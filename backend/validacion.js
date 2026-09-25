@@ -4,11 +4,16 @@
 // mandar un POST a mano). Esta es la que protege los datos: si algo no cierra,
 // la respuesta se rechaza entera y no se guarda nada.
 
+import { esVisible } from './encuestas/condiciones.js';
+
 const esVacio = (valor) =>
   valor === undefined ||
   valor === null ||
   (typeof valor === 'string' && valor.trim() === '') ||
   (Array.isArray(valor) && valor.length === 0);
+
+// Las pantallas de tipo 'info' son solo texto: no se responden ni se guardan.
+export const preguntasConRespuesta = (encuesta) => encuesta.preguntas.filter((p) => p.tipo !== 'info');
 
 // Nombre de la columna que guarda una opción de una pregunta de respuesta múltiple.
 export const columnaDeOpcion = (pregunta, opcion) => `${pregunta.id}_${opcion.valor}`;
@@ -78,7 +83,8 @@ export function validarRespuesta(encuesta, cuerpo) {
   }
 
   const errores = [];
-  const idsConocidos = new Set(encuesta.preguntas.map((p) => p.id));
+  const preguntas = preguntasConRespuesta(encuesta);
+  const idsConocidos = new Set(preguntas.map((p) => p.id));
   for (const clave of Object.keys(cuerpo)) {
     if (!idsConocidos.has(clave)) errores.push(`${clave}: campo desconocido`);
   }
@@ -88,9 +94,9 @@ export function validarRespuesta(encuesta, cuerpo) {
   const respuestas = {};
   let fila = {};
 
-  for (const pregunta of encuesta.preguntas) {
+  for (const pregunta of preguntas) {
     const valor = cuerpo[pregunta.id];
-    const visible = pregunta.visibleSi ? pregunta.visibleSi(respuestas) : true;
+    const visible = esVisible(pregunta, respuestas);
 
     if (!visible) {
       // Si la pregunta no corresponde a esta rama, no debería venir respondida.

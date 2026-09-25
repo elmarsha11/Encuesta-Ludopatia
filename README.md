@@ -29,11 +29,12 @@ npm test                 # corre todas las pruebas automáticas
 | `backend/test/` | Pruebas automáticas. |
 | `database/schema.sql` | Esquema de la base, **generado** con `npm run schema` (no editar a mano). |
 | `docs/` | Plan y fuentes originales de las preguntas. |
+| `docs/diseno/` | Brief de diseño, guía de Claude Design, contrato frontend/backend y contenido **generado** de cada encuesta (`npm run contenido`). |
 
 ## Cambiar una pregunta
 
 1. Editar la encuesta en `backend/encuestas/`.
-2. `npm run schema` para regenerar `database/schema.sql`.
+2. `npm run schema` y `npm run contenido` para regenerar `database/schema.sql` y `docs/diseno/contenido-*.md`.
 3. `npm test`.
 
 Si la base ya tiene respuestas guardadas, el servidor se niega a arrancar cuando la tabla ya no coincide con la definición. Así se evita mezclar datos viejos con columnas nuevas.

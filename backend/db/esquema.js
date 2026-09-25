@@ -2,7 +2,7 @@
 // Así, agregar o cambiar una pregunta en backend/encuestas/ actualiza la tabla
 // sin tener que mantener la misma lista de opciones en dos lugares.
 
-import { columnaDeOpcion } from '../validacion.js';
+import { columnaDeOpcion, preguntasConRespuesta } from '../validacion.js';
 
 const textoSql = (s) => `'${s.replaceAll("'", "''")}'`;
 
@@ -38,7 +38,7 @@ function columnasDePregunta(pregunta, obligatoriaSiempre) {
 /** Lista ordenada de nombres de columna de la tabla de una encuesta (sin `id` ni `fecha`). */
 export function nombresDeColumnas(encuesta) {
   return [
-    ...encuesta.preguntas.flatMap((p) =>
+    ...preguntasConRespuesta(encuesta).flatMap((p) =>
       p.tipo === 'multiple' ? p.opciones.map((o) => columnaDeOpcion(p, o)) : [p.id],
     ),
     ...(encuesta.columnasCalculadas ?? []).map((c) => c.nombre),
@@ -53,7 +53,7 @@ export function sentenciasDeEncuesta(encuesta) {
     // Solo la fecha, sin hora, para reducir el riesgo de identificar a alguien.
     // Hora argentina (UTC-3, sin horario de verano).
     "fecha TEXT NOT NULL DEFAULT (date('now', '-3 hours'))",
-    ...encuesta.preguntas.flatMap((p) => {
+    ...preguntasConRespuesta(encuesta).flatMap((p) => {
       // NOT NULL solo si la pregunta se muestra a todos y es obligatoria.
       const obligatoria = p.obligatoria ?? encuesta.respuestasObligatorias;
       return columnasDePregunta(p, obligatoria && !p.visibleSi);

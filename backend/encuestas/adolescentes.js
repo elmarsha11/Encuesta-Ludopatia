@@ -13,8 +13,7 @@ const PREFIERO_NO_RESPONDER = {
 };
 
 // La Sección 3 solo se muestra a quien dijo que alguna vez apostó.
-const aposto = (r) =>
-  r.aposto_alguna_vez === 'si_no_ultimo_anio' || r.aposto_alguna_vez === 'si_ultimo_anio';
+const aposto = { pregunta: 'aposto_alguna_vez', es: ['si_no_ultimo_anio', 'si_ultimo_anio'] };
 
 export default {
   id: 'adolescentes',
@@ -22,10 +21,65 @@ export default {
   titulo: '¿Cuándo el juego deja de ser un juego?',
   respuestasObligatorias: false,
 
+  // Textos de las pantallas que no son preguntas.
+  pantallas: {
+    intro: {
+      titulo: '¿Cuándo el juego deja de ser un juego?',
+      texto:
+        'Esta es una encuesta sobre cómo se vive el juego y las apuestas online entre estudiantes; ' +
+        'si las probaron, si conocen a alguien que apuesta y por qué lo hace. No hay respuestas ' +
+        'correctas ni incorrectas, y no buscamos juzgar a nadie: nos sirve que contestes lo que ' +
+        'realmente pensás y sentís. Vas a ver algunas preguntas obligatorias para continuar y otras ' +
+        'que podés no responder. Es anónima: no pedimos tu nombre ni identidad, no hace falta ' +
+        'iniciar sesión ni cargar nada. Lleva menos de 5 minutos y podés dejarla cuando quieras. ' +
+        'Lo único que te pedimos es honestidad y sinceridad.',
+    },
+    consentimiento: {
+      pregunta: '¿Te animás a participar?',
+      si: 'Sí',
+      no: 'No',
+      // Si elige "No": no se guarda nada y se muestra este mensaje.
+      respuestaNo: 'Está perfecto. Gracias por pasar igual.',
+    },
+    edadFueraDeRango:
+      'Esta encuesta es para personas de 12 a 17 años. Gracias por tu interés.',
+    cierre: {
+      titulo: '¡Gracias por responder!',
+      texto: 'Tus respuestas nos ayudan a entender mejor cómo se vive el juego entre estudiantes.',
+    },
+  },
+
+  secciones: [
+    {
+      id: 'sobre_vos',
+      titulo: 'Sobre vos...',
+      descripcion: 'Solo para conocer al grupo que responde. No te pedimos nombre ni datos que te identifiquen.',
+    },
+    {
+      id: 'experiencia',
+      titulo: 'Tu experiencia con las apuestas',
+      descripcion:
+        'Estas preguntas son para quienes alguna vez apostaron. Acá nadie te juzga. ' +
+        'Si alguna no querés contestarla, elegí «Prefiero no responder».',
+    },
+    {
+      id: 'entorno',
+      titulo: 'Tu entorno y tu opinión',
+      descripcion:
+        'Estas preguntas son para todos, hayas apostado o no. Nos interesa lo que ves a tu alrededor y lo que pensás.',
+    },
+    {
+      id: 'espacio_abierto',
+      titulo: 'Un breve espacio para leerte',
+      descripcion: 'Gracias por tu tiempo, hayas respondido todo o solo una parte. Este espacio es opcional.',
+    },
+  ],
+
   preguntas: [
     // Sección 2 — Sobre vos
     {
       id: 'edad',
+      seccion: 'sobre_vos',
       tipo: 'numero',
       texto: '¿Cuál es tu edad?',
       min: 12,
@@ -34,6 +88,7 @@ export default {
     },
     {
       id: 'genero',
+      seccion: 'sobre_vos',
       tipo: 'unica',
       texto: '¿Cómo te percibís?',
       opciones: [
@@ -45,6 +100,7 @@ export default {
     },
     {
       id: 'aposto_alguna_vez',
+      seccion: 'sobre_vos',
       tipo: 'unica',
       texto: '¿Alguna vez apostaste plata o algo que vale plata (por ejemplo, skins)?',
       opciones: [
@@ -58,6 +114,7 @@ export default {
     // Sección 3 — Tu experiencia con las apuestas (solo rama "sí")
     {
       id: 'en_que_aposto',
+      seccion: 'experiencia',
       tipo: 'multiple',
       texto: '¿En qué apostaste?',
       visibleSi: aposto,
@@ -73,6 +130,7 @@ export default {
     },
     {
       id: 'frecuencia_ultimo_anio',
+      seccion: 'experiencia',
       tipo: 'unica',
       texto: 'En el último año, ¿con qué frecuencia apostaste?',
       visibleSi: aposto,
@@ -88,6 +146,7 @@ export default {
     },
     {
       id: 'motivo',
+      seccion: 'experiencia',
       tipo: 'multiple',
       texto: '¿Qué te llevó a apostar?',
       visibleSi: aposto,
@@ -104,6 +163,7 @@ export default {
     },
     {
       id: 'como_accedio',
+      seccion: 'experiencia',
       tipo: 'unica',
       texto: '¿Cómo accediste?',
       visibleSi: aposto,
@@ -118,6 +178,7 @@ export default {
     // Sección 4 — Tu entorno y tu opinión (todos)
     {
       id: 'conoce_alguien',
+      seccion: 'entorno',
       tipo: 'unica',
       texto: '¿Conocés a alguien de tu entorno que apueste?',
       opciones: [
@@ -129,6 +190,7 @@ export default {
     },
     {
       id: 'frecuencia_publicidad',
+      seccion: 'entorno',
       tipo: 'unica',
       texto: '¿Con qué frecuencia ves publicidad de apuestas?',
       opciones: [
@@ -141,6 +203,7 @@ export default {
     },
     {
       id: 'donde_publicidad',
+      seccion: 'entorno',
       tipo: 'multiple',
       texto: '¿Dónde ves más publicidad?',
       opciones: [
@@ -154,18 +217,21 @@ export default {
     },
     {
       id: 'escala_perder_control',
+      seccion: 'entorno',
       tipo: 'escala',
       texto: 'Es fácil perder el control con las apuestas online.',
       ...ACUERDO_1_A_5,
     },
     {
       id: 'escala_pasatiempo_inofensivo',
+      seccion: 'entorno',
       tipo: 'escala',
       texto: 'Apostar online es un pasatiempo inofensivo.',
       ...ACUERDO_1_A_5,
     },
     {
       id: 'percepcion_por_que',
+      seccion: 'entorno',
       tipo: 'multiple',
       texto: '¿Por qué creés que apuestan las personas de tu edad?',
       opciones: [
@@ -181,6 +247,7 @@ export default {
     },
     {
       id: 'escala_ganar_plata',
+      seccion: 'entorno',
       tipo: 'escala',
       texto: 'Alguien de mi edad puede ganar plata apostando.',
       ...ACUERDO_1_A_5,
@@ -189,6 +256,7 @@ export default {
     // Sección 5 — Un breve espacio para leerte (opcional)
     {
       id: 'comentario',
+      seccion: 'espacio_abierto',
       tipo: 'texto',
       texto:
         'Si querés contar algo o simplemente opinar, este es el lugar. ' +

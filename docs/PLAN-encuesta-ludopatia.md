@@ -241,6 +241,8 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
 
 ### 8.1 Frontend
 - Diseño trabajado en conjunto en Claude Design (fase propia, ver sección 10). Se exporta como HTML/CSS/JS estático y lo sirve el backend.
+- **Dibujado a partir de datos:** el frontend pide la definición a `GET /api/encuestas/:id` (ya implementado) y arma las pantallas con componentes reutilizables. Las condiciones de rama son datos (`visibleSi: { pregunta, es: [...] }`), así que frontend y backend aplican exactamente las mismas reglas.
+- Sin recursos externos (tipografías servidas desde el propio servidor, sin analytics): por la anonimidad y para no depender de Google.
 - Mobile-first: se entra por QR desde el celular.
 - **Una pregunta (o un grupo chico) por pantalla**, con transiciones suaves y barra de progreso. Con bifurcaciones, el total de pasos cambia según la rama: la barra se calcula sobre la rama actual.
 - La lógica de bifurcación vive en el frontend para que la experiencia sea fluida. **El backend vuelve a validar todo** antes de guardar.
@@ -328,7 +330,7 @@ Encuesta-Ludopatia/
 
 1. ✅ **Base de datos**: `database/schema.sql` generado desde las definiciones, con CHECKs y triggers de solo agregar.
 2. ✅ **Backend núcleo**: Express, `@libsql/client`, definición de ambas encuestas, `POST /api/respuestas/:encuesta` con validación, límite de envíos, helmet y 32 tests automáticos.
-3. **Diseño** (en conjunto, Claude Design): identidad visual, componentes (pregunta única, múltiple, escala, número), transiciones, pantalla final.
+3. 🔄 **Diseño** (en conjunto, Claude Design): material listo en `docs/diseno/` (brief, guía con prompts, contrato, contenido generado). DECIDIDO: dos identidades distintas (adolescentes: curiosa y confiable, no divertida; adultos: editorial y detallada) sobre un mismo motor de componentes con dos temas. Sin restricciones de color.
 4. **Frontend**: implementación del diseño con la lógica de bifurcación.
 5. **Integración** frontend ↔ backend.
 6. **Dashboards** + **exportación Excel** + **autenticación**.

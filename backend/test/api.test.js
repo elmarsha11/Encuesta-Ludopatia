@@ -87,6 +87,24 @@ describe('POST /api/respuestas/:encuesta', () => {
   });
 });
 
+describe('GET /api/encuestas/:encuesta', () => {
+  test('devuelve la definición pública, sin detalles internos', async () => {
+    const res = await fetch(`${base}/api/encuestas/adultos`);
+    assert.equal(res.status, 200);
+    const def = await res.json();
+    assert.equal(def.id, 'adultos');
+    assert.ok(def.preguntas.length > 0);
+    assert.equal(def.tabla, undefined, 'no debe exponer el nombre de la tabla');
+    const deuda = def.preguntas.find((p) => p.id === 'deuda_relativa');
+    assert.deepEqual(deuda.visibleSi, { pregunta: 'tiene_deudas', es: ['si'] });
+  });
+
+  test('encuesta inexistente → 404', async () => {
+    const res = await fetch(`${base}/api/encuestas/otra`);
+    assert.equal(res.status, 404);
+  });
+});
+
 describe('protección de los datos', () => {
   test('la base no permite modificar respuestas', async () => {
     await assert.rejects(

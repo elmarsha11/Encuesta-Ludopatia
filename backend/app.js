@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import { validarRespuesta } from './validacion.js';
 import { guardarRespuesta } from './db/conexion.js';
+import { definicionPublica } from './encuestas/publica.js';
 
 /**
  * @param {object} opciones
@@ -35,6 +36,13 @@ export function crearApp({ db, encuestas, trustProxy = false, limiteEnviosPorMin
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     message: { ok: false, errores: ['Demasiados envíos seguidos. Esperá un minuto.'] },
+  });
+
+  // Definición de la encuesta para el frontend: preguntas, opciones, ramas y textos.
+  app.get('/api/encuestas/:encuesta', (req, res) => {
+    const encuesta = encuestas[req.params.encuesta];
+    if (!encuesta) return res.status(404).json({ ok: false, errores: ['Encuesta inexistente'] });
+    res.json(definicionPublica(encuesta));
   });
 
   app.post('/api/respuestas/:encuesta', limitador, async (req, res, next) => {
