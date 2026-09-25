@@ -6,9 +6,9 @@
 > - **PROPUESTA**: recomendación técnica, falta confirmación (de Juli o del grupo de adultos).
 > - **PENDIENTE**: falta información; no codear esa parte hasta cerrarla.
 >
-> Fuentes de las preguntas (en la raíz del repo):
-> - Adultos: `WhatsApp Image 2026-09-22 at 20.23.20(1).jpeg` (datos personales, hábitos, educación financiera) y `preguntas 2.jpg` (rama "no apuesta").
-> - Adolescentes: `Estructura del Formulario - ¿Cuándo el juego deja de ser un juego_.pdf`.
+> Fuentes de las preguntas:
+> - Adultos: `docs/fuentes/adultos-preguntas-1.jpeg` (datos personales, hábitos, educación financiera) y `docs/fuentes/adultos-preguntas-2-no-apuesta.jpg` (rama "no apuesta").
+> - Adolescentes: `docs/fuentes/adolescentes-formulario.pdf`.
 
 ---
 
@@ -88,11 +88,9 @@ BLOQUE 1 — Sobre vos (obligatorio)
   → Ingresos del HOGAR (DECIDIDO: slider de 5 pasos, pregunta propia)
       "¿Cuánto dinero ingresa por mes en tu hogar, aproximadamente?"
       Paso 1: "Sin ingresos o hasta $A" … Paso 5: "$D o más". Pasos 2-4 = rangos intermedios.
-      PENDIENTE: montos A-D. Juli propuso "menos de $10.000" a "más de $100.000", pero el salario
-      mínimo en septiembre de 2026 es $383.800: con esos cortes casi todos los hogares caerían
-      en el paso 5 y la pregunta no distinguiría a nadie. Esos cortes sí sirven para el monto
-      apostado por vez (ver abajo). Para ingresos, PROPUESTA: expresarlos en salarios mínimos
-      (ej. hasta 1 SMVM / 1-2 / 2-3 / 3-5 / más de 5), mostrando el monto en pesos equivalente.
+      DECIDIDO: en salarios mínimos (SMVM): hasta 1 / 1-2 / 2-3 / 3-5 / más de 5, mostrando el
+      monto en pesos equivalente. (Los cortes en pesos, de $10.000 a $100.000, quedaban por debajo
+      del salario mínimo, $383.800 en septiembre de 2026, y casi todos habrían caído en el paso 5.)
   → Deudas (DECIDIDO: separada de ingresos pero complementaria)
       "¿Tenés deudas actualmente?" (Sí / No)
         → si Sí: slider de 5 pasos, en relación al ingreso (DECIDIDO):
@@ -122,7 +120,7 @@ BLOQUE 2 — Pregunta gatillo
     → ¿Incluiste a alguien para que se involucre en el mundo de las apuestas? (Sí / No / No sé)
     → ¿Cuánto dinero solés apostar cada vez? (DECIDIDO: rangos, slider de 5 pasos)
         Menos de $10.000 / $10.000–$25.000 / $25.000–$50.000 / $50.000–$100.000 / Más de $100.000
-        PENDIENTE: confirmar los cortes intermedios (el mínimo y el máximo los definió Juli).
+
     → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes sociales / Otro)
         DECIDIDO. "Otro" se agrega porque, como en adultos todo es obligatorio, sin esa opción
         quien no encaje queda forzado a marcar una opción falsa.
@@ -274,7 +272,18 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
 1. **Excel** (`exceljs`): datos crudos, una fila por respuesta, una columna por opción de las preguntas múltiples, fecha sin hora. En adultos se incluye la columna calculada `pgsi_total` y su categoría.
 2. **Dashboard web** (una página por encuesta, protegida): gráficos con Chart.js alimentados por los endpoints de agregación. Los porcentajes de preguntas de rama usan como denominador **solo a quienes vieron la pregunta**.
 
-### 8.5 Servidor y despliegue — PENDIENTE decidir (restricción: costo $0)
+### 8.5 Servidor y despliegue — DECIDIDO: se prueba la opción B (costo $0)
+
+**Requisitos de Juli:** que sea rápido y fluido, sin problemas de acceso, y que ningún dato se borre, se altere ni se pierda. La luz y el internet de la casa de Juli son estables, así que la opción A queda como respaldo real: el código es el mismo en ambas.
+
+**Cómo se cubre cada requisito en la opción B:**
+- *Lentitud por el "sueño" de Render*: un servicio gratuito de monitoreo (por ejemplo, UptimeRobot o cron-job.org) consulta un endpoint liviano `/api/salud` cada 10 minutos durante los días de encuesta, y el servidor no llega a dormirse. Encendido las 24 h, un servicio consume unas 744 h por mes, dentro de las 750 h gratuitas. PENDIENTE verificar en la fase de despliegue que las condiciones de Render lo permitan. Si no, se pasa a la opción A.
+- *Que nada se altere o borre*: la base es de solo agregar (triggers que bloquean UPDATE y DELETE, ya implementados y probados), con reglas CHECK por columna y ningún endpoint que modifique o borre.
+- *Que nada se pierda*: Turso guarda los datos fuera del servidor. Además, un script de backup descarga una copia completa cada noche durante la semana de encuesta (fase de despliegue).
+
+---
+
+Opciones evaluadas:
 
 Nadie va a pagar el hosting, así que solo entran opciones gratuitas. Hay dos candidatas:
 
@@ -317,8 +326,8 @@ Encuesta-Ludopatia/
 
 ## 10. Fases de implementación
 
-1. **Base de datos**: `schema.sql` con ambas tablas + script para crear la base.
-2. **Backend núcleo**: Express, conexión SQLite, definición de encuestas, endpoints de guardado con validación y tests automáticos de cada rama.
+1. ✅ **Base de datos**: `database/schema.sql` generado desde las definiciones, con CHECKs y triggers de solo agregar.
+2. ✅ **Backend núcleo**: Express, `@libsql/client`, definición de ambas encuestas, `POST /api/respuestas/:encuesta` con validación, límite de envíos, helmet y 32 tests automáticos.
 3. **Diseño** (en conjunto, Claude Design): identidad visual, componentes (pregunta única, múltiple, escala, número), transiciones, pantalla final.
 4. **Frontend**: implementación del diseño con la lógica de bifurcación.
 5. **Integración** frontend ↔ backend.
@@ -331,13 +340,11 @@ Encuesta-Ludopatia/
 
 | # | Tema | Quién decide |
 |---|------|--------------|
-| 1 | Cortes de ingresos del hogar (los propuestos, de $10.000 a $100.000, quedan por debajo del salario mínimo). Propuesta: expresarlos en salarios mínimos | Juli / grupo |
-| 2 | Cortes intermedios del monto apostado por vez ($10k / 25k / 50k / 100k) | Juli / grupo |
+| 1 | Valor del salario mínimo de octubre de 2026 (constante `SMVM_REFERENCIA` en `backend/encuestas/adultos.js`) | Juli |
 | 3 | Texto de la explicación de educación financiera (Claude redacta un borrador, el grupo aprueba) | Grupo |
 | 4 | Ítems textuales del PGSI en español (artículo de 2018) | Juli |
 | 5 | Verificar las líneas de ayuda 0800-444-4000 y 141 | Juli |
 | 6 | Franjas horarias de cada institución (19 al 23/10) | Juli |
-| 7 | Hosting: opción A (PC + ngrok) u opción B (Render + Turso) | Juli |
 | 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
 
-**Ya decidido en esta ronda:** respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard.
+**Ya decidido:** ingresos medidos en salarios mínimos; cortes del monto apostado ($10k / 25k / 50k / 100k); hosting opción B con la A de respaldo; respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard.
