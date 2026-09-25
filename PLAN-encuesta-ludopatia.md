@@ -1,356 +1,308 @@
 # Plan Técnico — Encuestas sobre Ludopatía (Adultos 18+ y Adolescentes 12-17)
 
-> Documento de referencia para el desarrollo con Claude Code. Contiene el contexto, la arquitectura y las decisiones tomadas hasta ahora. Las secciones marcadas como **PENDIENTE** requieren confirmación antes de codear esa parte. Las marcadas como **PROPUESTA** son decisiones que tomé por mi cuenta como recomendación — Juli las puede confirmar o cambiar.
+> Documento de referencia para el desarrollo. Contiene el contexto, la arquitectura y las decisiones tomadas hasta ahora.
+>
+> - **DECIDIDO**: confirmado por Juli, se puede codear.
+> - **PROPUESTA**: recomendación técnica, falta confirmación (de Juli o del grupo de adultos).
+> - **PENDIENTE**: falta información; no codear esa parte hasta cerrarla.
+>
+> Fuentes de las preguntas (en la raíz del repo):
+> - Adultos: `WhatsApp Image 2026-09-22 at 20.23.20(1).jpeg` (datos personales, hábitos, educación financiera) y `preguntas 2.jpg` (rama "no apuesta").
+> - Adolescentes: `Estructura del Formulario - ¿Cuándo el juego deja de ser un juego_.pdf`.
 
 ---
 
 ## 1. Contexto
 
-Dos encuestas sobre ludopatía, para dos públicos distintos, que se van a construir sobre el mismo sistema propio (sin Google Forms/Sheets):
+Dos encuestas sobre ludopatía, para dos públicos y **dos instituciones distintas**, construidas sobre el mismo sistema propio (sin Google Forms/Sheets):
 
-- **Encuesta de adultos**: encargada por un grupo de estudiantes de Administración Financiera de un instituto, dirigida a adultos (18 años en adelante, sin límite superior) que cursan en la institución. Busca detectar perfiles de riesgo de ludopatía y entender qué factores contextuales los empujan a apostar.
-- **Encuesta de adolescentes** (12-17 años): proyecto propio de Juli, hasta ahora en Google Forms, que se migra a este mismo sistema para dejar de depender del ecosistema Google.
+- **Encuesta de adultos (18+)**: encargada por un grupo de estudiantes de Administración Financiera de un instituto, dirigida a adultos que cursan en esa institución. Busca detectar perfiles de riesgo de ludopatía y entender qué factores contextuales los empujan a apostar. **Para los adultos las respuestas son obligatorias.**
+- **Encuesta de adolescentes (12-17)**: proyecto propio de Juli, hasta ahora en Google Forms, que se migra a este sistema. **Para los menores las respuestas no son obligatorias** (se mantiene "Prefiero no responder" y preguntas que se pueden saltear).
 
-**Restricciones comunes a ambas:**
+**Restricciones comunes:**
 - No usar Google Forms / Sheets / Looker Studio.
 - Página web propia, alojada de forma provisoria.
-- Disponible durante **7 días exactos**; después el servidor se apaga. **PENDIENTE**: confirmar si este plazo aplica igual a ambas encuestas o si la de adolescentes tiene más margen.
-- Acceso a resultados (Excel + dashboard) restringido solo a quien corresponda en cada caso.
+- Disponible durante **7 días**. **PENDIENTE**: confirmar si el plazo es igual para ambas encuestas.
+- Acceso a resultados (Excel + dashboard) restringido a quien corresponda en cada caso.
 - Duración máxima de respuesta: **menos de 5 minutos**.
-- Experiencia dinámica, no monótona.
+- Experiencia dinámica y cuidada: ni monótona ni básica, pero tampoco extravagante, y **sin ninguna estética que remita a apuestas o casinos** (nada de fichas, ruletas, dorados tipo casino, confeti de "ganaste").
 - Anónimas: sin nombre, DNI ni email.
-- Copy neutral, sin alusiones estigmatizantes hacia quienes apuestan.
+- Copy neutral, sin estigmatizar a quienes apuestan.
 
-**Objetivo de investigación — encuesta de adultos:**
-- Cuántos adultos del instituto apostaron alguna vez o tienen problemas de ludopatía.
-- Relación entre contexto económico/laboral (desempleo, bajos ingresos, deudas, mala educación financiera) y la probabilidad de apostar.
+**Objetivo de investigación — adultos:**
+- Cuántos adultos del instituto apostaron o presentan riesgo de juego problemático.
+- Relación entre contexto económico/laboral y la probabilidad de apostar.
 - Rangos etarios con mayor incidencia.
 - Rol de la publicidad y el acceso online como facilitadores.
-- **No** buscan comparar entre carreras (el dato se recolecta igual, pero no es eje de análisis).
+- No se busca comparar entre carreras (el dato se recolecta igual).
 
-**Objetivo de investigación — encuesta de adolescentes:**
-- Prevalencia de apuestas (incluyendo apuestas "en especie", como skins de videojuegos) entre adolescentes.
-- Exposición a publicidad y su relación con la percepción de que apostar es normal/inofensivo.
-- Percepción social: por qué creen que sus pares apuestan, si creen que se puede "ganar plata" apostando.
+**Objetivo de investigación — adolescentes:**
+- Prevalencia de apuestas (incluidas las "en especie", como skins) entre adolescentes.
+- Exposición a publicidad y su relación con percibir que apostar es normal o inofensivo.
+- Percepción social: por qué creen que apuestan sus pares y si creen que se puede "ganar plata".
 
-## 2. Alcance de este documento
+## 2. Acceso y validación de edad (DECIDIDO)
 
-Cubre el diseño completo de **ambas** encuestas sobre el mismo sistema (mismo backend, misma lógica de exportación, bases de datos separadas por tabla).
+- **Dos QR / dos URLs**, uno por encuesta (cada uno se distribuye en su institución). No hay pantalla de enrutamiento por edad.
+  - `/adultos` → encuesta de adultos.
+  - `/adolescentes` → encuesta de adolescentes.
+- Cada encuesta pregunta la edad y **valida su propio rango**:
+  - Adolescentes: **12 a 17** inclusive. (El Forms original decía "entre 12 y 18"; se corrige: 18 ya es adulto.)
+  - Adultos: **18 o más**. **PROPUESTA**: tope superior de 99 para descartar errores de tipeo (ej. 188).
+- Si alguien pone una edad fuera de rango (por error o a propósito), se le muestra un mensaje amable ("esta encuesta es para personas de X a Y años") y **no puede continuar**. Nada se guarda.
+- El backend **vuelve a validar el rango** antes de guardar: la validación del frontend se puede saltear, la del servidor no.
 
-**Regla de enrutamiento por edad (PROPUESTA):** al entrar, la primera pregunta del sistema es la edad. Si es **menor a 18 → flujo de adolescentes**; si es **18 o más → flujo de adultos**. Esto evita la superposición que existe en los formularios originales (el de adolescentes permite cargar "18" como edad válida). Confirmar si este corte está bien o si el grupo de adultos quiere manejarlo distinto.
+## 3. Reglas de diseño de datos (DECIDIDO)
 
-Como la edad ya se pregunta una sola vez al entrar (para decidir el enrutamiento), **no se vuelve a preguntar dentro de cada encuesta** — se reutiliza ese mismo dato como el campo `edad` de la tabla correspondiente. Esto evita una pregunta redundante que rompería la promesa de "menos de 5 minutos".
+1. **Preguntas de respuesta múltiple → una columna 0/1 por opción** (ej. `tipo_casino_online`). Contar cuántos marcaron una opción es un `SUM()`, y en Excel queda una columna por opción, lista para una tabla dinámica.
+2. **Columnas de preguntas no mostradas → `NULL`, nunca `0`/`FALSE` por defecto.** `NULL` significa "no se le preguntó"; `0` significa "se le preguntó y no lo marcó". Si se confunden, los porcentajes salen mal sin que nadie lo note (ej. "% que apostó en skins" dividido por todos los encuestados en vez de solo por quienes apostaron).
+3. **Toda opción de la pregunta tiene su columna**, incluidas "Prefiero no responder", "No sé", "Ninguno" y "No veo publicidad".
+4. **Sin columna de consentimiento**: si alguien responde "No" a "¿Aceptás participar?", el frontend corta ahí y nunca llama al endpoint de guardado.
+5. **Fecha de respuesta sin hora en el Excel exportado**: edad exacta + carrera + género + hora exacta puede identificar a alguien en grupos chicos.
 
-## 3. Decisión de diseño: preguntas de respuesta múltiple (checkboxes)
+## 4. Encuesta de ADULTOS (18+)
 
-Varias preguntas (sobre todo en la encuesta de adolescentes) permiten marcar más de una opción a la vez (ej. "¿En qué apostaste?", "¿Dónde ves más publicidad?"). Hay tres formas de guardar esto en la base de datos:
-
-1. **Texto plano con las opciones separadas por coma** dentro de una sola columna. Rápido de programar, pero difícil de analizar después (hay que buscar texto dentro de texto para contar cuántos marcaron una opción).
-2. **Tabla normalizada** (una fila por cada opción marcada, con una clave foránea a la respuesta). Es la forma "correcta" en teoría relacional, pero exige un `JOIN` para reconstruir la respuesta y una vuelta extra de lógica en el backend (un insert por cada opción marcada).
-3. **Una columna booleana por cada opción posible** (ej. `aposto_casino_online`, `aposto_skins`, todas `TRUE`/`FALSE`). Son más columnas, pero cada una se lee y se cuenta sola con un simple `SUM()`, y al exportar a Excel el resultado es exactamente una columna por opción con 1 y 0 — el formato más directo para armar una tabla dinámica después.
-
-**Decisión: se usa la opción 3 (columnas booleanas)** en todas las preguntas de checkbox de ambas encuestas, por ser la que menos fricción da tanto en el código como en el análisis posterior, dado el tamaño chico del dataset esperado (unos cientos de respuestas).
-
-**PENDIENTE confirmar con Juli:** en la encuesta de adultos, la pregunta "¿Qué tipo de apuestas haces? (Casino, Casino online, Apuestas deportivas)" fue tratada como respuesta múltiple (columnas booleanas) por consistencia con este criterio. Si en realidad era de una sola opción, avisar para volver a una sola columna `tipo_apuesta`.
-
-## 4. Estructura de la encuesta — ADULTOS (18+)
-
-```
-PANTALLA DE ENTRADA (todo el sistema)
-  → ¿Qué edad tenés? → si ≥18, continúa acá
-
-PANTALLA DE CONSENTIMIENTO (PROPUESTA, ver sección 6)
-  → Intro + "¿Aceptás participar?" (Sí/No). Si No, fin sin guardar nada.
-
-BLOQUE 1 — Obligatorio para todos
-  → Sexo
-  → Carrera
-  → Situación laboral / económica (trabajo propio, no trabajo, trabajo en dependencia)
-  → Depende económicamente de alguien (sí/no)
-  → Alguien depende económicamente de él/ella (sí/no)
-
-BLOQUE 2 — Bifurcación
-  Pregunta gatillo: "¿Apostaste alguna vez?"
-
-  SI SÍ → Sección "Experiencia con apuestas"
-    → Frecuencia de apuestas (diaria / semanal / mensual)
-    → Motivo (diversión, ganar dinero, influencia social, otra) — múltiple
-    → Tipo de apuesta (casino, casino online, apuestas deportivas) — múltiple, ver sección 3
-    → ¿La plataforma es legal? (sí/no/no sabe)
-    → Cuánto dinero apostó/perdió
-    → Origen del dinero (sueldo, préstamo, planes, otro)
-    → Cómo accedió (complementaria, no obligatoria)
-    → Escalas sobre impacto y control (PENDIENTE, ver sección 5)
-
-  SI NO → Sección "Entorno y exposición"
-    → ¿Conoce a alguien que apuesta?
-    → Con qué frecuencia ve publicidad de apuestas
-    → Dónde ve más publicidad — múltiple
-
-BLOQUE 3 — Convergencia (todos)
-  → Exposición a publicidad y acceso online a las apuestas
-
-BLOQUE 4 — Educación financiera (todos, sección corta, EXCLUSIVA de esta encuesta)
-  → ¿Recibiste educación financiera? (sí/no/no sé, ¿dónde? casa/escuela/internet)
-  → ¿Entendés cómo gestionar tu dinero?
-  → ¿Estarías dispuesto a recibir asesoramiento?
-  → Breve explicación teórica de qué es la educación financiera (informativo, no pregunta)
-```
-
-## 5. Estructura de la encuesta — ADOLESCENTES (12-17)
-
-Basado en el formulario "¿Cuándo el juego deja de ser un juego?" que Juli ya tenía armado en Google Forms — se migra tal cual, sin agregar ni quitar preguntas por ahora.
+Preguntas **obligatorias según el grupo** (no se tocan): **edad, género, carrera y el bloque de educación financiera**. El resto viene de las imágenes y se puede ajustar (**PROPUESTA** de ajustes marcada abajo).
 
 ```
-PANTALLA DE ENTRADA (todo el sistema)
-  → ¿Qué edad tenés? → si <18, continúa acá
+PANTALLA 0 — Intro + consentimiento (PROPUESTA)
+  Texto: anónima, sin respuestas correctas, sin juzgar, < 5 min.
+  "¿Aceptás participar?" Sí / No  → No: fin sin guardar nada.
+  PENDIENTE: si la encuesta es obligatoria para los adultos, ¿igual va la opción "No"?
 
-SECCIÓN 1 — Introducción y consentimiento
-  → Intro: encuesta sobre juego y apuestas online, anónima, sin juzgar, <5 min.
-  → "¿Te animás a participar?" (Sí/No). Si No, fin sin guardar nada.
+BLOQUE 1 — Sobre vos (obligatorio)
+  → ¿Qué edad tenés? (número, 18–99)
+  → ¿Qué carrera estás cursando? (única)
+      Inicial / Inglés / CUFA Curso de Formación Básica / Matemáticas /
+      Profesorado Literatura / Tecnicatura Enfermería / Trabajo Social /
+      Seguridad e Higiene / Ciencia de Datos e Inteligencia Artificial /
+      Adm. Financiera / Enfermería / ATM
+      PENDIENTE: en la imagen dicen "PROFESORADO LITERATURA SOLO" y "SEGURIDAD E HIGIENE SOLO";
+      confirmar si "SOLO" es parte del nombre o una aclaración interna.
+  → ¿Con qué género te identificás? (Masculino / Femenino / Otro)
+  → ¿En qué condición laboral te encontrás? (Trabajo propio / No trabajo / Trabajo en relación de dependencia)
+  → ¿Dependés económicamente de alguien? (Sí / No)
+  → ¿Alguien depende económicamente de vos? (Sí / No)
+  PENDIENTE: el objetivo menciona ingresos bajos y deudas, pero no hay preguntas para eso.
+             Sin esos datos no se puede analizar esa relación. Consultar al grupo.
 
-SECCIÓN 2 — Sobre vos
-  → Género (Varón / Mujer / Otro / Prefiero no decir)
-  → "¿Alguna vez apostaste plata o algo que vale plata (ej. skins)?" — GATILLO, 4 opciones:
-      "Sí, pero no en el último año" / "Sí, en el último año" / "Nunca" / "Prefiero no responder"
+BLOQUE 2 — Pregunta gatillo
+  Original: "¿Realizás apuestas online?" (Sí / No)
+  PROPUESTA: "En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?"
+    Motivos: (a) después se pregunta por "Casino" presencial, que no es online;
+             (b) el PGSI mide los últimos 12 meses, así que el gatillo tiene que usar el mismo período.
 
-  BIFURCACIÓN según esa respuesta:
-    → {"Sí, pero no en el último año", "Sí, en el último año"} → va a Sección 3
-    → {"Nunca", "Prefiero no responder"} → salta directo a Sección 4
+  SI SÍ → "Tus hábitos de apuesta"
+    → ¿Con qué frecuencia apostás? (ÚNICA — en la imagen dice "múltiple", pero una frecuencia es una sola)
+        PROPUESTA de opciones (mismas que adolescentes, para poder comparar):
+        Menos de una vez al mes / Algunas veces al mes / Una vez por semana /
+        Varias veces por semana / Casi todos los días
+    → ¿Por qué apostás? (múltiple: Diversión / Ganar dinero / Influencia social / Otra)
+    → ¿Qué tipo de apuestas hacés? (múltiple: Casino presencial / Casino online / Apuestas deportivas)
+    → ¿Reconocés si apostás en una plataforma legal? (Sí / No)
+    → ¿Incluiste a alguien para que se involucre en el mundo de las apuestas? (Sí / No / No sé)
+    → ¿Cuánto dinero solés apostar cada vez? PROPUESTA: rangos en lugar de número libre
+        (un número libre trae valores absurdos y es difícil de agrupar). PENDIENTE: definir rangos en $.
+    → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes / …)
+        PENDIENTE: la lista está cortada en la imagen ("sueldo, Préstamo, planes,"). ¿Qué opciones faltan?
+        ¿"Planes" = planes sociales?
+    → PGSI — 9 preguntas (ver sección 6)
+
+  SI NO → "Tu mirada sobre las apuestas" (de preguntas 2.jpg)
+    → ¿Pensaste alguna vez en hacerlo? (Sí / No)
+    → ¿Cuál es el motivo principal por el que no apostás? (única: No me interesa /
+        Miedo a perder plata / Miedo a volverme adicto / No sé cómo se hace / Otro)
+
+BLOQUE 3 — Entorno y publicidad (TODOS) — PROPUESTA
+  Estas preguntas estaban solo en la rama "no apuesta". Se pasan al bloque común porque,
+  para estudiar el rol de la publicidad y del entorno, hay que comparar a los que apuestan
+  con los que no. Si solo responde un grupo, esa comparación es imposible.
+    → ¿Tenés familiares o amigos cercanos que apuesten regularmente? (Sí / No / No sé)
+    → ¿Creés que se puede generar plata fácil apostando? (Sí / No / A veces)
+    → ¿Por qué canales ves más publicidad de apuestas? (múltiple: Redes sociales /
+        Videojuegos / Streamers y/o influencers / Ninguno)
+        PROPUESTA: sumar "TV" y "La calle", como en adolescentes, para poder comparar.
+
+BLOQUE 4 — Educación financiera (obligatorio, exclusivo de adultos)
+  PROPUESTA de orden: primero "¿sabés qué es?" y después "¿la recibiste?".
+    → ¿Sabés qué es la educación financiera? (Sí / No)
+    → ¿Recibiste educación financiera? (Sí / No / No sé)
+        → si Sí: ¿Dónde? (múltiple: Casa / Escuela / Internet)
+    → ¿Te gustaría recibirla? (Sí / No)
+    → Breve explicación de qué es la educación financiera (informativo). PENDIENTE: texto del grupo.
+
+PANTALLA FINAL — Agradecimiento + recursos de ayuda (ver sección 7)
+```
+
+**Estimación de tiempo** (rama "sí", la más larga): 6 + 1 + 8 + 9 (PGSI) + 3 + 4 ≈ 31 preguntas, casi todas de un toque. Entra en 5 minutos si cada pantalla es ágil, pero está justo. **Hay que medirlo en una prueba piloto** (sección 11).
+
+## 5. Encuesta de ADOLESCENTES (12-17)
+
+Se migra **tal cual** desde el PDF, con una sola corrección: la validación de edad pasa a ser 12-17. Todas las preguntas son salteables salvo el consentimiento y la edad (necesaria para validar el rango).
+
+```
+SECCIÓN 1 — ¿Cuándo el juego deja de ser un juego?
+  Intro (texto del PDF) + "¿Te animás a participar?" (Sí / No) → No: fin sin guardar.
+
+SECCIÓN 2 — Sobre vos...
+  P2  ¿Cuál es tu edad? (número, 12–17)
+  P3  ¿Cómo te percibís? (Varón / Mujer / Otro / Prefiero no decir)
+  P4  ¿Alguna vez apostaste plata o algo que vale plata (por ejemplo, skins)?   ← GATILLO
+      Sí, pero no en el último año / Sí, en el último año / Nunca / Prefiero no responder
+      → cualquiera de los dos "Sí" → Sección 3
+      → "Nunca" o "Prefiero no responder" → Sección 4
 
 SECCIÓN 3 — Tu experiencia con las apuestas (solo rama "sí")
-  → ¿En qué apostaste? — múltiple (deportivas online, casino online, cartas, quiniela/lotería, skins, otro, prefiero no responder)
-  → Frecuencia en el último año (única)
-  → ¿Qué te llevó a apostar? — múltiple (diversión, publicidad/influencers, curiosidad, ganar plata, aburrimiento, amigos/familia, otro, prefiero no responder)
-  → ¿Cómo accediste? (con mi cuenta / cuenta de otra persona / en persona / prefiero no responder)
+  P5  ¿En qué apostaste? (múltiple: Apuestas deportivas online / Casino online /
+      Juego de cartas por plata / Quiniela, Lotería / Skins o cajas de videojuegos /
+      Otro / Prefiero no responder)
+  P6  En el último año, ¿con qué frecuencia apostaste? (única: Ninguna vez en el último año /
+      Menos de una vez al mes / Algunas veces al mes / Una vez por semana /
+      Varias veces a la semana / Casi todos los días / Prefiero no responder)
+  P7  ¿Qué te llevó a apostar? (múltiple: Diversión / Publicidad o influencers / Curiosidad /
+      Ganar plata / Aburrimiento / Amigos o familia que también apuestan / Otro / Prefiero no responder)
+  P8  ¿Cómo accediste? (única: Con mi propia cuenta / Con la cuenta o datos de otra persona /
+      En persona / Prefiero no responder)
 
-SECCIÓN 4 — Tu entorno y tu opinión (TODOS — convergencia)
-  → ¿Conocés a alguien de tu entorno que apueste? (no / sí una persona / sí varias / prefiero no responder)
-  → Frecuencia con que ve publicidad de apuestas
-  → ¿Dónde ves más publicidad? — múltiple (redes sociales, streamers/influencers, TV, videojuegos, la calle, no veo publicidad)
-  → Escala 1-5: "Es fácil perder el control con las apuestas online"
-  → Escala 1-5: "Apostar online es un pasatiempo inofensivo"
-  → "¿Por qué creés que apuestan las personas de tu edad?" — múltiple (percepción social, distinta de la pregunta 7 que es personal)
-  → Escala 1-5: "Alguien de mi edad puede ganar plata apostando"
+SECCIÓN 4 — Tu entorno y tu opinión (TODOS)
+  P9  ¿Conocés a alguien de tu entorno que apueste? (No / Sí, una persona / Sí, varias / Prefiero no responder)
+  P10 ¿Con qué frecuencia ves publicidad de apuestas? (Nunca o casi nunca / Algunas veces al mes /
+      Algunas veces por semana / Todos los días / No sé)
+  P11 ¿Dónde ves más publicidad? (múltiple: Redes sociales / Streamers y/o influencers / TV /
+      Videojuegos / La calle / No veo publicidad de apuestas)
+  P12 Escala 1-5: "Es fácil perder el control con las apuestas online."
+  P13 Escala 1-5: "Apostar online es un pasatiempo inofensivo."
+  P14 ¿Por qué creés que apuestan las personas de tu edad? (múltiple: Diversión /
+      Publicidad o influencers / Curiosidad / Ganar plata / Aburrimiento /
+      Amigos o familia que también apuestan / Otro / No sé)
+  P15 Escala 1-5: "Alguien de mi edad puede ganar plata apostando."
+  (Escalas: 1 = Nada de acuerdo … 5 = Totalmente de acuerdo)
 
-SECCIÓN 5 — Espacio abierto (opcional)
-  → Comentario libre de texto, sin nombres ni datos identificatorios.
+SECCIÓN 5 — Un breve espacio para leerte (opcional)
+  P16 Texto libre. "No escribas nombres ni nada que te identifique." PROPUESTA: límite de 1000 caracteres.
+
+PANTALLA FINAL — Agradecimiento + recursos de ayuda (ver sección 7)
 ```
 
-## 6. Pantalla de consentimiento para adultos (PROPUESTA)
+## 6. Instrumento de riesgo: PGSI (DECIDIDO, solo adultos, rama "sí")
 
-La encuesta de adolescentes ya trae una intro + pregunta de consentimiento explícita antes de pedir cualquier dato. La de adultos no la tenía definida. Propongo agregar el mismo patrón, adaptando el texto de la intro de adolescentes (quitando referencias específicas a la edad): explicar que es anónima, que no hay respuestas correctas, que se puede abandonar en cualquier momento, y pedir honestidad. Si responde "No" a "¿Aceptás participar?", no se guarda ningún registro — se corta ahí, igual que en la de adolescentes.
+El **Problem Gambling Severity Index** (índice de severidad del juego problemático) es un cuestionario de 9 preguntas validado internacionalmente. Reemplaza a las "escalas de impacto" propias del plan anterior. Con él se puede decir "el X% presenta riesgo moderado" con respaldo metodológico.
 
-## 7. Preguntas y decisiones PENDIENTES de confirmar con el grupo (solo encuesta de ADULTOS)
+Período: **últimos 12 meses**. Cada pregunta: Nunca (0) / A veces (1) / La mayoría de las veces (2) / Casi siempre (3).
 
-La encuesta de adolescentes ya está completamente definida (viene del Forms existente). Lo que falta cerrar es específico de adultos:
+1. ¿Apostaste más de lo que realmente podías permitirte perder?
+2. ¿Necesitaste apostar cantidades cada vez mayores para sentir la misma emoción?
+3. ¿Volviste otro día para intentar recuperar el dinero que habías perdido?
+4. ¿Pediste dinero prestado o vendiste algo para conseguir dinero para apostar?
+5. ¿Sentiste que podrías tener un problema con el juego?
+6. ¿El juego te causó problemas de salud, incluido estrés o ansiedad?
+7. ¿Otras personas criticaron tus apuestas o te dijeron que tenías un problema con el juego, más allá de que vos creyeras que era cierto o no?
+8. ¿El juego te causó problemas económicos a vos o a tu hogar?
+9. ¿Te sentiste culpable por la forma en que apostás o por lo que pasa cuando apostás?
 
-- Redacción exacta de las preguntas de contexto económico (ingresos aproximados, si tiene deudas).
-- Redacción y escala exacta de las preguntas de impacto/riesgo en la rama "sí apostó" (impacto relacional, impacto laboral, intentos de dejar, ocultamiento, apuesta para recuperar pérdidas).
-- Si "cuánto dinero apostó/perdió" se pide como número libre o como rangos.
-- Texto final de la explicación breve sobre educación financiera (Bloque 4).
-- Confirmar si "tipo de apuesta" es de respuesta múltiple (ver sección 3).
+Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin riesgo · 1–2 = riesgo bajo · 3–7 = riesgo moderado · 8+ = juego problemático.
+
+**PENDIENTE verificar**: la redacción de arriba es una traducción de trabajo. Conviene usar una versión en español validada (hay adaptaciones publicadas) y que el grupo o su docente la apruebe.
+
+## 7. Consideraciones éticas
+
+- Ninguna encuesta pide datos identificatorios.
+- Copy neutral, sin estigmatizar.
+- Consentimiento explícito al inicio de ambas.
+- **Pantalla final con recursos de ayuda** (línea de juego responsable / atención en adicciones de la jurisdicción). **PENDIENTE**: Juli verifica los números oficiales vigentes de su provincia. Especialmente importante en la de adolescentes y para quienes tengan PGSI alto. **No se muestra el puntaje ni un "diagnóstico"** al encuestado: una encuesta no diagnostica.
+- La encuesta de adolescentes involucra menores en un tema sensible. Confirmar que el consentimiento institucional sigue vigente al cambiar de plataforma (cuestión institucional, no técnica).
+- No se guardan direcciones IP en la base ni en logs propios.
 
 ## 8. Arquitectura técnica
 
 ### 8.1 Frontend
-- Construido en Claude Design, exportado como HTML/CSS/JS estático.
-- Archivos estáticos servidos por el backend (carpeta `frontend/` o `public/`).
-- Mobile-first: se accede principalmente desde el celular vía QR.
-- La pantalla de entrada (edad) decide qué flujo cargar; la lógica de bifurcación interna de cada encuesta vive en el frontend para que la experiencia sea fluida, pero el backend vuelve a validar la coherencia antes de guardar (nunca confiar solo en el cliente).
-- Comunicación con el backend vía `fetch()` a endpoints REST, formato JSON.
-- Barra de progreso visible.
+- Diseño trabajado en conjunto en Claude Design (fase propia, ver sección 10). Se exporta como HTML/CSS/JS estático y lo sirve el backend.
+- Mobile-first: se entra por QR desde el celular.
+- **Una pregunta (o un grupo chico) por pantalla**, con transiciones suaves y barra de progreso. Con bifurcaciones, el total de pasos cambia según la rama: la barra se calcula sobre la rama actual.
+- La lógica de bifurcación vive en el frontend para que la experiencia sea fluida. **El backend vuelve a validar todo** antes de guardar.
+- Guardado: **un solo envío al final** (`fetch` POST en JSON). PROPUESTA: guardar el progreso en `sessionStorage` para que un refresh accidental no borre lo respondido.
 
 ### 8.2 Backend
 - **Node.js + Express.**
-- Endpoints principales:
-  - `POST /api/respuestas/adultos` — guarda una respuesta completa de la encuesta de adultos.
-  - `POST /api/respuestas/adolescentes` — guarda una respuesta completa de la encuesta de adolescentes.
-  - `GET /api/dashboard/adultos` y `GET /api/dashboard/adolescentes` — datos agregados para cada dashboard. **Protegidos.**
-  - `GET /api/export/adultos` y `GET /api/export/adolescentes` — generan y descargan el Excel correspondiente. **Protegidos.**
-- Protección de `/dashboard` y `/export`: contraseña compartida simple (no hace falta sistema de usuarios completo dado el uso acotado en el tiempo).
-- Paquetes clave: `express`, `mysql2`, `exceljs`, `dotenv`, middleware de auth básico.
+- Endpoints:
+  - `POST /api/respuestas/adultos`, `POST /api/respuestas/adolescentes` — públicos.
+  - `GET /api/dashboard/:encuesta` — datos agregados. **Protegido.**
+  - `GET /api/export/:encuesta` — Excel. **Protegido.**
+- Protección de dashboard/export: contraseña distinta por encuesta (el grupo de adultos no ve la de adolescentes y viceversa), guardada en `.env` y nunca en el frontend.
+- **Anti-abuso** (el POST es público): límite de envíos por IP y por minuto (`express-rate-limit`), límite de tamaño del body, y validación estricta de cada campo (tipo, opciones permitidas, coherencia con la bifurcación).
+- **Cierre automático** (PROPUESTA): fecha y hora de cierre en `.env`. Pasada esa fecha el POST responde "encuesta cerrada" y el frontend lo muestra, pero dashboard y export siguen andando.
+- **Fuente única de verdad** (PROPUESTA): la definición de cada encuesta (preguntas, opciones, bifurcaciones) en un archivo propio del backend. De ahí salen la validación, los encabezados del Excel y los datos del dashboard, para no mantener la misma lista de opciones en cuatro lugares distintos.
 
-### 8.3 Base de datos
+### 8.3 Base de datos — SQLite (DECIDIDO)
 
-MySQL vía XAMPP. Dos tablas independientes (no una tabla única con columnas en NULL para la mitad de los casos).
+Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay servidor que levantar y el backup es copiar ese archivo. Para unos cientos de respuestas sobra.
 
-```sql
--- ============================
--- ENCUESTA DE ADULTOS (18+)
--- ============================
-CREATE TABLE respuestas_adultos (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
+- Dos tablas independientes: `respuestas_adultos` y `respuestas_adolescentes`.
+- SQLite no tiene tipo `BOOLEAN`: se usa `INTEGER` con `CHECK (col IN (0,1))`. Las opciones de respuesta única se guardan como texto con `CHECK (col IN (...))`.
+- El `schema.sql` se escribe en la Fase 1 a partir de las secciones 4 y 5, siguiendo las reglas de la sección 3.
+- Librería Node: **PENDIENTE** decidir en Fase 2 (`better-sqlite3`, estable y muy usada, contra el módulo `node:sqlite` integrado en Node, que todavía es experimental).
 
-  -- Bloque 1 (obligatorio)
-  edad INT NOT NULL,
-  sexo VARCHAR(20) NOT NULL,
-  carrera VARCHAR(100) NOT NULL,
-  situacion_laboral VARCHAR(30) NOT NULL,
-  depende_economicamente BOOLEAN,
-  alguien_depende_de_el BOOLEAN,
-  -- ingresos_aprox / tiene_deudas: PENDIENTE definir preguntas exactas
+### 8.4 Exportación
+1. **Excel** (`exceljs`): datos crudos, una fila por respuesta, una columna por opción de las preguntas múltiples, fecha sin hora. En adultos se incluye la columna calculada `pgsi_total` y su categoría.
+2. **Dashboard web** (una página por encuesta, protegida): gráficos con Chart.js alimentados por los endpoints de agregación. Los porcentajes de preguntas de rama usan como denominador **solo a quienes vieron la pregunta**.
 
-  -- Bloque 2 (gatillo)
-  aposto_alguna_vez BOOLEAN NOT NULL,
+### 8.5 Servidor y despliegue — PENDIENTE decidir
 
-  -- Rama SI (nullable)
-  frecuencia_apuestas VARCHAR(20),
-  -- motivo_apuesta (múltiple, columnas booleanas):
-  motivo_diversion BOOLEAN DEFAULT FALSE,
-  motivo_ganar_dinero BOOLEAN DEFAULT FALSE,
-  motivo_influencia_social BOOLEAN DEFAULT FALSE,
-  motivo_otro BOOLEAN DEFAULT FALSE,
-  -- tipo_apuesta (múltiple, columnas booleanas — PENDIENTE confirmar si era múltiple):
-  tipo_casino BOOLEAN DEFAULT FALSE,
-  tipo_casino_online BOOLEAN DEFAULT FALSE,
-  tipo_apuestas_deportivas BOOLEAN DEFAULT FALSE,
-  plataforma_legal VARCHAR(10),
-  monto_apostado DECIMAL(10,2),
-  origen_del_dinero VARCHAR(50),
-  como_accedio VARCHAR(100),
-  escala_impacto_relacional TINYINT,    -- PENDIENTE definir escala
-  escala_impacto_laboral TINYINT,       -- PENDIENTE
-  escala_intentos_dejar TINYINT,        -- PENDIENTE
-  escala_ocultamiento TINYINT,          -- PENDIENTE
-  escala_recuperacion_perdidas TINYINT, -- PENDIENTE
+La idea original era la PC de Juli + ngrok. Riesgos detectados:
+- El **plan gratuito de ngrok muestra una página de advertencia** antes de entrar al sitio, y eso asusta a quien escanea el QR. Además tiene tope de tráfico mensual.
+- La PC tiene que estar prendida, sin suspenderse y con internet los 7 días seguidos.
 
-  -- Rama NO (nullable)
-  conoce_alguien_que_apuesta VARCHAR(10),
-  frecuencia_publicidad_percibida VARCHAR(20),
-  -- donde_ve_publicidad (múltiple, columnas booleanas):
-  publicidad_redes_sociales BOOLEAN DEFAULT FALSE,
-  publicidad_streamers BOOLEAN DEFAULT FALSE,
-  publicidad_tv BOOLEAN DEFAULT FALSE,
-  publicidad_videojuegos BOOLEAN DEFAULT FALSE,
-  publicidad_calle BOOLEAN DEFAULT FALSE,
+Alternativas a evaluar: ngrok pago por un mes (sin advertencia), Cloudflare Tunnel (gratis, pero la URL fija requiere dominio propio) o un hosting con disco persistente. **Decidir antes de imprimir los QR**, porque la URL tiene que quedar fija.
 
-  -- Bloque 3 (convergencia, todos)
-  exposicion_publicidad_online VARCHAR(50), -- PENDIENTE preguntas exactas
+Checklist de cierre (por encuesta): exportar Excel final → copiar el archivo `.db` como backup → recién ahí apagar.
 
-  -- Bloque 4 (educación financiera, todos — exclusiva de adultos)
-  recibio_educacion_financiera VARCHAR(10),
-  donde_recibio_educacion VARCHAR(50),
-  entiende_gestion_dinero VARCHAR(10),
-  dispuesto_asesoramiento VARCHAR(10)
-);
-
--- ================================
--- ENCUESTA DE ADOLESCENTES (12-17)
--- ================================
-CREATE TABLE respuestas_adolescentes (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  fecha_hora DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-  -- Sección 2
-  edad INT NOT NULL,
-  genero VARCHAR(20) NOT NULL,
-  aposto_alguna_vez VARCHAR(30) NOT NULL, -- 'si_no_ultimo_anio' | 'si_ultimo_anio' | 'nunca' | 'prefiero_no_responder'
-
-  -- Sección 3 (nullable, solo rama "sí")
-  -- en_que_aposto (múltiple, columnas booleanas):
-  aposto_deportivas_online BOOLEAN DEFAULT FALSE,
-  aposto_casino_online BOOLEAN DEFAULT FALSE,
-  aposto_cartas BOOLEAN DEFAULT FALSE,
-  aposto_quiniela_loteria BOOLEAN DEFAULT FALSE,
-  aposto_skins BOOLEAN DEFAULT FALSE,
-  aposto_otro BOOLEAN DEFAULT FALSE,
-  frecuencia_ultimo_anio VARCHAR(30),
-  -- que_lo_llevo_a_apostar (múltiple, columnas booleanas):
-  motivo_diversion BOOLEAN DEFAULT FALSE,
-  motivo_publicidad_influencers BOOLEAN DEFAULT FALSE,
-  motivo_curiosidad BOOLEAN DEFAULT FALSE,
-  motivo_ganar_plata BOOLEAN DEFAULT FALSE,
-  motivo_aburrimiento BOOLEAN DEFAULT FALSE,
-  motivo_amigos_familia BOOLEAN DEFAULT FALSE,
-  motivo_otro BOOLEAN DEFAULT FALSE,
-  como_accedio VARCHAR(30),
-
-  -- Sección 4 (todos)
-  conoce_alguien_que_apuesta VARCHAR(30),
-  frecuencia_publicidad VARCHAR(30),
-  -- donde_ve_publicidad (múltiple, columnas booleanas):
-  publicidad_redes_sociales BOOLEAN DEFAULT FALSE,
-  publicidad_streamers BOOLEAN DEFAULT FALSE,
-  publicidad_tv BOOLEAN DEFAULT FALSE,
-  publicidad_videojuegos BOOLEAN DEFAULT FALSE,
-  publicidad_calle BOOLEAN DEFAULT FALSE,
-  escala_perder_control TINYINT,        -- 1 a 5
-  escala_pasatiempo_inofensivo TINYINT, -- 1 a 5
-  -- percepcion_por_que_apuesta_su_edad (múltiple, columnas booleanas):
-  percepcion_diversion BOOLEAN DEFAULT FALSE,
-  percepcion_publicidad_influencers BOOLEAN DEFAULT FALSE,
-  percepcion_curiosidad BOOLEAN DEFAULT FALSE,
-  percepcion_ganar_plata BOOLEAN DEFAULT FALSE,
-  percepcion_aburrimiento BOOLEAN DEFAULT FALSE,
-  percepcion_amigos_familia BOOLEAN DEFAULT FALSE,
-  percepcion_otro BOOLEAN DEFAULT FALSE,
-  escala_puede_ganar_plata TINYINT,     -- 1 a 5
-
-  -- Sección 5 (opcional)
-  comentario_abierto TEXT
-);
-```
-
-Nota: no hay columna para "¿Te animás a participar?" / "¿Aceptás participar?" en ninguna de las dos tablas. Si la respuesta es "No", el frontend corta ahí y nunca llama al endpoint de guardado — no tiene sentido guardar una fila vacía de alguien que no participó.
-
-### 8.4 Exportación de datos
-
-Dos entregables por encuesta, cada uno con su propio endpoint protegido:
-
-1. **Excel** (`exceljs`): datos crudos, una fila por respuesta. `exceljs` no tiene buen soporte para gráficos nativos de Excel, así que este archivo se limita a los datos.
-2. **Dashboard web** (páginas separadas, protegidas): gráficos con Chart.js en el navegador, alimentados por los endpoints de agregación en SQL. El formato de columnas booleanas (sección 3) hace estas agregaciones triviales: contar cuántos marcaron una opción es un `SUM(columna)`.
-
-### 8.5 Servidor y despliegue
-
-- Backend Node.js corriendo localmente en la PC de Juli.
-- Expuesto a internet con **ngrok** (dominio estático gratuito, no cambia entre reinicios) — se descartó Render por el free tier de PostgreSQL con expiración a 30 días y el disco efímero en servicios gratuitos, que no combina bien con MySQL/XAMPP y agrega una tecnología nueva a mitad de proyecto.
-- Un solo QR con selector de edad al entrar, o dos QR distintos (uno por encuesta) si se prefiere saltear el paso de preguntar la edad para enrutar — **PENDIENTE decidir cuál de los dos.**
-- Duración: **PENDIENTE confirmar si son 7 días para ambas o si difiere por encuesta.** Checklist antes de apagar (por cada encuesta activa):
-  1. Exportar el Excel final.
-  2. Backup del dump de MySQL (`mysqldump`) de ambas tablas.
-  3. Recién ahí detener el proceso de Node y cerrar el túnel de ngrok.
-
-## 9. Estructura de carpetas sugerida
+## 9. Estructura de carpetas
 
 ```
-encuesta-ludopatia/
+Encuesta-Ludopatia/
 ├── backend/
 │   ├── server.js
+│   ├── encuestas/           ← definición de preguntas (fuente única de verdad)
 │   ├── routes/
-│   │   ├── respuestas-adultos.js
-│   │   ├── respuestas-adolescentes.js
-│   │   ├── dashboard.js
-│   │   └── export.js
 │   ├── db/
-│   │   └── conexion.js
-│   ├── middleware/
-│   │   └── auth.js
-│   └── .env
-├── frontend/               ← archivos exportados de Claude Design
+│   └── middleware/
+├── frontend/
+│   ├── adultos/
+│   └── adolescentes/
 ├── database/
 │   └── schema.sql
-└── docs/
-    └── PLAN-encuesta-ludopatia.md   ← este documento
+├── docs/
+│   ├── PLAN-encuesta-ludopatia.md
+│   └── fuentes/             ← imágenes y PDF originales de las preguntas
+├── .env.example             ← variables sin valores reales
+└── .gitignore               ← incluye .env y *.db (los datos NUNCA van a GitHub)
 ```
 
-## 10. Fases de implementación sugeridas
+## 10. Fases de implementación
 
-1. Base de datos: `schema.sql` con ambas tablas.
-2. Backend: endpoints de guardado para las dos encuestas + conexión a MySQL.
-3. Frontend: pantalla de entrada (edad → enrutamiento) + maquetado de ambas encuestas en Claude Design, con su lógica de bifurcación.
-4. Integración frontend ↔ backend.
-5. Dashboards: endpoints de agregación + páginas con Chart.js (uno por encuesta).
-6. Exportación a Excel (una por encuesta).
-7. Autenticación simple para `/dashboard` y `/export`.
-8. Despliegue: ngrok + generación de QR.
-9. Pruebas end-to-end de ambas encuestas y todas sus ramas.
-10. Checklist de cierre al vencer el plazo (backup + apagado).
+1. **Base de datos**: `schema.sql` con ambas tablas + script para crear la base.
+2. **Backend núcleo**: Express, conexión SQLite, definición de encuestas, endpoints de guardado con validación y tests automáticos de cada rama.
+3. **Diseño** (en conjunto, Claude Design): identidad visual, componentes (pregunta única, múltiple, escala, número), transiciones, pantalla final.
+4. **Frontend**: implementación del diseño con la lógica de bifurcación.
+5. **Integración** frontend ↔ backend.
+6. **Dashboards** + **exportación Excel** + **autenticación**.
+7. **Prueba piloto** con 3-5 personas por encuesta: medir tiempos, detectar preguntas confusas.
+8. **Despliegue** + generación de los dos QR.
+9. **Cierre**: backup y apagado.
 
-## 11. Consideraciones éticas
+## 11. Resumen de PENDIENTES
 
-- Ninguna de las dos encuestas pide datos identificatorios.
-- Copy neutral, sin alusiones estigmatizantes.
-- Pantalla de consentimiento explícita en ambas (ver sección 6 para adultos), con intro que explica anonimato y propósito.
-- La encuesta de adolescentes trata un tema sensible en menores de edad. Como ya viene corriendo en Forms, se asume que el instituto ya tiene resuelto el consentimiento institucional correspondiente — **confirmar que esto sigue vigente** al migrar de plataforma, ya que es una cuestión institucional, no técnica.
+| # | Tema | Quién decide |
+|---|------|--------------|
+| 1 | ¿Adultos tienen opción "No participar" si la encuesta es obligatoria? | Juli / grupo |
+| 2 | Preguntas de ingresos y deudas (objetivo de investigación sin preguntas) | Grupo |
+| 3 | Aceptar el nuevo gatillo "últimos 12 meses, online o presencial" | Grupo |
+| 4 | Rangos de monto apostado | Grupo |
+| 5 | Lista completa de "origen del dinero" | Grupo |
+| 6 | Nombres exactos de carreras ("SOLO") | Grupo |
+| 7 | Pasar entorno/publicidad al bloque común; sumar TV y calle | Grupo |
+| 8 | Texto de la explicación de educación financiera | Grupo |
+| 9 | Versión validada en español del PGSI | Juli / grupo |
+| 10 | Números de ayuda oficiales para la pantalla final | Juli |
+| 11 | Plazo de 7 días: ¿igual para ambas? | Juli |
+| 12 | Hosting / túnel definitivo | Juli |
