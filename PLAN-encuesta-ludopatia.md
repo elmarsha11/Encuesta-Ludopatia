@@ -22,7 +22,7 @@ Dos encuestas sobre ludopatía, para dos públicos y **dos instituciones distint
 **Restricciones comunes:**
 - No usar Google Forms / Sheets / Looker Studio.
 - Página web propia, alojada de forma provisoria.
-- Disponible durante **7 días**. **PENDIENTE**: confirmar si el plazo es igual para ambas encuestas.
+- Disponible del **lunes 19 al viernes 23 de octubre de 2026** (ambas encuestas), en **franjas horarias específicas** (PENDIENTE: definir las franjas de cada institución).
 - Acceso a resultados (Excel + dashboard) restringido a quien corresponda en cada caso.
 - Duración máxima de respuesta: **menos de 5 minutos**.
 - Experiencia dinámica y cuidada: ni monótona ni básica, pero tampoco extravagante, y **sin ninguna estética que remita a apuestas o casinos** (nada de fichas, ruletas, dorados tipo casino, confeti de "ganaste").
@@ -74,26 +74,31 @@ PANTALLA 0 — Intro + consentimiento (PROPUESTA)
 BLOQUE 1 — Sobre vos (obligatorio)
   → ¿Qué edad tenés? (número, 18–99)
   → ¿Qué carrera estás cursando? (única)
-      Inicial / Inglés / CUFA Curso de Formación Básica / Matemáticas /
-      Profesorado Literatura / Tecnicatura Enfermería / Trabajo Social /
-      Seguridad e Higiene / Ciencia de Datos e Inteligencia Artificial /
-      Adm. Financiera / Enfermería / ATM
-      PENDIENTE: en la imagen dicen "PROFESORADO LITERATURA SOLO" y "SEGURIDAD E HIGIENE SOLO";
-      confirmar si "SOLO" es parte del nombre o una aclaración interna.
-  → ¿Con qué género te identificás? (Masculino / Femenino / Otro)
+      DECIDIDO (lista corregida por Juli; la de la imagen estaba mal cargada):
+      Educación Inicial
+      Profesorado de Inglés / Profesorado de Matemáticas / Profesorado de Literatura
+      Tecnicatura en Ciencia de Datos e IA / Tecnicatura en Seguridad e Higiene /
+      Tecnicatura en Administración Financiera / Tecnicatura en Acompañante Terapéutico /
+      Tecnicatura en Trabajo Social
+      UI: agrupadas en tres bloques visuales (Educación Inicial / Profesorados / Tecnicaturas).
+  → ¿Con qué género te identificás? (Masculino / Femenino / Otro / Prefiero no decir)
   → ¿En qué condición laboral te encontrás? (Trabajo propio / No trabajo / Trabajo en relación de dependencia)
   → ¿Dependés económicamente de alguien? (Sí / No)
   → ¿Alguien depende económicamente de vos? (Sí / No)
-  → Ingresos (DECIDIDO: slider de 5 pasos, pregunta propia)
-      "¿Cuánto dinero te ingresa por mes, aproximadamente?"
+  → Ingresos del HOGAR (DECIDIDO: slider de 5 pasos, pregunta propia)
+      "¿Cuánto dinero ingresa por mes en tu hogar, aproximadamente?"
       Paso 1: "Sin ingresos o hasta $A" … Paso 5: "$D o más". Pasos 2-4 = rangos intermedios.
-      PENDIENTE: montos A-D (los define el grupo; conviene revisarlos la semana del lanzamiento por inflación).
-      PENDIENTE: ¿ingreso personal o del hogar? (miden cosas distintas).
+      PENDIENTE: montos A-D. Juli propuso "menos de $10.000" a "más de $100.000", pero el salario
+      mínimo en septiembre de 2026 es $383.800: con esos cortes casi todos los hogares caerían
+      en el paso 5 y la pregunta no distinguiría a nadie. Esos cortes sí sirven para el monto
+      apostado por vez (ver abajo). Para ingresos, PROPUESTA: expresarlos en salarios mínimos
+      (ej. hasta 1 SMVM / 1-2 / 2-3 / 3-5 / más de 5), mostrando el monto en pesos equivalente.
   → Deudas (DECIDIDO: separada de ingresos pero complementaria)
       "¿Tenés deudas actualmente?" (Sí / No)
-        → si Sí: slider de 5 pasos. PROPUESTA: medir la deuda en relación al ingreso
-          ("Menos de medio mes de ingresos" … "Más de 6 meses de ingresos") en vez de en pesos.
-          Así se compara a una persona que gana poco con una que gana mucho y no depende de la inflación.
+        → si Sí: slider de 5 pasos, en relación al ingreso (DECIDIDO):
+          "Menos de medio mes de ingresos" / "Medio mes a 1 mes" / "1 a 3 meses" /
+          "3 a 6 meses" / "Más de 6 meses de ingresos".
+          Así se compara a una persona que gana poco con una que gana mucho, sin depender de la inflación.
   Reglas de UI para los sliders (PROPUESTA):
     - Arrancan SIN valor seleccionado (sin un punto de partida marcado). Si arrancaran en el medio,
       quien no lo toque quedaría guardado con una respuesta que nunca dio.
@@ -102,25 +107,25 @@ BLOQUE 1 — Sobre vos (obligatorio)
 
 BLOQUE 2 — Pregunta gatillo
   Original: "¿Realizás apuestas online?" (Sí / No)
-  PROPUESTA: "En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?"
+  DECIDIDO: "En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?"
     Motivos: (a) después se pregunta por "Casino" presencial, que no es online;
              (b) el PGSI mide los últimos 12 meses, así que el gatillo tiene que usar el mismo período.
 
   SI SÍ → "Tus hábitos de apuesta"
     → ¿Con qué frecuencia apostás? (ÚNICA — en la imagen dice "múltiple", pero una frecuencia es una sola)
-        PROPUESTA de opciones (mismas que adolescentes, para poder comparar):
+        DECIDIDO (mismas opciones que adolescentes, para poder comparar):
         Menos de una vez al mes / Algunas veces al mes / Una vez por semana /
         Varias veces por semana / Casi todos los días
     → ¿Por qué apostás? (múltiple: Diversión / Ganar dinero / Influencia social / Otra)
     → ¿Qué tipo de apuestas hacés? (múltiple: Casino presencial / Casino online / Apuestas deportivas)
     → ¿Reconocés si apostás en una plataforma legal? (Sí / No)
     → ¿Incluiste a alguien para que se involucre en el mundo de las apuestas? (Sí / No / No sé)
-    → ¿Cuánto dinero solés apostar cada vez? PROPUESTA: rangos en lugar de número libre
-        (un número libre trae valores absurdos y es difícil de agrupar). PENDIENTE: definir rangos en $.
-    → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes sociales)
-        DECIDIDO: la lista del grupo son esas tres opciones ("planes" = planes sociales).
-        PROPUESTA: sumar "Otro" (ahorros, ayuda familiar, changas…). Como en adultos todo es obligatorio,
-        sin "Otro" quien no encaje queda forzado a marcar una opción falsa.
+    → ¿Cuánto dinero solés apostar cada vez? (DECIDIDO: rangos, slider de 5 pasos)
+        Menos de $10.000 / $10.000–$25.000 / $25.000–$50.000 / $50.000–$100.000 / Más de $100.000
+        PENDIENTE: confirmar los cortes intermedios (el mínimo y el máximo los definió Juli).
+    → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes sociales / Otro)
+        DECIDIDO. "Otro" se agrega porque, como en adultos todo es obligatorio, sin esa opción
+        quien no encaje queda forzado a marcar una opción falsa.
     → PGSI — 9 preguntas (ver sección 6)
 
   SI NO → "Tu mirada sobre las apuestas" (de preguntas 2.jpg)
@@ -128,23 +133,23 @@ BLOQUE 2 — Pregunta gatillo
     → ¿Cuál es el motivo principal por el que no apostás? (única: No me interesa /
         Miedo a perder plata / Miedo a volverme adicto / No sé cómo se hace / Otro)
 
-BLOQUE 3 — Entorno y publicidad (TODOS) — PROPUESTA
+BLOQUE 3 — Entorno y publicidad (TODOS) — DECIDIDO
   Estas preguntas estaban solo en la rama "no apuesta". Se pasan al bloque común porque,
   para estudiar el rol de la publicidad y del entorno, hay que comparar a los que apuestan
   con los que no. Si solo responde un grupo, esa comparación es imposible.
     → ¿Tenés familiares o amigos cercanos que apuesten regularmente? (Sí / No / No sé)
     → ¿Creés que se puede generar plata fácil apostando? (Sí / No / A veces)
     → ¿Por qué canales ves más publicidad de apuestas? (múltiple: Redes sociales /
-        Videojuegos / Streamers y/o influencers / Ninguno)
-        PROPUESTA: sumar "TV" y "La calle", como en adolescentes, para poder comparar.
+        Videojuegos / Streamers y/o influencers / TV / La calle / Ninguno)
+        "TV" y "La calle" se suman para poder comparar con adolescentes.
 
 BLOQUE 4 — Educación financiera (obligatorio, exclusivo de adultos)
-  PROPUESTA de orden: primero "¿sabés qué es?" y después "¿la recibiste?".
+  DECIDIDO el orden: primero "¿sabés qué es?" y después "¿la recibiste?".
     → ¿Sabés qué es la educación financiera? (Sí / No)
     → ¿Recibiste educación financiera? (Sí / No / No sé)
         → si Sí: ¿Dónde? (múltiple: Casa / Escuela / Internet)
     → ¿Te gustaría recibirla? (Sí / No)
-    → Breve explicación de qué es la educación financiera (informativo). PENDIENTE: texto del grupo.
+    → Breve explicación de qué es la educación financiera (informativo). PENDIENTE: Claude redacta un borrador y el grupo lo aprueba.
 
 PANTALLA FINAL — Agradecimiento + recursos de ayuda (ver sección 7)
 ```
@@ -217,15 +222,21 @@ Período: **últimos 12 meses**. Cada pregunta: Nunca (0) / A veces (1) / La may
 
 Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin riesgo · 1–2 = riesgo bajo · 3–7 = riesgo moderado · 8+ = juego problemático.
 
-**PENDIENTE verificar**: la redacción de arriba es una traducción de trabajo. Conviene usar una versión en español validada (hay adaptaciones publicadas) y que el grupo o su docente la apruebe.
+**Versión en español (DECIDIDO buscar primero en español):** existe una validación publicada: López-González, Estévez y Griffiths (2018), *Spanish validation of the Problem Gambling Severity Index: A confirmatory factor analysis with sports bettors*, Journal of Behavioral Addictions 7(3). Muestra de 659 apostadores deportivos adultos de España, consistencia interna muy alta (α ordinal = .97). También hay una versión en español que distribuye el Departamento de Salud Mental y Adicciones de Connecticut (DMHAS).
+
+**PENDIENTE**: la redacción de arriba es una traducción de trabajo. Hay que reemplazarla por los ítems textuales del artículo (Juli lo descarga: desde el entorno de desarrollo el sitio de la revista está bloqueado). Como esa validación es de España, se permite adaptar al voseo rioplatense ("apostaste" en vez de "has apostado") sin cambiar el sentido de cada ítem, y dejar documentado el cambio. No hay validación específica para Argentina: es una limitación a mencionar en el informe del grupo.
 
 ## 7. Consideraciones éticas
 
 - Ninguna encuesta pide datos identificatorios.
 - Copy neutral, sin estigmatizar.
 - Consentimiento explícito al inicio de ambas.
-- **Pantalla final con recursos de ayuda** (línea de juego responsable / atención en adicciones de la jurisdicción). **PENDIENTE**: Juli verifica los números oficiales vigentes de su provincia. Especialmente importante en la de adolescentes y para quienes tengan PGSI alto. **No se muestra el puntaje ni un "diagnóstico"** al encuestado: una encuesta no diagnostica.
-- La encuesta de adolescentes involucra menores en un tema sensible. Confirmar que el consentimiento institucional sigue vigente al cambiar de plataforma (cuestión institucional, no técnica).
+- **Pantalla final con recursos de ayuda** (ambas instituciones están en Chascomús, provincia de Buenos Aires). Números encontrados, **PENDIENTE que Juli los verifique en las fuentes oficiales** (desde el entorno de desarrollo esas páginas están bloqueadas):
+  - **0800-444-4000**: Programa de Prevención y Asistencia al Juego Compulsivo (Lotería de la Provincia de Buenos Aires). Gratuita, 24 h, todo el año.
+  - **141**: línea nacional gratuita de SEDRONAR para consumos y adicciones.
+  Mismo texto en ambas encuestas, sin tono alarmista ("Si vos o alguien cercano quiere hablar sobre esto…"). **No se muestra el puntaje ni un "diagnóstico"** al encuestado: una encuesta no diagnostica.
+- **Consentimiento para la encuesta de adolescentes**: hoy la autorización institucional es solo de palabra. PROPUESTA fuerte: conseguir **por escrito** (un email alcanza) la autorización de la dirección de la escuela, y enviar una **nota informativa a las familias**. Es una encuesta a menores sobre un tema sensible: tenerlo por escrito protege a los chicos, a la escuela y a Juli. Es una cuestión institucional, no técnica, y no reemplaza el asesoramiento de la institución.
+- **Docentes con acceso al dashboard de adolescentes**: los docentes conocen a sus alumnos, así que en un curso chico edad + género alcanzan para adivinar quién respondió qué, y el comentario libre puede delatar a su autor aunque no tenga el nombre. Por eso (PROPUESTA): el dashboard de docentes muestra **solo datos agregados** y oculta cualquier cruce con menos de 5 respuestas; el Excel crudo y los comentarios libres los ve **solo Juli**, que decide qué compartir.
 - No se guardan direcciones IP en la base ni en logs propios.
 
 ## 8. Arquitectura técnica
@@ -243,9 +254,11 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
   - `POST /api/respuestas/adultos`, `POST /api/respuestas/adolescentes` — públicos.
   - `GET /api/dashboard/:encuesta` — datos agregados. **Protegido.**
   - `GET /api/export/:encuesta` — Excel. **Protegido.**
-- Protección de dashboard/export: contraseña distinta por encuesta (el grupo de adultos no ve la de adolescentes y viceversa), guardada en `.env` y nunca en el frontend.
+- Protección de dashboard/export: contraseña distinta por encuesta, guardada en `.env` y nunca en el frontend (DECIDIDO):
+  - Adultos: el grupo que encargó el trabajo (dashboard + Excel).
+  - Adolescentes: un grupo de docentes (solo dashboard agregado, ver sección 7) y Juli (todo).
 - **Anti-abuso** (el POST es público): límite de envíos por IP y por minuto (`express-rate-limit`), límite de tamaño del body, y validación estricta de cada campo (tipo, opciones permitidas, coherencia con la bifurcación).
-- **Cierre automático** (PROPUESTA): fecha y hora de cierre en `.env`. Pasada esa fecha el POST responde "encuesta cerrada" y el frontend lo muestra, pero dashboard y export siguen andando.
+- **Ventanas de apertura** (PROPUESTA): las fechas (19 al 23/10) y las franjas horarias de cada encuesta se configuran en `.env`. Fuera de esas ventanas, el POST responde "encuesta cerrada" y el frontend muestra cuándo vuelve a abrir. Dashboard y export siguen andando siempre. Así lo que se habilita no depende de acordarse de prender o apagar nada a mano.
 - **Fuente única de verdad** (PROPUESTA): la definición de cada encuesta (preguntas, opciones, bifurcaciones) en un archivo propio del backend. De ahí salen la validación, los encabezados del Excel y los datos del dashboard, para no mantener la misma lista de opciones en cuatro lugares distintos.
 
 ### 8.3 Base de datos — SQLite (DECIDIDO)
@@ -255,21 +268,30 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
 - Dos tablas independientes: `respuestas_adultos` y `respuestas_adolescentes`.
 - SQLite no tiene tipo `BOOLEAN`: se usa `INTEGER` con `CHECK (col IN (0,1))`. Las opciones de respuesta única se guardan como texto con `CHECK (col IN (...))`.
 - El `schema.sql` se escribe en la Fase 1 a partir de las secciones 4 y 5, siguiendo las reglas de la sección 3.
-- Librería Node: **PENDIENTE** decidir en Fase 2 (`better-sqlite3`, estable y muy usada, contra el módulo `node:sqlite` integrado en Node, que todavía es experimental).
+- Librería Node: PROPUESTA **`@libsql/client`**. Habla el mismo SQL que SQLite y funciona tanto con un archivo local (`file:encuestas.db`) como con una base SQLite en la nube (Turso). El código no cambia si el hosting cambia (ver 8.5), así que esta decisión no queda atada a la de hosting.
 
 ### 8.4 Exportación
 1. **Excel** (`exceljs`): datos crudos, una fila por respuesta, una columna por opción de las preguntas múltiples, fecha sin hora. En adultos se incluye la columna calculada `pgsi_total` y su categoría.
 2. **Dashboard web** (una página por encuesta, protegida): gráficos con Chart.js alimentados por los endpoints de agregación. Los porcentajes de preguntas de rama usan como denominador **solo a quienes vieron la pregunta**.
 
-### 8.5 Servidor y despliegue — PENDIENTE decidir
+### 8.5 Servidor y despliegue — PENDIENTE decidir (restricción: costo $0)
 
-La idea original era la PC de Juli + ngrok. Riesgos detectados:
-- El **plan gratuito de ngrok muestra una página de advertencia** antes de entrar al sitio, y eso asusta a quien escanea el QR. Además tiene tope de tráfico mensual.
-- La PC tiene que estar prendida, sin suspenderse y con internet los 7 días seguidos.
+Nadie va a pagar el hosting, así que solo entran opciones gratuitas. Hay dos candidatas:
 
-Alternativas a evaluar: ngrok pago por un mes (sin advertencia), Cloudflare Tunnel (gratis, pero la URL fija requiere dominio propio) o un hosting con disco persistente. **Decidir antes de imprimir los QR**, porque la URL tiene que quedar fija.
+**Opción A — PC de Juli + ngrok (gratis), en franjas horarias**
+- A favor: todo queda en la PC de Juli, el control es total y no hay cuentas externas salvo ngrok.
+- En contra: el plan gratuito muestra una **página de advertencia de ngrok** la primera vez que alguien entra (después queda recordado 7 días en ese navegador). Si la PC está apagada, el QR muestra un error de ngrok y no un mensaje propio. Un corte de luz o de internet en Chascomús durante una franja deja la encuesta caída.
+- Mitigación: avisar en el aula "vas a ver una pantalla de ngrok, tocá *Visit Site*".
 
-Checklist de cierre (por encuesta): exportar Excel final → copiar el archivo `.db` como backup → recién ahí apagar.
+**Opción B — Render (gratis) + Turso (gratis)**
+- Render aloja el servidor Node con una URL fija `https://….onrender.com` (HTTPS y sin página de advertencia). En el plan gratuito, el disco se borra en cada reinicio: por eso los datos NO pueden vivir ahí.
+- Turso guarda la base SQLite en la nube (el plan gratuito sobra: 5 GB y millones de escrituras).
+- A favor: no depende de la PC ni de la luz de Juli, y la URL queda fija para imprimir los QR.
+- En contra: el servidor gratuito de Render "se duerme" tras 15 minutos sin visitas y tarda cerca de un minuto en despertar. Mitigación: abrir el link unos minutos antes de cada franja. Además, suma dos cuentas externas y los datos (anónimos) quedan en un servicio de terceros.
+
+Con `@libsql/client` (ver 8.3), el código es el mismo en ambas opciones: se puede desarrollar ya y decidir el hosting después. **Decidir antes de imprimir los QR**, porque la URL tiene que quedar fija.
+
+Checklist de cierre (por encuesta): exportar Excel final → backup de la base (copiar el `.db`, o `turso db shell … .dump` en la opción B) → recién ahí apagar.
 
 ## 9. Estructura de carpetas
 
@@ -309,15 +331,13 @@ Encuesta-Ludopatia/
 
 | # | Tema | Quién decide |
 |---|------|--------------|
-| 1 | ~~Opción "No participar" en adultos~~ → DECIDIDO: sí, lo obligatorio es responder cada pregunta | — |
-| 2 | Ingresos/deudas: montos de los 5 pasos, ingreso personal u hogar, deuda en pesos o relativa | Grupo |
-| 3 | Aceptar el nuevo gatillo "últimos 12 meses, online o presencial" | Grupo |
-| 4 | Rangos de monto apostado | Grupo |
-| 5 | ~~Lista de "origen del dinero"~~ → Sueldo / Préstamo / Planes sociales. Falta confirmar si se suma "Otro" | Grupo |
-| 6 | Nombres exactos de carreras ("SOLO") | Grupo |
-| 7 | Pasar entorno/publicidad al bloque común; sumar TV y calle | Grupo |
-| 8 | Texto de la explicación de educación financiera | Grupo |
-| 9 | Versión validada en español del PGSI | Juli / grupo |
-| 10 | Números de ayuda oficiales para la pantalla final | Juli |
-| 11 | Plazo de 7 días: ¿igual para ambas? | Juli |
-| 12 | Hosting / túnel definitivo | Juli |
+| 1 | Cortes de ingresos del hogar (los propuestos, de $10.000 a $100.000, quedan por debajo del salario mínimo). Propuesta: expresarlos en salarios mínimos | Juli / grupo |
+| 2 | Cortes intermedios del monto apostado por vez ($10k / 25k / 50k / 100k) | Juli / grupo |
+| 3 | Texto de la explicación de educación financiera (Claude redacta un borrador, el grupo aprueba) | Grupo |
+| 4 | Ítems textuales del PGSI en español (artículo de 2018) | Juli |
+| 5 | Verificar las líneas de ayuda 0800-444-4000 y 141 | Juli |
+| 6 | Franjas horarias de cada institución (19 al 23/10) | Juli |
+| 7 | Hosting: opción A (PC + ngrok) u opción B (Render + Turso) | Juli |
+| 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
+
+**Ya decidido en esta ronda:** respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard.
