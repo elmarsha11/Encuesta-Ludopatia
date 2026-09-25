@@ -117,9 +117,10 @@ BLOQUE 2 — Pregunta gatillo
     → ¿Incluiste a alguien para que se involucre en el mundo de las apuestas? (Sí / No / No sé)
     → ¿Cuánto dinero solés apostar cada vez? PROPUESTA: rangos en lugar de número libre
         (un número libre trae valores absurdos y es difícil de agrupar). PENDIENTE: definir rangos en $.
-    → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes / …)
-        PENDIENTE: la lista está cortada en la imagen ("sueldo, Préstamo, planes,"). ¿Qué opciones faltan?
-        ¿"Planes" = planes sociales?
+    → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes sociales)
+        DECIDIDO: la lista del grupo son esas tres opciones ("planes" = planes sociales).
+        PROPUESTA: sumar "Otro" (ahorros, ayuda familiar, changas…). Como en adultos todo es obligatorio,
+        sin "Otro" quien no encaje queda forzado a marcar una opción falsa.
     → PGSI — 9 preguntas (ver sección 6)
 
   SI NO → "Tu mirada sobre las apuestas" (de preguntas 2.jpg)
@@ -312,7 +313,7 @@ Encuesta-Ludopatia/
 | 2 | Ingresos/deudas: montos de los 5 pasos, ingreso personal u hogar, deuda en pesos o relativa | Grupo |
 | 3 | Aceptar el nuevo gatillo "últimos 12 meses, online o presencial" | Grupo |
 | 4 | Rangos de monto apostado | Grupo |
-| 5 | Lista completa de "origen del dinero" (última línea de "Hábitos de apuestas" en la imagen de WhatsApp) | Grupo |
+| 5 | ~~Lista de "origen del dinero"~~ → Sueldo / Préstamo / Planes sociales. Falta confirmar si se suma "Otro" | Grupo |
 | 6 | Nombres exactos de carreras ("SOLO") | Grupo |
 | 7 | Pasar entorno/publicidad al bloque común; sumar TV y calle | Grupo |
 | 8 | Texto de la explicación de educación financiera | Grupo |
