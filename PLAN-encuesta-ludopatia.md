@@ -68,7 +68,8 @@ Preguntas **obligatorias según el grupo** (no se tocan): **edad, género, carre
 PANTALLA 0 — Intro + consentimiento (PROPUESTA)
   Texto: anónima, sin respuestas correctas, sin juzgar, < 5 min.
   "¿Aceptás participar?" Sí / No  → No: fin sin guardar nada.
-  PENDIENTE: si la encuesta es obligatoria para los adultos, ¿igual va la opción "No"?
+  DECIDIDO: participar es voluntario; lo obligatorio es responder cada pregunta una vez que se aceptó
+  (no hay "Prefiero no responder" y no se avanza sin contestar).
 
 BLOQUE 1 — Sobre vos (obligatorio)
   → ¿Qué edad tenés? (número, 18–99)
@@ -83,8 +84,21 @@ BLOQUE 1 — Sobre vos (obligatorio)
   → ¿En qué condición laboral te encontrás? (Trabajo propio / No trabajo / Trabajo en relación de dependencia)
   → ¿Dependés económicamente de alguien? (Sí / No)
   → ¿Alguien depende económicamente de vos? (Sí / No)
-  PENDIENTE: el objetivo menciona ingresos bajos y deudas, pero no hay preguntas para eso.
-             Sin esos datos no se puede analizar esa relación. Consultar al grupo.
+  → Ingresos (DECIDIDO: slider de 5 pasos, pregunta propia)
+      "¿Cuánto dinero te ingresa por mes, aproximadamente?"
+      Paso 1: "Sin ingresos o hasta $A" … Paso 5: "$D o más". Pasos 2-4 = rangos intermedios.
+      PENDIENTE: montos A-D (los define el grupo; conviene revisarlos la semana del lanzamiento por inflación).
+      PENDIENTE: ¿ingreso personal o del hogar? (miden cosas distintas).
+  → Deudas (DECIDIDO: separada de ingresos pero complementaria)
+      "¿Tenés deudas actualmente?" (Sí / No)
+        → si Sí: slider de 5 pasos. PROPUESTA: medir la deuda en relación al ingreso
+          ("Menos de medio mes de ingresos" … "Más de 6 meses de ingresos") en vez de en pesos.
+          Así se compara a una persona que gana poco con una que gana mucho y no depende de la inflación.
+  Reglas de UI para los sliders (PROPUESTA):
+    - Arrancan SIN valor seleccionado (sin un punto de partida marcado). Si arrancaran en el medio,
+      quien no lo toque quedaría guardado con una respuesta que nunca dio.
+    - Muestran el rango en texto mientras se desliza ("Entre $X y $Y").
+    - En el backend se guarda el número de paso (1-5), no el texto: es ordinal y fácil de graficar.
 
 BLOQUE 2 — Pregunta gatillo
   Original: "¿Realizás apuestas online?" (Sí / No)
@@ -134,7 +148,7 @@ BLOQUE 4 — Educación financiera (obligatorio, exclusivo de adultos)
 PANTALLA FINAL — Agradecimiento + recursos de ayuda (ver sección 7)
 ```
 
-**Estimación de tiempo** (rama "sí", la más larga): 6 + 1 + 8 + 9 (PGSI) + 3 + 4 ≈ 31 preguntas, casi todas de un toque. Entra en 5 minutos si cada pantalla es ágil, pero está justo. **Hay que medirlo en una prueba piloto** (sección 11).
+**Estimación de tiempo** (rama "sí", la más larga): 9 + 1 + 8 + 9 (PGSI) + 3 + 4 ≈ 34 preguntas, casi todas de un toque. Entra en 5 minutos si cada pantalla es ágil, pero está justo. **Hay que medirlo en una prueba piloto** (sección 11).
 
 ## 5. Encuesta de ADOLESCENTES (12-17)
 
@@ -294,11 +308,11 @@ Encuesta-Ludopatia/
 
 | # | Tema | Quién decide |
 |---|------|--------------|
-| 1 | ¿Adultos tienen opción "No participar" si la encuesta es obligatoria? | Juli / grupo |
-| 2 | Preguntas de ingresos y deudas (objetivo de investigación sin preguntas) | Grupo |
+| 1 | ~~Opción "No participar" en adultos~~ → DECIDIDO: sí, lo obligatorio es responder cada pregunta | — |
+| 2 | Ingresos/deudas: montos de los 5 pasos, ingreso personal u hogar, deuda en pesos o relativa | Grupo |
 | 3 | Aceptar el nuevo gatillo "últimos 12 meses, online o presencial" | Grupo |
 | 4 | Rangos de monto apostado | Grupo |
-| 5 | Lista completa de "origen del dinero" | Grupo |
+| 5 | Lista completa de "origen del dinero" (última línea de "Hábitos de apuestas" en la imagen de WhatsApp) | Grupo |
 | 6 | Nombres exactos de carreras ("SOLO") | Grupo |
 | 7 | Pasar entorno/publicidad al bloque común; sumar TV y calle | Grupo |
 | 8 | Texto de la explicación de educación financiera | Grupo |
