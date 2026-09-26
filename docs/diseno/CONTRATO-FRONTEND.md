@@ -14,7 +14,11 @@
 
 ## 1. Definición (`GET /api/encuestas/:id`)
 
-Devuelve `{ id, titulo, respuestasObligatorias, smvmReferencia, pantallas, secciones, preguntas }`.
+Devuelve `{ id, titulo, respuestasObligatorias, smvmReferencia, pantallas, secciones, preguntas, abierta, proximaApertura }`.
+
+- `abierta`: `false` fuera de los días y horarios configurados. En ese caso se muestra la pantalla de encuesta cerrada.
+- `proximaApertura`: fecha ISO de la próxima franja, o `null` si ya no quedan.
+- `pantallas.intro` puede traer `puntos: [{ destacado, texto }]` y `cierre`, además de `texto`.
 
 Cada pregunta tiene:
 
@@ -56,6 +60,7 @@ Cuerpo JSON con **solo las preguntas visibles que tienen respuesta**:
 |---|---|
 | `201 { ok: true }` | Mostrar la pantalla final y borrar el borrador guardado |
 | `400 { ok: false, errores: [...] }` | Es un error del frontend: registrarlo en la consola y mostrar un mensaje genérico |
+| `403 { cerrada: true, proximaApertura }` | La franja cerró (pasados los 15 minutos de tolerancia): mostrar la pantalla de encuesta cerrada |
 | `429` | Demasiados envíos: esperar y reintentar sin perder las respuestas |
 | `5xx` / sin conexión | Reintento manual con un botón, sin perder las respuestas |
 

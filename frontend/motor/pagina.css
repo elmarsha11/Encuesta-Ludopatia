@@ -1,0 +1,16 @@
+/* Ajustes de página comunes a todas las encuestas.
+   El aspecto de los componentes vive en el tema de cada encuesta (tema-*.css):
+   este archivo solo hace que la columna ocupe la pantalla real del celular. */
+
+html,
+body {
+  height: 100%;
+}
+
+.app {
+  height: 100vh;
+  height: 100dvh; /* alto real visible en celulares (descuenta la barra del navegador) */
+  max-width: 560px;
+  margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom);
+}
