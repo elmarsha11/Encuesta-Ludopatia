@@ -8,7 +8,13 @@
 
 ### ¿Cuándo el juego deja de ser un juego?
 
-Esta es una encuesta sobre cómo se vive el juego y las apuestas online entre estudiantes; si las probaron, si conocen a alguien que apuesta y por qué lo hace. No hay respuestas correctas ni incorrectas, y no buscamos juzgar a nadie: nos sirve que contestes lo que realmente pensás y sentís. Vas a ver algunas preguntas obligatorias para continuar y otras que podés no responder. Es anónima: no pedimos tu nombre ni identidad, no hace falta iniciar sesión ni cargar nada. Lleva menos de 5 minutos y podés dejarla cuando quieras. Lo único que te pedimos es honestidad y sinceridad.
+Queremos entender qué pasa con las apuestas online entre los jóvenes hoy.
+
+- **100% anónima:** no te pedimos nombre, mail ni ningún dato que te identifique.
+- **Rápida:** te lleva 3 minutos.
+- **Cero juzgar:** no hay respuestas correctas ni incorrectas, solo nos sirve tu realidad.
+
+Respondé lo que vivís vos o lo que ves en tu grupo. Podés dejarla cuando quieras.
 
 **¿Te animás a participar?** — botones: «Sí» / «No»
 

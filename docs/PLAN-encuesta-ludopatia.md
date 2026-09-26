@@ -331,8 +331,8 @@ Encuesta-Ludopatia/
 1. ✅ **Base de datos**: `database/schema.sql` generado desde las definiciones, con CHECKs y triggers de solo agregar.
 2. ✅ **Backend núcleo**: Express, `@libsql/client`, definición de ambas encuestas, `POST /api/respuestas/:encuesta` con validación, límite de envíos, helmet y 32 tests automáticos.
 3. 🔄 **Diseño** (en conjunto, Claude Design): material listo en `docs/diseno/` (brief, guía con prompts, contrato, contenido generado). DECIDIDO: dos identidades distintas (adolescentes: curiosa y confiable, no divertida; adultos: editorial y detallada) sobre un mismo motor de componentes con dos temas. Sin restricciones de color.
-4. **Frontend**: implementación del diseño con la lógica de bifurcación.
-5. **Integración** frontend ↔ backend.
+4. 🔄 **Frontend**: ✅ adolescentes (motor sin framework traducido del prototipo de Claude Design, tema "Noche tranquila", probado de punta a punta en Chromium). Falta adultos (diseño pendiente).
+5. ✅ **Integración** frontend ↔ backend (adolescentes), con ventanas de apertura (`VENTANAS_*`) y pantalla de encuesta cerrada.
 6. **Dashboards** + **exportación Excel** + **autenticación**.
 7. **Prueba piloto** con 3-5 personas por encuesta: medir tiempos, detectar preguntas confusas.
 8. **Despliegue** + generación de los dos QR.

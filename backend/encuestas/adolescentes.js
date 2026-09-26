@@ -23,16 +23,22 @@ export default {
 
   // Textos de las pantallas que no son preguntas.
   pantallas: {
+    // Portada rediseñada en Claude Design (design/adolescentes/HANDOFF.md).
+    // `puntos` y `cierre` son opcionales: la portada de adultos usa solo `texto`.
     intro: {
       titulo: '¿Cuándo el juego deja de ser un juego?',
-      texto:
-        'Esta es una encuesta sobre cómo se vive el juego y las apuestas online entre estudiantes; ' +
-        'si las probaron, si conocen a alguien que apuesta y por qué lo hace. No hay respuestas ' +
-        'correctas ni incorrectas, y no buscamos juzgar a nadie: nos sirve que contestes lo que ' +
-        'realmente pensás y sentís. Vas a ver algunas preguntas obligatorias para continuar y otras ' +
-        'que podés no responder. Es anónima: no pedimos tu nombre ni identidad, no hace falta ' +
-        'iniciar sesión ni cargar nada. Lleva menos de 5 minutos y podés dejarla cuando quieras. ' +
-        'Lo único que te pedimos es honestidad y sinceridad.',
+      texto: 'Queremos entender qué pasa con las apuestas online entre los jóvenes hoy.',
+      puntos: [
+        // «ningún dato que te identifique» en vez de «ningún dato personal» del diseño:
+        // la encuesta sí pregunta edad y género, que son datos personales.
+        { destacado: '100% anónima', texto: 'no te pedimos nombre, mail ni ningún dato que te identifique.' },
+        { destacado: 'Rápida', texto: 'te lleva 3 minutos.' },
+        {
+          destacado: 'Cero juzgar',
+          texto: 'no hay respuestas correctas ni incorrectas, solo nos sirve tu realidad.',
+        },
+      ],
+      cierre: 'Respondé lo que vivís vos o lo que ves en tu grupo. Podés dejarla cuando quieras.',
     },
     consentimiento: {
       pregunta: '¿Te animás a participar?',

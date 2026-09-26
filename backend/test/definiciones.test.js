@@ -64,6 +64,7 @@ for (const encuesta of Object.values(ENCUESTAS)) {
     test('tiene todos los textos de pantalla', () => {
       const { intro, consentimiento, edadFueraDeRango, cierre } = encuesta.pantallas;
       assert.ok(intro.titulo && intro.texto);
+      for (const punto of intro.puntos ?? []) assert.ok(punto.destacado && punto.texto);
       assert.ok(consentimiento.pregunta && consentimiento.si && consentimiento.no);
       assert.ok(edadFueraDeRango);
       assert.ok(cierre.titulo && cierre.texto);
