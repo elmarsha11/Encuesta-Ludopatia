@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Encuesta adolescentes · prototipo</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tema-a.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<main class="{{ claseApp }}" ref="{{ guardarMain }}" style="width: 409px; height: 800px; background: var(--color-fondo); color: var(--color-texto); font-family: var(--fuente-texto)">
+<header class="barra" style="width: 362px; height: 51px">
+<p class="anonima">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+<span>{{ ui.anonima }}</span>
+</p>
+</header>
+<div class="progreso-bloque">
+<p class="progreso-seccion">{{ nombreSeccion }}</p>
+<progress class="progreso" value="{{ progresoHechas }}" max="{{ progresoTotal }}" aria-label="{{ ui.progreso }}"></progress>
+</div>
+<div class="motivo" aria-hidden="true" ref="{{ guardarMotivo }}" style="width: 100%; height: 56px">
+<sc-for list="{{ pixeles }}" as="px" hint-placeholder-count="18">
+<span class="px" style="left: {{ px.x }}px; top: {{ px.y }}px; opacity: {{ px.o }}; background: {{ px.color }}; transition-delay: {{ px.retraso }}ms; animation-delay: {{ px.ola }}ms"></span>
+</sc-for>
+</div>
+<div class="{{ claseContenido }}" style="width: 367px; height: 659px">
+
+<sc-if value="{{ esInicio }}" hint-placeholder-val="{{ true }}">
+<h1 class="{{ intro.claseTitulo }}" style="animation-delay: {{ intro.dTitulo }}ms; width: 361px; height: 77px" tabindex="-1">{{ def.pantallas.intro.titulo }}</h1>
+<p class="{{ intro.claseTexto }}" style="animation-delay: {{ intro.dTexto }}ms">{{ def.pantallas.intro.texto }}</p>
+<sc-if value="{{ intro.hayPuntos }}" hint-placeholder-val="{{ true }}">
+<ul class="puntos">
+<sc-for list="{{ intro.puntos }}" as="pt" hint-placeholder-count="3">
+<li class="{{ pt.clase }}" style="animation-delay: {{ pt.retraso }}ms"><span><strong>{{ pt.titulo }}</strong> {{ pt.texto }}</span></li>
+</sc-for>
+</ul>
+</sc-if>
+<sc-if value="{{ intro.hayCierre }}" hint-placeholder-val="{{ true }}">
+<p class="{{ intro.claseCierre }}" style="animation-delay: {{ intro.dCierre }}ms">{{ def.pantallas.intro.cierre }}</p>
+</sc-if>
+<section class="{{ intro.claseConsentimiento }}" style="animation-delay: {{ intro.dConsentimiento }}ms" aria-labelledby="consentimiento-t">
+<h2 id="consentimiento-t" class="consentimiento-pregunta">{{ def.pantallas.consentimiento.pregunta }}</h2>
+<div class="consentimiento-botones">
+<button type="button" class="btn btn--primario" onClick="{{ aceptar }}">{{ def.pantallas.consentimiento.si }}</button>
+<button type="button" class="btn btn--secundario" onClick="{{ rechazar }}">{{ def.pantallas.consentimiento.no }}</button>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{ esNoParticipa }}" hint-placeholder-val="{{ false }}">
+<div class="mensaje">
+<h1 class="mensaje-titulo" tabindex="-1">{{ def.pantallas.consentimiento.respuestaNo }}</h1>
+</div>
+</sc-if>
+
+<sc-if value="{{ esSeccion }}" hint-placeholder-val="{{ false }}">
+<div class="seccion">
+<h1 class="{{ claseSeccionTitulo }}" style="animation-delay: {{ retrasoSeccionTitulo }}ms" tabindex="-1">{{ seccion.titulo }}</h1>
+<p class="{{ claseSeccionDesc }}" style="animation-delay: {{ retrasoSeccionDesc }}ms">{{ seccion.descripcion }}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ esOpciones }}" hint-placeholder-val="{{ false }}">
+<div class="{{ claseTarjeta }}">
+<fieldset class="grupo">
+<legend class="grupo-leyenda"><h1 class="{{ clasePregunta }}" tabindex="-1">{{ pregunta.texto }}</h1></legend>
+<sc-if value="{{ esMultiple }}" hint-placeholder-val="{{ false }}">
+<p class="pista">{{ ui.pistaMultiple }}</p>
+</sc-if>
+<div class="opciones">
+<sc-for list="{{ opciones }}" as="o" hint-placeholder-count="4">
+<sc-if value="{{ o.separar }}" hint-placeholder-val="{{ false }}">
+<div class="separador" aria-hidden="true"></div>
+</sc-if>
+<label class="{{ o.clase }}" style="animation-delay: {{ o.retraso }}ms" onClick="{{ o.clic }}">
+<input class="opcion-input" type="{{ o.tipoInput }}" name="{{ pregunta.id }}" value="{{ o.valor }}" checked="{{ o.marcada }}" onChange="{{ o.cambiar }}">
+<span class="opcion-marca" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
+<span class="opcion-texto">{{ o.texto }}</span>
+</label>
+</sc-for>
+</div>
+</fieldset>
+</div>
+</sc-if>
+
+<sc-if value="{{ esEscala }}" hint-placeholder-val="{{ false }}">
+<div class="{{ claseTarjeta }}">
+<fieldset class="grupo">
+<legend class="grupo-leyenda"><h1 class="{{ clasePregunta }}" tabindex="-1">{{ pregunta.texto }}</h1></legend>
+<div class="escala">
+<sc-for list="{{ puntos }}" as="o" hint-placeholder-count="5">
+<label class="{{ o.clase }}" style="animation-delay: {{ o.retraso }}ms" onClick="{{ o.clic }}">
+<input class="opcion-input" type="radio" name="{{ pregunta.id }}" value="{{ o.valor }}" checked="{{ o.marcada }}" onChange="{{ o.cambiar }}">
+<span>{{ o.valor }}</span><span class="solo-lector">{{ o.lector }}</span>
+</label>
+</sc-for>
+</div>
+<div class="escala-extremos" aria-hidden="true"><span>{{ etiquetaMin }}</span><span>{{ etiquetaMax }}</span></div>
+</fieldset>
+</div>
+</sc-if>
+
+<sc-if value="{{ esNumero }}" hint-placeholder-val="{{ false }}">
+<div class="{{ claseTarjeta }}">
+<div class="grupo">
+<h1 class="{{ clasePregunta }}" tabindex="-1"><label for="campo-numero">{{ pregunta.texto }}</label></h1>
+<input id="campo-numero" class="campo campo--numero" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="2" value="{{ borradorEdad }}" onChange="{{ escribirEdad }}" onKeyDown="{{ teclaEdad }}" aria-invalid="{{ edadFuera }}" aria-describedby="aviso-edad">
+<sc-if value="{{ edadFuera }}" hint-placeholder-val="{{ false }}">
+<p class="aviso" id="aviso-edad" role="status">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg>
+<span>{{ def.pantallas.edadFueraDeRango }}</span>
+</p>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ esTexto }}" hint-placeholder-val="{{ false }}">
+<div class="{{ claseTarjeta }}">
+<div class="grupo">
+<h1 class="{{ clasePregunta }}" tabindex="-1"><label for="campo-texto">{{ pregunta.texto }}</label></h1>
+<textarea id="campo-texto" class="campo campo--texto" rows="6" maxlength="{{ pregunta.maxLargo }}" value="{{ textoActual }}" onChange="{{ escribirTexto }}" aria-describedby="contador-texto"></textarea>
+<p class="{{ claseContador }}" id="contador-texto">{{ largoTexto }} / {{ pregunta.maxLargo }}</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ esEnviando }}" hint-placeholder-val="{{ false }}">
+<div class="mensaje" role="status">
+<h1 class="mensaje-titulo" tabindex="-1">{{ ui.enviando }}</h1>
+</div>
+</sc-if>
+
+<sc-if value="{{ esError }}" hint-placeholder-val="{{ false }}">
+<div class="mensaje" role="alert">
+<h1 class="mensaje-titulo" tabindex="-1">{{ error.titulo }}</h1>
+<p class="mensaje-texto">{{ error.texto }}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ esCerrada }}" hint-placeholder-val="{{ false }}">
+<div class="mensaje">
+<h1 class="mensaje-titulo" tabindex="-1">{{ ui.cerrada.titulo }}</h1>
+<p class="mensaje-texto">{{ ui.cerrada.texto }}</p>
+</div>
+</sc-if>
+
+<sc-if value="{{ esFinal }}" hint-placeholder-val="{{ false }}">
+<div class="mensaje">
+<h1 class="{{ final.claseTitulo }}" style="animation-delay: {{ final.dTitulo }}ms" tabindex="-1">{{ def.pantallas.cierre.titulo }}</h1>
+<p class="{{ final.claseTexto }}" style="animation-delay: {{ final.dTexto }}ms">{{ def.pantallas.cierre.texto }}</p>
+</div>
+<section class="{{ final.claseAyuda }}" style="animation-delay: {{ final.dAyuda }}ms" aria-labelledby="ayuda-t">
+<p id="ayuda-t" class="ayuda-intro">{{ ui.ayuda.intro }}</p>
+<sc-for list="{{ ui.ayuda.lineas }}" as="l" hint-placeholder-count="2">
+<a class="linea" href="{{ l.href }}">
+<span class="linea-icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg></span>
+<span class="linea-textos"><span class="linea-numero">{{ l.numero }}</span><span class="linea-desc">{{ l.descripcion }}</span></span>
+</a>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{ mostrarEnvio }}" hint-placeholder-val="{{ false }}">
+<details class="panel-dev">
+<summary>Datos que se enviarían (solo prototipo)</summary>
+<pre>{{ cuerpoJson }}</pre>
+</details>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ mostrarPie }}" hint-placeholder-val="{{ false }}">
+<div class="pie">
+<sc-if value="{{ puedeVolver }}" hint-placeholder-val="{{ true }}">
+<button type="button" class="btn-volver" onClick="{{ volver }}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+<span>{{ ui.atras }}</span>
+</button>
+</sc-if>
+<sc-if value="{{ hayAccion }}" hint-placeholder-val="{{ true }}">
+<button type="button" class="{{ claseAccion }}" onClick="{{ accion }}" disabled="{{ accionDeshabilitada }}">
+<span>{{ etiquetaAccion }}</span>
+<sc-if value="{{ accionConFlecha }}" hint-placeholder-val="{{ true }}">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+</sc-if>
+</button>
+</sc-if>
+</div>
+</sc-if>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;escenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;inicio&quot;,&quot;no-participa&quot;,&quot;edad&quot;,&quot;edad-fuera&quot;,&quot;seccion&quot;,&quot;unica&quot;,&quot;multiple&quot;,&quot;escala&quot;,&quot;texto&quot;,&quot;enviando&quot;,&quot;error-envio&quot;,&quot;error-ocupado&quot;,&quot;cerrada&quot;,&quot;final&quot;],&quot;default&quot;:&quot;inicio&quot;,&quot;section&quot;:&quot;Prototipo&quot;},&quot;simularEnvio&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;ok&quot;,&quot;sin-conexion&quot;,&quot;ocupado&quot;],&quot;default&quot;:&quot;ok&quot;,&quot;section&quot;:&quot;Prototipo&quot;},&quot;ritmo&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tranquilo&quot;,&quot;medio&quot;,&quot;agil&quot;],&quot;default&quot;:&quot;tranquilo&quot;,&quot;section&quot;:&quot;Movimiento&quot;},&quot;tarjeta&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;section&quot;:&quot;Variantes&quot;},&quot;mostrarEnvio&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;section&quot;:&quot;Desarrollo&quot;},&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.temporizador = null;           // autoavance y envío simulado
+    this.temporizadorTransicion = null; // fase de salida del carrusel
+    this.main = null;
+
+    // ---------------------------------------------------------------------------
+    // DEFINICIÓN: copia de lo que devuelve GET /api/encuestas/adolescentes
+    // (backend/encuestas/adolescentes.js pasado por definicionPublica).
+    // En el frontend real esto NO se escribe a mano: se pide con fetch.
+    // ---------------------------------------------------------------------------
+    const aposto = { pregunta: 'aposto_alguna_vez', es: ['si_no_ultimo_anio', 'si_ultimo_anio'] };
+    const acuerdo = { min: 1, max: 5, etiquetas: { 1: 'Nada de acuerdo', 5: 'Totalmente de acuerdo' } };
+    const motivos = [
+      { valor: 'diversion', texto: 'Diversión' },
+      { valor: 'publicidad_influencers', texto: 'Publicidad o influencers' },
+      { valor: 'curiosidad', texto: 'Curiosidad' },
+      { valor: 'ganar_plata', texto: 'Ganar plata' },
+      { valor: 'aburrimiento', texto: 'Aburrimiento' },
+      { valor: 'amigos_familia', texto: 'Amigos o familia que también apuestan' },
+      { valor: 'otro', texto: 'Otro' },
+    ];
+    this.def = {
+      id: 'adolescentes',
+      titulo: '¿Cuándo el juego deja de ser un juego?',
+      respuestasObligatorias: false,
+      pantallas: {
+        // NUEVA ESTRUCTURA (pendiente de pasar a backend/encuestas/adolescentes.js):
+        // texto + puntos + cierre. "puntos" y "cierre" son opcionales: si no están,
+        // la portada muestra solo el texto (así sigue funcionando la de adultos).
+        intro: {
+          titulo: '¿Cuándo el juego deja de ser un juego?',
+          texto: 'Queremos entender qué pasa con las apuestas online entre los jóvenes hoy.',
+          puntos: [
+            { destacado: '100% anónima', texto: 'no te pedimos nombre, mail ni ningún dato personal.' },
+            { destacado: 'Rápida', texto: 'te lleva 3 minutos.' },
+            { destacado: 'Cero juzgar', texto: 'no hay respuestas correctas ni incorrectas, solo nos sirve tu realidad.' },
+          ],
+          cierre: 'Respondé lo que vivís vos o lo que ves en tu grupo. Podés dejarla cuando quieras.',
+        },
+        consentimiento: { pregunta: '¿Te animás a participar?', si: 'Sí', no: 'No', respuestaNo: 'Está perfecto. Gracias por pasar igual.' },
+        edadFueraDeRango: 'Esta encuesta es para personas de 12 a 17 años. Gracias por tu interés.',
+        cierre: { titulo: '¡Gracias por responder!', texto: 'Tus respuestas nos ayudan a entender mejor cómo se vive el juego entre estudiantes.' },
+      },
+      secciones: [
+        { id: 'sobre_vos', titulo: 'Sobre vos...', descripcion: 'Solo para conocer al grupo que responde. No te pedimos nombre ni datos que te identifiquen.' },
+        { id: 'experiencia', titulo: 'Tu experiencia con las apuestas', descripcion: 'Estas preguntas son para quienes alguna vez apostaron. Acá nadie te juzga. Si alguna no querés contestarla, elegí «Prefiero no responder».' },
+        { id: 'entorno', titulo: 'Tu entorno y tu opinión', descripcion: 'Estas preguntas son para todos, hayas apostado o no. Nos interesa lo que ves a tu alrededor y lo que pensás.' },
+        { id: 'espacio_abierto', titulo: 'Un breve espacio para leerte', descripcion: 'Gracias por tu tiempo, hayas respondido todo o solo una parte. Este espacio es opcional.' },
+      ],
+      preguntas: [
+        { id: 'edad', seccion: 'sobre_vos', tipo: 'numero', texto: '¿Cuál es tu edad?', min: 12, max: 17, obligatoria: true },
+        { id: 'genero', seccion: 'sobre_vos', tipo: 'unica', texto: '¿Cómo te percibís?', opciones: [
+          { valor: 'varon', texto: 'Varón' }, { valor: 'mujer', texto: 'Mujer' }, { valor: 'otro', texto: 'Otro' }, { valor: 'prefiero_no_decir', texto: 'Prefiero no decir' } ] },
+        { id: 'aposto_alguna_vez', seccion: 'sobre_vos', tipo: 'unica', texto: '¿Alguna vez apostaste plata o algo que vale plata (por ejemplo, skins)?', opciones: [
+          { valor: 'si_no_ultimo_anio', texto: 'Sí, pero no en el último año' }, { valor: 'si_ultimo_anio', texto: 'Sí, en el último año' },
+          { valor: 'nunca', texto: 'Nunca' }, { valor: 'prefiero_no_responder', texto: 'Prefiero no responder' } ] },
+        { id: 'en_que_aposto', seccion: 'experiencia', tipo: 'multiple', texto: '¿En qué apostaste?', visibleSi: aposto, opciones: [
+          { valor: 'deportivas_online', texto: 'Apuestas deportivas online' }, { valor: 'casino_online', texto: 'Casino online' },
+          { valor: 'cartas', texto: 'Juego de cartas (póker, truco, etc.) por plata' }, { valor: 'quiniela_loteria', texto: 'Quiniela, Lotería' },
+          { valor: 'skins', texto: 'Skins o cajas de videojuegos' }, { valor: 'otro', texto: 'Otro' },
+          { valor: 'prefiero_no_responder', texto: 'Prefiero no responder', exclusiva: true } ] },
+        { id: 'frecuencia_ultimo_anio', seccion: 'experiencia', tipo: 'unica', texto: 'En el último año, ¿con qué frecuencia apostaste?', visibleSi: aposto, opciones: [
+          { valor: 'ninguna', texto: 'Ninguna vez en el último año' }, { valor: 'menos_mensual', texto: 'Menos de una vez al mes' },
+          { valor: 'algunas_mes', texto: 'Algunas veces al mes' }, { valor: 'semanal', texto: 'Una vez por semana' },
+          { valor: 'varias_semana', texto: 'Varias veces a la semana' }, { valor: 'casi_diario', texto: 'Casi todos los días' },
+          { valor: 'prefiero_no_responder', texto: 'Prefiero no responder' } ] },
+        { id: 'motivo', seccion: 'experiencia', tipo: 'multiple', texto: '¿Qué te llevó a apostar?', visibleSi: aposto,
+          opciones: motivos.concat([{ valor: 'prefiero_no_responder', texto: 'Prefiero no responder', exclusiva: true }]) },
+        { id: 'como_accedio', seccion: 'experiencia', tipo: 'unica', texto: '¿Cómo accediste?', visibleSi: aposto, opciones: [
+          { valor: 'cuenta_propia', texto: 'Con mi propia cuenta' }, { valor: 'cuenta_ajena', texto: 'Con la cuenta o los datos de otra persona' },
+          { valor: 'en_persona', texto: 'En persona' }, { valor: 'prefiero_no_responder', texto: 'Prefiero no responder' } ] },
+        { id: 'conoce_alguien', seccion: 'entorno', tipo: 'unica', texto: '¿Conocés a alguien de tu entorno que apueste?', opciones: [
+          { valor: 'no', texto: 'No' }, { valor: 'si_una', texto: 'Sí, conozco a una persona' },
+          { valor: 'si_varias', texto: 'Sí, conozco a varias personas' }, { valor: 'prefiero_no_responder', texto: 'Prefiero no responder' } ] },
+        { id: 'frecuencia_publicidad', seccion: 'entorno', tipo: 'unica', texto: '¿Con qué frecuencia ves publicidad de apuestas?', opciones: [
+          { valor: 'nunca_casi_nunca', texto: 'Nunca o casi nunca' }, { valor: 'algunas_mes', texto: 'Algunas veces al mes' },
+          { valor: 'algunas_semana', texto: 'Algunas veces por semana' }, { valor: 'todos_los_dias', texto: 'Todos los días' },
+          { valor: 'no_se', texto: 'No sé' } ] },
+        { id: 'donde_publicidad', seccion: 'entorno', tipo: 'multiple', texto: '¿Dónde ves más publicidad?', opciones: [
+          { valor: 'redes', texto: 'Redes sociales (Instagram, TikTok, Facebook, X, etc.)' }, { valor: 'streamers', texto: 'Streamers y/o influencers' },
+          { valor: 'tv', texto: 'TV' }, { valor: 'videojuegos', texto: 'Videojuegos' }, { valor: 'calle', texto: 'La calle' },
+          { valor: 'no_veo', texto: 'No veo publicidad de apuestas', exclusiva: true } ] },
+        Object.assign({ id: 'escala_perder_control', seccion: 'entorno', tipo: 'escala', texto: 'Es fácil perder el control con las apuestas online.' }, acuerdo),
+        Object.assign({ id: 'escala_pasatiempo_inofensivo', seccion: 'entorno', tipo: 'escala', texto: 'Apostar online es un pasatiempo inofensivo.' }, acuerdo),
+        { id: 'percepcion_por_que', seccion: 'entorno', tipo: 'multiple', texto: '¿Por qué creés que apuestan las personas de tu edad?',
+          opciones: motivos.concat([{ valor: 'no_se', texto: 'No sé', exclusiva: true }]) },
+        Object.assign({ id: 'escala_ganar_plata', seccion: 'entorno', tipo: 'escala', texto: 'Alguien de mi edad puede ganar plata apostando.' }, acuerdo),
+        { id: 'comentario', seccion: 'espacio_abierto', tipo: 'texto', texto: 'Si querés contar algo o simplemente opinar, este es el lugar. No escribas nombres ni nada que te identifique.', maxLargo: 1000 },
+      ],
+    };
+
+    // ---------------------------------------------------------------------------
+    // TEXTOS DE INTERFAZ: no son preguntas, los pone el frontend.
+    // Los marcados PROPUESTA no están en contenido-adolescentes.md: revisarlos con el grupo.
+    // ---------------------------------------------------------------------------
+    this.ui = {
+      atras: 'Atrás',
+      siguiente: 'Siguiente',
+      saltar: 'Saltar',
+      enviar: 'Enviar', // PROPUESTA
+      reintentar: 'Probar de nuevo', // PROPUESTA
+      anonima: 'Anónima',
+      progreso: 'Progreso de la encuesta',
+      pistaMultiple: 'Podés marcar más de una.', // PROPUESTA
+      enviando: 'Enviando tus respuestas…', // PROPUESTA
+      errores: { // PROPUESTA
+        'sin-conexion': { titulo: 'No pudimos enviar tus respuestas', texto: 'Parece que no hay conexión. Tus respuestas siguen acá, no se perdió nada. Probá de nuevo en un momento.' },
+        'ocupado': { titulo: 'Hay mucha gente enviando a la vez', texto: 'Esperá unos segundos y probá de nuevo. Tus respuestas siguen acá, no se perdió nada.' },
+        'generico': { titulo: 'Algo salió mal', texto: 'No es por algo que hiciste. Probá de nuevo en un momento: tus respuestas siguen acá.' },
+      },
+      cerrada: { // PROPUESTA: faltan las franjas horarias reales
+        titulo: 'La encuesta está cerrada en este momento',
+        texto: 'Vuelve a abrir el [DÍA] a las [HORA]. Podés entrar con el mismo QR.',
+      },
+      ayuda: { // Brief, sección 6.10. Números PENDIENTES de verificación final.
+        intro: 'Si vos o alguien cercano quiere hablar sobre el juego o las apuestas, hay ayuda gratuita y confidencial:',
+        lineas: [
+          { numero: '0800-444-4000', href: 'tel:08004444000', descripcion: 'Provincia de Buenos Aires, las 24 horas.' },
+          { numero: '141', href: 'tel:141', descripcion: 'SEDRONAR, línea nacional.' },
+        ],
+      },
+    };
+
+    this.state = this.estadoDeEscenario(props.escenario || 'inicio');
+  }
+
+  // Al abrir la encuesta, los píxeles llegan de a uno (arrancan invisibles y un poco más abajo).
+  componentDidMount() {
+    this.programarAparicion();
+  }
+
+  programarAparicion() {
+    if (this.temporizadorAparicion) clearTimeout(this.temporizadorAparicion);
+    this.temporizadorAparicion = setTimeout(() => {
+      this.temporizadorAparicion = null;
+      this.setState({ aparecido: true });
+    }, 80);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.escenario !== this.props.escenario) {
+      this.limpiarTemporizador();
+      this.limpiarTransicion();
+      this.setState(this.estadoDeEscenario(this.props.escenario || 'inicio'));
+      this.programarAparicion();
+      return;
+    }
+    // Llegó una pantalla nueva: volver arriba y llevar el foco al título (lectores de pantalla).
+    if (prevState && prevState.vista !== this.state.vista && this.main) {
+      this.main.scrollTop = 0;
+      const titulo = this.main.querySelector('h1');
+      if (titulo && titulo.focus) titulo.focus({ preventScroll: true });
+    }
+  }
+
+  componentWillUnmount() {
+    this.limpiarTemporizador();
+    this.limpiarTransicion();
+    if (this.temporizadorAparicion) clearTimeout(this.temporizadorAparicion);
+  }
+
+  limpiarTemporizador() {
+    if (this.temporizador) {
+      clearTimeout(this.temporizador);
+      this.temporizador = null;
+    }
+  }
+
+  limpiarTransicion() {
+    if (this.temporizadorTransicion) {
+      clearTimeout(this.temporizadorTransicion);
+      this.temporizadorTransicion = null;
+    }
+  }
+
+  // --- Movimiento: los tiempos se leen de los tokens CSS (una sola fuente de verdad) ---
+
+  movimientoReducido() {
+    try {
+      return !!(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  leerMs(token, porDefecto) {
+    try {
+      if (!this.main || typeof getComputedStyle === 'undefined') return porDefecto;
+      const v = getComputedStyle(this.main).getPropertyValue(token).trim();
+      const n = parseFloat(v);
+      if (!v || isNaN(n)) return porDefecto;
+      if (/ms$/.test(v)) return n;
+      if (/s$/.test(v)) return n * 1000;
+      return n;
+    } catch (e) {
+      return porDefecto;
+    }
+  }
+
+  // Cambiar de pantalla en dos tiempos: primero se va la actual (salida), después llega la nueva.
+  // Si llega otra navegación en el medio, gana la última.
+  navegar(cambios, direccion) {
+    const dir = direccion || 'adelante';
+    this.limpiarTransicion();
+    const aplicar = () => {
+      this.temporizadorTransicion = null;
+      this.setState(Object.assign({}, cambios, { vista: this.state.vista + 1, transicion: null, direccion: dir }));
+    };
+    if (this.movimientoReducido() || !this.main) return aplicar();
+    this.setState({ transicion: 'saliendo', direccion: dir });
+    this.temporizadorTransicion = setTimeout(aplicar, this.leerMs('--dur-salida', 320));
+  }
+
+  // --- Reglas del contrato -----------------------------------------------------
+
+  // Una pregunta es visible si no tiene visibleSi, o si la respuesta a visibleSi.pregunta está en visibleSi.es.
+  visible(p, r) {
+    if (!p.visibleSi) return true;
+    return p.visibleSi.es.indexOf(r[p.visibleSi.pregunta]) !== -1;
+  }
+
+  // Si cambia una rama, se descartan las respuestas de preguntas que dejaron de ser visibles.
+  limpiar(r) {
+    const limpio = {};
+    this.def.preguntas.forEach((p) => {
+      if (r[p.id] !== undefined && this.visible(p, limpio)) limpio[p.id] = r[p.id];
+    });
+    return limpio;
+  }
+
+  tieneRespuesta(p, r) {
+    const v = r[p.id];
+    if (v === undefined || v === null) return false;
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === 'string') return v.trim() !== '';
+    return true;
+  }
+
+  // Cuerpo del POST: solo preguntas visibles con respuesta, con el tipo de dato correcto.
+  cuerpo(r) {
+    const c = {};
+    this.def.preguntas.forEach((p) => {
+      if (!this.visible(p, r) || !this.tieneRespuesta(p, r)) return;
+      const v = r[p.id];
+      if (p.tipo === 'numero' || p.tipo === 'escala') c[p.id] = parseInt(v, 10);
+      else if (p.tipo === 'texto') c[p.id] = String(v).trim();
+      else if (p.tipo !== 'info') c[p.id] = v;
+    });
+    return c;
+  }
+
+  // --- Recorrido ---------------------------------------------------------------
+
+  // Lista de pasos del camino actual: un título de sección antes de la primera pregunta visible de cada sección.
+  pasos(r) {
+    const lista = [];
+    let anterior = null;
+    this.def.preguntas.forEach((p) => {
+      if (!this.visible(p, r)) return;
+      if (p.seccion !== anterior) {
+        lista.push({ clase: 'seccion', seccion: this.def.secciones.find((s) => s.id === p.seccion) });
+        anterior = p.seccion;
+      }
+      lista.push({ clase: 'pregunta', pregunta: p });
+    });
+    return lista;
+  }
+
+  // Progreso sobre el camino actual. Mientras una rama no está decidida, se cuentan sus preguntas:
+  // así la barra puede saltar hacia adelante (rama corta), pero nunca retrocede.
+  progreso(r, indice, pasos) {
+    const pasadas = {};
+    let hechas = 0;
+    for (let i = 0; i < indice && i < pasos.length; i++) {
+      if (pasos[i].clase === 'pregunta') {
+        hechas++;
+        pasadas[pasos[i].pregunta.id] = true;
+      }
+    }
+    let total = 0;
+    this.def.preguntas.forEach((p) => {
+      if (this.visible(p, r)) total++;
+      else if (p.visibleSi && !pasadas[p.visibleSi.pregunta]) total++;
+    });
+    return { hechas, total };
+  }
+
+  // Avance del motivo de píxeles: cuenta TODAS las pantallas (portada, títulos de sección y
+  // preguntas), así cambia desde la primera. Igual que la barra, cuenta las ramas que todavía
+  // pueden aparecer: si la rama resulta corta, el motivo salta hacia adelante, nunca hacia atrás.
+  avanceMotivo(r, indice, lista) {
+    const pasadas = {};
+    for (let i = 0; i < indice && i < lista.length; i++) {
+      if (lista[i].clase === 'pregunta') pasadas[lista[i].pregunta.id] = true;
+    }
+    let pasosPosibles = 0;
+    let anterior = null;
+    this.def.preguntas.forEach((p) => {
+      const cuenta = this.visible(p, r) || (p.visibleSi && !pasadas[p.visibleSi.pregunta]);
+      if (!cuenta) return;
+      if (p.seccion !== anterior) {
+        pasosPosibles++;
+        anterior = p.seccion;
+      }
+      pasosPosibles++;
+    });
+    const totalPantallas = pasosPosibles + 2; // + portada + final
+    return (1 + indice) / (totalPantallas - 1);
+  }
+
+  // --- Escenarios (para revisar cada estado sin recorrer toda la encuesta) ------
+
+  estadoDeEscenario(esc) {
+    const base = { pantalla: 'inicio', paso: 0, respuestas: {}, borradorEdad: '', edadFuera: false, error: null, intentos: 0, vista: 0, transicion: null, direccion: 'quieto', aparecido: false };
+    const previas = { edad: 15, genero: 'prefiero_no_decir', aposto_alguna_vez: 'nunca', conoce_alguien: 'si_una', frecuencia_publicidad: 'algunas_semana' };
+    const completas = Object.assign({}, previas, { donde_publicidad: ['redes', 'streamers'], escala_perder_control: 4, escala_pasatiempo_inofensivo: 2, percepcion_por_que: ['curiosidad', 'publicidad_influencers'], escala_ganar_plata: 2 });
+    const irA = (r, id, extra) => {
+      const lista = this.pasos(r);
+      const i = lista.findIndex((s) => (s.clase === 'pregunta' && s.pregunta.id === id) || (s.clase === 'seccion' && s.seccion.id === id));
+      return Object.assign({}, base, { pantalla: 'recorrido', paso: Math.max(0, i), respuestas: r }, extra || {});
+    };
+    switch (esc) {
+      case 'no-participa': return Object.assign({}, base, { pantalla: 'no-participa' });
+      case 'edad': return irA({}, 'edad');
+      case 'edad-fuera': return irA({}, 'edad', { borradorEdad: '19', edadFuera: true });
+      case 'seccion': return irA({ edad: 15, aposto_alguna_vez: 'si_ultimo_anio' }, 'experiencia');
+      case 'unica': return irA({ edad: 15, genero: 'prefiero_no_decir' }, 'aposto_alguna_vez');
+      case 'multiple': return irA(Object.assign({}, previas, { donde_publicidad: ['redes', 'streamers'] }), 'donde_publicidad');
+      case 'escala': return irA(Object.assign({}, previas, { donde_publicidad: ['redes', 'streamers'], escala_perder_control: 4 }), 'escala_perder_control');
+      case 'texto': return irA(completas, 'comentario');
+      case 'enviando': return Object.assign({}, base, { pantalla: 'enviando', respuestas: completas, intentos: 1 });
+      case 'error-envio': return Object.assign({}, base, { pantalla: 'error', error: 'sin-conexion', respuestas: completas, intentos: 1 });
+      case 'error-ocupado': return Object.assign({}, base, { pantalla: 'error', error: 'ocupado', respuestas: completas, intentos: 1 });
+      case 'cerrada': return Object.assign({}, base, { pantalla: 'cerrada' });
+      case 'final': return Object.assign({}, base, { pantalla: 'final', respuestas: completas });
+      default: return base;
+    }
+  }
+
+  // --- Acciones ----------------------------------------------------------------
+
+  irAPaso(i, direccion) {
+    this.limpiarTemporizador();
+    const dir = direccion || (i >= this.state.paso ? 'adelante' : 'atras');
+    const lista = this.pasos(this.state.respuestas);
+    if (i < 0) return this.navegar({ pantalla: 'inicio', paso: 0 }, 'atras');
+    if (i >= lista.length) return this.enviar();
+    const s = lista[i];
+    const extra = {};
+    if (s.clase === 'pregunta' && s.pregunta.tipo === 'numero') {
+      const v = this.state.respuestas[s.pregunta.id];
+      extra.borradorEdad = v === undefined ? '' : String(v);
+      extra.edadFuera = false;
+    }
+    this.navegar(Object.assign({ pantalla: 'recorrido', paso: i }, extra), dir);
+  }
+
+  responder(id, valor) {
+    const r = Object.assign({}, this.state.respuestas);
+    if (valor === undefined || valor === '' || (Array.isArray(valor) && valor.length === 0)) delete r[id];
+    else r[id] = valor;
+    this.setState({ respuestas: this.limpiar(r) });
+  }
+
+  // Opción múltiple: una exclusiva desmarca las demás, y marcar otra desmarca la exclusiva.
+  alternar(p, opcion) {
+    const actual = (this.state.respuestas[p.id] || []).slice();
+    let nueva;
+    if (actual.indexOf(opcion.valor) !== -1) nueva = actual.filter((v) => v !== opcion.valor);
+    else if (opcion.exclusiva) nueva = [opcion.valor];
+    else {
+      const exclusivas = p.opciones.filter((o) => o.exclusiva).map((o) => o.valor);
+      nueva = actual.filter((v) => exclusivas.indexOf(v) === -1).concat([opcion.valor]);
+    }
+    const orden = p.opciones.map((o) => o.valor);
+    this.responder(p.id, orden.filter((v) => nueva.indexOf(v) !== -1));
+  }
+
+  // Avanza solo si el toque fue con el dedo o el mouse (detail > 0), después de una pausa
+  // para ver lo elegido. Con teclado (flechas o espacio) detail es 0: se elige sin saltar.
+  programarAvance(e) {
+    const d = e ? (e.detail !== undefined ? e.detail : (e.nativeEvent ? e.nativeEvent.detail : 0)) : 0;
+    if (!(d > 0)) return;
+    this.limpiarTemporizador();
+    const pasoAlTocar = this.state.paso;
+    this.temporizador = setTimeout(() => {
+      this.temporizador = null;
+      if (this.state.pantalla === 'recorrido' && this.state.paso === pasoAlTocar && !this.state.transicion) this.irAPaso(pasoAlTocar + 1, 'adelante');
+    }, this.leerMs('--pausa-autoavance', 900));
+  }
+
+  confirmarEdad(p) {
+    const txt = this.state.borradorEdad;
+    if (txt === '') return;
+    const n = parseInt(txt, 10);
+    if (isNaN(n) || n < p.min || n > p.max) {
+      this.setState({ edadFuera: true });
+      return;
+    }
+    const r = Object.assign({}, this.state.respuestas);
+    r[p.id] = n;
+    this.setState({ respuestas: this.limpiar(r), edadFuera: false }, () => this.irAPaso(this.state.paso + 1, 'adelante'));
+  }
+
+  enviar() {
+    this.limpiarTemporizador();
+    const intento = this.state.intentos + 1;
+    this.navegar({ pantalla: 'enviando', intentos: intento }, 'adelante');
+    // Simulación: en el frontend real acá va el fetch a POST /api/respuestas/adolescentes.
+    this.temporizador = setTimeout(() => {
+      this.temporizador = null;
+      const modo = this.props.simularEnvio || 'ok';
+      if (modo !== 'ok' && intento === 1) this.navegar({ pantalla: 'error', error: modo }, 'adelante');
+      else this.navegar({ pantalla: 'final' }, 'adelante');
+    }, 1800);
+  }
+
+  // --- Motivo de píxeles -------------------------------------------------------
+
+  pixeles(calma, aparecido) {
+    const c = Math.max(0, Math.min(1, calma));
+    const nx = [8, 30, 46, 71, 90, 118, 133, 160, 181, 204, 222, 247, 263, 289, 301, 318, 250, 150];
+    const ny = [30, 12, 40, 22, 6, 34, 18, 44, 10, 28, 4, 38, 20, 8, 42, 24, 48, 2];
+    const no = [0.35, 0.8, 0.5, 0.9, 0.3, 0.65, 0.45, 0.85, 0.3, 0.7, 0.5, 0.9, 0.35, 0.6, 0.8, 0.4, 0.55, 0.7];
+    const nt = [0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0];
+    const tonos = ['var(--color-lila)', 'var(--color-borde)'];
+    // Ancho real del motivo (de margen a margen de la pantalla); si todavía no se midió, 342px.
+    const ANCHO = (this.motivo && this.motivo.clientWidth) || 342;
+    return nx.map((x, i) => {
+      const sx = Math.round(x / 6) * 6;
+      const sy = Math.round(ny[i] / 6) * 6;
+      const y = Math.round(sy + (24 - sy) * c);
+      // Fila final: de margen a margen del ancho del motivo, repartida en partes iguales.
+      const tx = Math.round(i * (ANCHO - 6) / (nx.length - 1));
+      return {
+        x: Math.round(sx + (tx - sx) * c),
+        y: aparecido ? y : y + 10,
+        o: aparecido ? (no[i] + (0.55 - no[i]) * c).toFixed(2) : '0',
+        color: c > 0.85 ? tonos[0] : tonos[nt[i]],
+        retraso: i * 30,
+        ola: -i * 180, // desfase: cada píxel sube un poco después que el anterior = onda
+      };
+    });
+  }
+
+  // --- Render ------------------------------------------------------------------
+
+  renderVals() {
+    const s = this.state;
+    const r = s.respuestas;
+    const lista = this.pasos(r);
+    const paso = lista[s.paso];
+    const enRecorrido = s.pantalla === 'recorrido' && !!paso;
+    const esSeccion = enRecorrido && paso.clase === 'seccion';
+    const esPregunta = enRecorrido && paso.clase === 'pregunta';
+    const p = esPregunta ? paso.pregunta : null;
+    const vacia = { id: '', texto: '', maxLargo: 0, opciones: [] };
+    const pregunta = p || vacia;
+    const seccion = esSeccion ? paso.seccion : { titulo: '', descripcion: '' };
+    const prog = this.progreso(r, s.paso, lista);
+
+    // Movimiento: clase del carrusel y de la aparición escalonada.
+    // Las clases -0/-1 alternan en cada pantalla para que la animación se reinicie.
+    const par = s.vista % 2;
+    const aparecer = ' aparecer-' + par;
+    const escalon = this.leerMs('--retraso-escalonado', 70);
+    const retrasoItem = (i, base) => Math.round(base + Math.min(i, 6) * escalon);
+    const claseContenido = s.transicion === 'saliendo'
+      ? 'contenido salir-' + s.direccion
+      : 'contenido entrar-' + s.direccion + '-' + par;
+
+    // Motivo: 0 en la portada, 1 en el final, y cada pantalla del medio suma un poco.
+    // La curva (1 - (1 - a)²) hace que los primeros pasos se noten más y que al final se aquiete.
+    let avance = 0;
+    if (enRecorrido) avance = this.avanceMotivo(r, s.paso, lista);
+    if (s.pantalla === 'enviando' || s.pantalla === 'error' || s.pantalla === 'final') avance = 1;
+    if (s.pantalla === 'no-participa') avance = 0.6;
+    if (s.pantalla === 'cerrada') avance = 0.4;
+    const calma = 1 - Math.pow(1 - Math.max(0, Math.min(1, avance)), 2);
+
+    // Portada
+    const intro = this.def.pantallas.intro;
+    const puntosIntro = (intro.puntos || []).map((pt, i) => ({
+      titulo: pt.destacado + ':',
+      texto: pt.texto,
+      clase: 'punto-lista' + aparecer,
+      retraso: retrasoItem(i, 320) + i * 40,
+    }));
+    const dCierre = 320 + puntosIntro.length * (escalon + 40) + 80;
+
+    // Opciones (única y múltiple comparten componente; cambia el input)
+    const esUnica = !!p && p.tipo === 'unica';
+    const esMultiple = !!p && p.tipo === 'multiple';
+    const opciones = (esUnica || esMultiple) ? p.opciones.map((o, i) => {
+      const marcada = esMultiple ? (r[p.id] || []).indexOf(o.valor) !== -1 : r[p.id] === o.valor;
+      return {
+        valor: o.valor,
+        texto: o.texto,
+        marcada,
+        separar: !!o.exclusiva,
+        tipoInput: esMultiple ? 'checkbox' : 'radio',
+        clase: 'opcion ' + (esMultiple ? 'opcion--check' : 'opcion--radio') + (marcada ? ' opcion--marcada' : '') + aparecer,
+        retraso: retrasoItem(i, 160),
+        cambiar: esMultiple ? () => this.alternar(p, o) : () => this.responder(p.id, o.valor),
+        clic: esUnica ? (e) => this.programarAvance(e) : () => {},
+      };
+    }) : [];
+
+    // Escala: los puntos salen de min, max y etiquetas
+    const esEscala = !!p && p.tipo === 'escala';
+    const puntos = [];
+    if (esEscala) {
+      for (let v = p.min; v <= p.max; v++) {
+        const marcada = r[p.id] === v;
+        const etiqueta = p.etiquetas && p.etiquetas[v];
+        puntos.push({
+          valor: v,
+          marcada,
+          lector: etiqueta ? ', ' + etiqueta : '',
+          clase: 'punto' + (marcada ? ' punto--marcado' : '') + aparecer,
+          retraso: retrasoItem(v - p.min, 160),
+          cambiar: () => this.responder(p.id, v),
+          clic: (e) => this.programarAvance(e),
+        });
+      }
+    }
+
+    // Texto libre
+    const esTexto = !!p && p.tipo === 'texto';
+    const textoActual = esTexto ? (r[p.id] || '') : '';
+
+    // Pie: Atrás a la izquierda + una acción a la derecha, según la pantalla
+    const esNumero = !!p && p.tipo === 'numero';
+    const esError = s.pantalla === 'error';
+    const esUltimo = enRecorrido && s.paso === lista.length - 1;
+    const obligatoria = p ? (p.obligatoria !== undefined ? p.obligatoria : this.def.respuestasObligatorias) : false;
+    const respondida = p ? this.tieneRespuesta(p, r) : false;
+    let etiquetaAccion = this.ui.siguiente;
+    let secundaria = false;
+    let conFlecha = true;
+    let accion = () => this.irAPaso(s.paso + 1, 'adelante');
+    if (esPregunta) {
+      if (esUltimo) etiquetaAccion = this.ui.enviar;
+      else if (!respondida && !obligatoria && !esNumero) {
+        etiquetaAccion = this.ui.saltar;
+        secundaria = true;
+      }
+      if (esNumero) accion = () => this.confirmarEdad(p);
+    }
+    if (esError) {
+      etiquetaAccion = this.ui.reintentar;
+      conFlecha = false;
+      accion = () => this.enviar();
+    }
+
+    return {
+      def: this.def,
+      ui: this.ui,
+      guardarMain: (el) => { this.main = el; },
+      guardarMotivo: (el) => { const antes = this.motivo; this.motivo = el; if (el && !antes) setTimeout(() => this.forceUpdate && this.forceUpdate(), 0); },
+      claseApp: 'app ritmo-' + (this.props.ritmo || 'tranquilo'),
+      claseContenido,
+      claseTarjeta: this.props.tarjeta ? 'tarjeta' : 'sin-tarjeta',
+
+      esInicio: s.pantalla === 'inicio',
+      esNoParticipa: s.pantalla === 'no-participa',
+      esSeccion,
+      esPregunta,
+      esOpciones: esUnica || esMultiple,
+      esMultiple,
+      esEscala,
+      esNumero,
+      esTexto,
+      esEnviando: s.pantalla === 'enviando',
+      esError,
+      esCerrada: s.pantalla === 'cerrada',
+      esFinal: s.pantalla === 'final',
+
+      intro: {
+        claseTitulo: 'portada-titulo' + aparecer,
+        claseTexto: 'portada-texto' + aparecer,
+        claseCierre: 'portada-cierre' + aparecer,
+        claseConsentimiento: 'consentimiento' + aparecer,
+        dTitulo: 60,
+        dTexto: 180,
+        hayPuntos: puntosIntro.length > 0,
+        puntos: puntosIntro,
+        hayCierre: !!intro.cierre,
+        dCierre,
+        dConsentimiento: dCierre + 140,
+      },
+      claseSeccionTitulo: 'seccion-titulo' + aparecer,
+      claseSeccionDesc: 'seccion-desc' + aparecer,
+      retrasoSeccionTitulo: 120,
+      retrasoSeccionDesc: 300,
+      final: {
+        claseTitulo: 'cierre-titulo' + aparecer,
+        claseTexto: 'mensaje-texto' + aparecer,
+        claseAyuda: 'ayuda' + aparecer,
+        dTitulo: 100,
+        dTexto: 260,
+        dAyuda: 480,
+      },
+
+      // La franja de progreso está SIEMPRE, en todas las pantallas, para que nada se mueva de lugar.
+      // Sin sección (portada, final…) el renglón queda reservado con un espacio duro.
+      nombreSeccion: p ? (this.def.secciones.find((x) => x.id === p.seccion) || {}).titulo
+        : ' ',
+      progresoHechas: enRecorrido ? prog.hechas
+        : (s.pantalla === 'enviando' || s.pantalla === 'error' || s.pantalla === 'final' ? prog.total : 0),
+      progresoTotal: prog.total,
+      pixeles: this.pixeles(calma, s.aparecido !== false),
+
+      seccion,
+      pregunta,
+      clasePregunta: 'pregunta-texto' + (pregunta.texto.length > 60 ? ' pregunta-texto--larga' : ''),
+      opciones,
+      puntos,
+      etiquetaMin: esEscala && p.etiquetas ? (p.etiquetas[p.min] || '') : '',
+      etiquetaMax: esEscala && p.etiquetas ? (p.etiquetas[p.max] || '') : '',
+      borradorEdad: s.borradorEdad,
+      edadFuera: s.edadFuera,
+      textoActual,
+      largoTexto: textoActual.length,
+      claseContador: 'contador' + (esTexto && textoActual.length >= p.maxLargo * 0.9 ? ' contador--cerca' : ''),
+
+      mostrarPie: enRecorrido || esError || s.pantalla === 'no-participa',
+      puedeVolver: enRecorrido || esError || s.pantalla === 'no-participa',
+      hayAccion: enRecorrido || esError,
+      etiquetaAccion,
+      accionConFlecha: conFlecha,
+      claseAccion: 'btn pie-accion ' + (secundaria ? 'btn--secundario' : 'btn--primario'),
+      accionDeshabilitada: esNumero && s.borradorEdad === '',
+      accion,
+      error: this.ui.errores[s.error] || this.ui.errores.generico,
+      mostrarEnvio: !!this.props.mostrarEnvio,
+      cuerpoJson: JSON.stringify(this.cuerpo(r), null, 2),
+
+      aceptar: () => this.irAPaso(0, 'adelante'),
+      rechazar: () => this.navegar({ pantalla: 'no-participa' }, 'adelante'),
+      volver: () => {
+        if (s.pantalla === 'no-participa') return this.navegar({ pantalla: 'inicio' }, 'atras');
+        if (esError) return this.irAPaso(lista.length - 1, 'atras');
+        this.irAPaso(s.paso - 1, 'atras');
+      },
+      escribirEdad: (e) => {
+        const v = String(e.target.value || '').replace(/\D/g, '').slice(0, 2);
+        this.setState({ borradorEdad: v, edadFuera: false });
+      },
+      teclaEdad: (e) => {
+        if (e.key === 'Enter') this.confirmarEdad(p);
+      },
+      escribirTexto: (e) => this.responder(p.id, String(e.target.value || '').slice(0, p.maxLargo)),
+    };
+  }
+}
+</script>
+</body>
+</html>

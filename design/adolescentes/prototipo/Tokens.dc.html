@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tokens · Tema A</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tema-a.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.doc{box-sizing:border-box;padding:56px;display:flex;flex-direction:column;gap:56px}
+.doc-cabecera{display:flex;flex-direction:column;gap:8px}
+.doc-titulo{margin:0;font-family:var(--fuente-titulo);font-size:40px;font-weight:600;letter-spacing:-.02em}
+.doc-sub{margin:0;color:var(--color-texto-3);font-size:18px}
+.doc-seccion{display:flex;flex-direction:column;gap:20px}
+.doc-seccion-titulo{margin:0;padding-bottom:12px;border-bottom:1px solid var(--color-borde-suave);font-family:var(--fuente-titulo);font-size:22px;font-weight:600}
+.doc-codigo{font-family:var(--fuente-codigo);font-size:13px;color:var(--color-agua)}
+.doc-nota{margin:0;font-size:16px;color:var(--color-texto-3);line-height:1.35}
+.muestras{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px}
+.muestra{display:flex;flex-direction:column;gap:6px}
+.muestra-color{height:72px;border:1px solid var(--color-borde-suave);border-radius:var(--radio-m)}
+.muestra-hex{margin:0;font-family:var(--fuente-codigo);font-size:14px;color:var(--color-texto-2)}
+.tipo-fila{display:grid;grid-template-columns:260px minmax(0,1fr);gap:32px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--color-borde-suave)}
+.tipo-meta{display:flex;flex-direction:column;gap:4px}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;align-items:start}
+.esp-fila{display:grid;grid-template-columns:96px 48px minmax(0,1fr);gap:12px;align-items:center;min-height:28px}
+.esp-barra{height:12px;background:var(--color-lila);border-radius:2px}
+.formas{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end}
+.forma{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.forma-caja{width:88px;height:72px;box-sizing:border-box;border:var(--borde-ancho) solid var(--color-borde);background:var(--color-superficie)}
+.lista{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px}
+.lista li{display:flex;flex-direction:column;gap:2px}
+.altos{display:flex;gap:12px;align-items:flex-end}
+.alto{width:56px;box-sizing:border-box;border:var(--borde-ancho) dashed var(--color-agua);border-radius:var(--radio-s);display:flex;align-items:center;justify-content:center;font-family:var(--fuente-codigo);font-size:13px;color:var(--color-agua)}
+</style>
+</helmet>
+<div class="doc" style="width: 1280px; height: 2280px; background: var(--color-fondo); color: var(--color-texto); font-family: var(--fuente-texto)">
+
+<header class="doc-cabecera">
+<h1 class="doc-titulo">Tokens · Tema A</h1>
+<p class="doc-sub">Variables CSS en tema-a.css (:root). El tema de adultos reemplaza solo estos valores; los componentes no cambian.</p>
+</header>
+
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Color</h2>
+<div class="muestras">
+<sc-for list="{{ colores }}" as="c" hint-placeholder-count="16">
+<div class="muestra">
+<div class="muestra-color" style="background: {{ c.valor }}"></div>
+<code class="doc-codigo">{{ c.token }}</code>
+<p class="muestra-hex">{{ c.hex }}</p>
+<p class="doc-nota">{{ c.nota }}</p>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Tipografía · servida desde nuestro servidor</h2>
+<div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-h1 · 34px</code><p class="doc-nota">Space Grotesk 600 · portada y secciones</p></div>
+<p style="margin: 0; font-family: var(--fuente-titulo); font-size: var(--tam-h1); font-weight: 600; line-height: 1.08; letter-spacing: -0.02em">¿Cuándo el juego deja de ser un juego?</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-pregunta · 28px</code><p class="doc-nota">Space Grotesk 600 · enunciado (22px si es largo)</p></div>
+<p style="margin: 0; font-family: var(--fuente-titulo); font-size: var(--tam-pregunta); font-weight: 600; line-height: 1.18">Es fácil perder el control con las apuestas online.</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-h3 · 22px</code><p class="doc-nota">Space Grotesk 600 · subtítulos</p></div>
+<p style="margin: 0; font-family: var(--fuente-titulo); font-size: var(--tam-h3); font-weight: 600">¿Te animás a participar?</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-lead · 20px</code><p class="doc-nota">Atkinson Hyperlegible Next · entrada de la portada</p></div>
+<p style="margin: 0; font-size: var(--tam-lead); line-height: 1.4">Queremos entender qué pasa con las apuestas online entre los jóvenes hoy.</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-cuerpo-l · 18px</code><p class="doc-nota">Atkinson Hyperlegible Next · descripciones</p></div>
+<p style="margin: 0; font-size: var(--tam-cuerpo-l); line-height: 1.5; color: var(--color-texto-2)">Tus respuestas nos ayudan a entender mejor cómo se vive el juego entre estudiantes.</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-opcion · 17px</code><p class="doc-nota">Atkinson Hyperlegible Next · opciones</p></div>
+<p style="margin: 0; font-size: var(--tam-opcion)">Sí, conozco a varias personas</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-cuerpo · 16px</code><p class="doc-nota">Mínimo absoluto · evita el zoom de iOS</p></div>
+<p style="margin: 0; font-size: var(--tam-cuerpo); line-height: 1.5; color: var(--color-texto-2)">Solo para conocer al grupo que responde. No te pedimos nombre ni datos que te identifiquen.</p>
+</div>
+<div class="tipo-fila">
+<div class="tipo-meta"><code class="doc-codigo">--tam-numero · 40px</code><p class="doc-nota">Space Grotesk 600 · campo de edad</p></div>
+<p style="margin: 0; font-family: var(--fuente-titulo); font-size: var(--tam-numero); font-weight: 600; letter-spacing: 0.04em">15</p>
+</div>
+</div>
+</section>
+
+<div class="tres">
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Espaciado (base 4)</h2>
+<div>
+<sc-for list="{{ espacios }}" as="e" hint-placeholder-count="8">
+<div class="esp-fila"><code class="doc-codigo">{{ e.token }}</code><span class="doc-nota">{{ e.px }}</span><div class="esp-barra" style="width: {{ e.ancho }}px"></div></div>
+</sc-for>
+<div class="esp-fila"><code class="doc-codigo">--margen-pantalla</code><span class="doc-nota">24px</span><div class="esp-barra" style="width: 24px; background: var(--color-agua)"></div></div>
+</div>
+</section>
+
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Forma · bordes de B</h2>
+<div class="formas">
+<div class="forma"><div class="forma-caja" style="border-radius: var(--radio-s)"></div><code class="doc-codigo">--radio-s · 8</code></div>
+<div class="forma"><div class="forma-caja" style="border-radius: var(--radio-m)"></div><code class="doc-codigo">--radio-m · 12</code></div>
+<div class="forma"><div class="forma-caja" style="border-radius: var(--radio-l)"></div><code class="doc-codigo">--radio-l · 18</code></div>
+<div class="forma"><div class="forma-caja" style="width: 120px; height: 44px; border-radius: var(--radio-pill)"></div><code class="doc-codigo">--radio-pill</code></div>
+</div>
+<p class="doc-nota">--borde-ancho: 2px en todos los controles, color --color-borde. Foco: 3px de --color-foco, separado 3px.</p>
+</section>
+
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Movimiento (ritmo tranquilo) y toque</h2>
+<ul class="lista">
+<li><code class="doc-codigo">--pausa-autoavance · 900ms</code><span class="doc-nota">Ver lo elegido antes de pasar (el motor lo lee del CSS)</span></li>
+<li><code class="doc-codigo">--dur-salida · 320ms</code><span class="doc-nota">La pregunta actual se desliza y se va</span></li>
+<li><code class="doc-codigo">--dur-entrada · 560ms</code><span class="doc-nota">La siguiente llega desde el costado</span></li>
+<li><code class="doc-codigo">--carrusel-distancia · 64px</code><span class="doc-nota">Cuánto se desliza (390px = carrusel completo)</span></li>
+<li><code class="doc-codigo">--retraso-escalonado · 70ms</code><span class="doc-nota">Entre opción y opción al aparecer</span></li>
+<li><code class="doc-codigo">--dur-lenta · 900ms</code><span class="doc-nota">Píxeles que se ordenan y barra de progreso</span></li>
+<li><code class="doc-codigo">--dur-rapida · 200ms</code><span class="doc-nota">Cambio de estado de un control</span></li>
+<li><span class="doc-nota">Ritmos medio y ágil: clases .ritmo-medio y .ritmo-agil. Con prefers-reduced-motion: sin animaciones.</span></li>
+</ul>
+<div class="altos">
+<div class="alto" style="height: 48px">48</div>
+<div class="alto" style="height: 52px">52</div>
+<div class="alto" style="height: 56px">56</div>
+<div class="alto" style="height: 64px">64</div>
+</div>
+<p class="doc-nota">--toque-min 48 · --alto-boton 52 · --alto-opcion 56 · --alto-punto 64</p>
+</section>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2280}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const c = (token, hex, nota) => ({ token, hex, nota, valor: 'var(' + token + ')' });
+    return {
+      colores: [
+        c('--color-fondo', '#16142B', 'Fondo de todas las pantallas'),
+        c('--color-superficie', '#221F3F', 'Opciones, campos y tarjetas'),
+        c('--color-superficie-hover', '#2C2851', 'Opción al pasar el mouse'),
+        c('--color-pista', '#2E2A55', 'Pista de la barra de progreso'),
+        c('--color-borde-suave', '#3A3566', 'Divisores y contenedores (decorativo)'),
+        c('--color-borde', '#8F88C9', 'Borde de controles · 5,6:1 sobre el fondo'),
+        c('--color-texto', '#F1EEFA', 'Texto principal · 15,7:1'),
+        c('--color-texto-2', '#DAD6EE', 'Texto de lectura · 12,7:1'),
+        c('--color-texto-3', '#B7B1D6', 'Texto secundario · 8,8:1'),
+        c('--color-lila', '#B8A8FF', 'Selección (--color-seleccion) · texto encima 8,6:1'),
+        c('--color-agua', '#7EDDD1', 'Foco, progreso y líneas de ayuda · 11,3:1'),
+        c('--color-accion', '#FF9600', 'Solo la acción principal · texto encima 8,0:1'),
+        c('--color-accion-hover', '#FFAA33', 'Acción al pasar el mouse'),
+        c('--color-sobre-accion', '#1A1530', 'Texto sobre la acción'),
+        c('--color-sobre-seleccion', '#16142B', 'Texto sobre la selección'),
+        c('--color-aviso-fondo', '#2A2447', 'Avisos calmos, con borde --color-accion. Nunca rojo.'),
+      ],
+      espacios: [
+        { token: '--esp-1', px: '4px', ancho: 4 },
+        { token: '--esp-2', px: '8px', ancho: 8 },
+        { token: '--esp-3', px: '12px', ancho: 12 },
+        { token: '--esp-4', px: '16px', ancho: 16 },
+        { token: '--esp-5', px: '20px', ancho: 20 },
+        { token: '--esp-6', px: '24px', ancho: 24 },
+        { token: '--esp-7', px: '32px', ancho: 32 },
+        { token: '--esp-8', px: '48px', ancho: 48 },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
