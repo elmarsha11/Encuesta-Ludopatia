@@ -81,8 +81,63 @@ async function salir() {
 // --- Utilidades de dibujo --------------------------------------------------------------
 
 function mostrar(...nodos) {
+  dejarDeEspiar();
   raiz.replaceChildren(...nodos);
   window.scrollTo(0, 0);
+}
+
+// --- Índice que acompaña el scroll -----------------------------------------------------
+// Enciende el enlace de la sección que se está leyendo. Se escucha el scroll de la ventana
+// (y no un IntersectionObserver) porque así la última sección, que suele ser corta y no
+// llega a subir, también se enciende al llegar al fondo (D.seccionActiva).
+
+let dejarDeEspiar = () => {};
+
+function espiarIndice() {
+  const indice = raiz.querySelector('.r-indice');
+  if (!indice) return;
+  const enlaces = [...indice.querySelectorAll('a[href^="#"]')];
+  const objetivos = enlaces.map((a) => document.getElementById(a.getAttribute('href').slice(1)));
+  let pendiente = false;
+  let actual = null;
+
+  const actualizar = () => {
+    pendiente = false;
+    const secciones = objetivos.map((el, i) => ({ id: i, arriba: el.getBoundingClientRect().top }));
+    const alFondo = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    const activa = D.seccionActiva(secciones, { linea: window.innerHeight * 0.3, alFondo });
+    if (activa === actual) return;
+    actual = activa;
+    enlaces.forEach((a, i) => (i === activa ? a.setAttribute('aria-current', 'location') : a.removeAttribute('aria-current')));
+    mantenerALaVista(indice, enlaces[activa]);
+  };
+  // Como mucho un cálculo por cuadro, aunque el navegador dispare muchos eventos de scroll.
+  const alMoverse = () => {
+    if (!pendiente) {
+      pendiente = true;
+      requestAnimationFrame(actualizar);
+    }
+  };
+
+  window.addEventListener('scroll', alMoverse, { passive: true });
+  window.addEventListener('resize', alMoverse);
+  actualizar();
+  dejarDeEspiar = () => {
+    window.removeEventListener('scroll', alMoverse);
+    window.removeEventListener('resize', alMoverse);
+    dejarDeEspiar = () => {};
+  };
+}
+
+// Si el índice tiene su propio scroll (lista larga, o fila horizontal en el celular), lo
+// mueve para que el enlace encendido se vea. Sin scrollIntoView: ese movería también la página.
+function mantenerALaVista(indice, enlace) {
+  const caja = indice.getBoundingClientRect();
+  const e = enlace.getBoundingClientRect();
+  if (e.top < caja.top) indice.scrollTop -= caja.top - e.top + 8;
+  else if (e.bottom > caja.bottom) indice.scrollTop += e.bottom - caja.bottom + 8;
+  if (e.left < caja.left) indice.scrollLeft -= caja.left - e.left + 8;
+  else if (e.right > caja.right) indice.scrollLeft += e.right - caja.right + 8;
 }
 
 const rotulo = (texto) => h('p', { class: 'r-rotulo' }, texto);
@@ -516,6 +571,7 @@ function dibujar() {
   document.title = `Resultados · ${NOMBRE_ENCUESTA[datos.encuesta]}`;
   const vista = estado.vista === 'control' && datos.control ? vistaControl(datos) : vistaResultados(datos);
   mostrar(barra(), h('main', {}, encabezado(datos), vista));
+  espiarIndice();
 }
 
 iniciar();

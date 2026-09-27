@@ -48,4 +48,20 @@ describe('reglas del dashboard', () => {
     assert.equal(t.seFueron, 4);
     assert.equal(D.tramoMayor([{ seFueron: 0 }]), null);
   });
+
+  test('índice: se enciende la última sección que cruzó la línea de lectura', () => {
+    const secciones = [
+      { id: 'hallazgos', arriba: -900 },
+      { id: 'tema-0', arriba: -200 },
+      { id: 'seccion-a', arriba: 150 },
+      { id: 'seccion-b', arriba: 1400 },
+    ];
+    assert.equal(D.seccionActiva(secciones, { linea: 240, alFondo: false }), 'seccion-a');
+    assert.equal(D.seccionActiva(secciones, { linea: 100, alFondo: false }), 'tema-0');
+    // Arriba de todo, antes de que la primera llegue a la línea: igual se enciende la primera.
+    assert.equal(D.seccionActiva([{ id: 'x', arriba: 500 }, { id: 'y', arriba: 900 }], { linea: 240, alFondo: false }), 'x');
+    // Al final de la página gana la última aunque no haya subido hasta la línea.
+    assert.equal(D.seccionActiva(secciones, { linea: 240, alFondo: true }), 'seccion-b');
+    assert.equal(D.seccionActiva([], { linea: 240, alFondo: false }), null);
+  });
 });

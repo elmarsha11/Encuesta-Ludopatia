@@ -59,3 +59,21 @@ export function resumenAccesible(d) {
 
 /** Primera letra en minúscula («Deudas» → «deudas»), para «…, según deudas». */
 export const minuscula = (texto) => texto.charAt(0).toLowerCase() + texto.slice(1);
+
+/**
+ * Qué sección del índice se enciende mientras se hace scroll.
+ * Recibe las secciones en orden de la página, con la posición de su borde superior respecto
+ * de la ventana (negativa = ya quedó arriba). Gana la última que cruzó la línea de lectura;
+ * si se llegó al final de la página, la última: una sección corta al fondo nunca sube hasta
+ * la línea y su enlace no se encendería jamás.
+ * @param {{ id: string, arriba: number }[]} secciones
+ * @param {{ linea: number, alFondo: boolean }} vista
+ * @returns {string | null}
+ */
+export function seccionActiva(secciones, { linea, alFondo }) {
+  if (secciones.length === 0) return null;
+  if (alFondo) return secciones.at(-1).id;
+  let activa = secciones[0].id;
+  for (const s of secciones) if (s.arriba <= linea) activa = s.id;
+  return activa;
+}
