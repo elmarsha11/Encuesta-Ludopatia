@@ -91,3 +91,34 @@ Revisá los componentes de las dos direcciones elegidas y armá:
 3. Una lista de lo que un tema NO puede cambiar (estructura, tamaños táctiles mínimos, orden de los elementos).
 Señalame cualquier diferencia entre las dos direcciones que no se pueda resolver solo con variables.
 ```
+
+## Prompt 4 — Dashboard de resultados
+
+Proyecto nuevo: **Dashboard resultados**, conectado al mismo repositorio. Antes, el pull request con `docs/diseno/dashboard/` tiene que estar mergeado en `main` (Claude Design lee la rama principal).
+
+```
+Vas a diseñar el dashboard de resultados de dos encuestas anónimas sobre apuestas: una a estudiantes adultos de un instituto terciario y otra a adolescentes de una escuela. Es una herramienta para LEER datos, no una presentación: claridad antes que decoración.
+
+Antes de diseñar, leé en el repositorio:
+- docs/diseno/dashboard/BRIEF-DASHBOARD.md (quién lo usa, reglas de los datos, pantallas y requisitos técnicos)
+- docs/diseno/dashboard/ejemplo-adultos-grupo.json y ejemplo-adultos-juli.json (datos de ejemplo con la forma exacta que entrega el servidor)
+- design/adultos/tema-b.css (la identidad «Papel y tinta» de la encuesta de adultos: reutilizá su tipografía y sus colores)
+
+Lo más importante, y lo que más cuidado necesita:
+1. Las celdas ocultas por anonimato (n: null, oculto: true) son un estado normal y digno, no un error. Una barra oculta no puede insinuar su valor. Hay cruces enteros ocultos (riesgo_deudas): explicalo con calma.
+2. Cada porcentaje va con su base (n = 27). Los cruces se leen por fila, con la nota de que muestran asociaciones, no causas.
+3. Nada de rojo alarmante ni nada que remita a casinos (tampoco dorado).
+
+Quiero un prototipo interactivo con:
+- Pantalla de acceso (solo contraseña).
+- Resultados en escritorio (1280 px): hallazgos principales arriba, cruces agrupados por sección y todas las preguntas con navegación por secciones. Que también funcione en celular.
+- La sección Control de Juli en celular (390 px): participación, embudo de abandono y evolución por día (datos en ejemplo-adultos-juli.json).
+- Estados: cargando, sin respuestas todavía, sesión vencida, error de conexión.
+- Estilos de impresión.
+
+Técnica: HTML/CSS/JS sin framework y gráficos hechos a mano con HTML/CSS o SVG, sin librerías ni recursos externos (ni CDN ni Google Fonts). Componentes reutilizables que se dibujen a partir del JSON, y tokens como variables CSS.
+
+Proponeme 2 direcciones visuales para los gráficos antes de profundizar en una.
+```
+
+Al hacer el handoff, subilo a `design/dashboard/` como las encuestas.

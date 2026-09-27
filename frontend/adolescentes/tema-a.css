@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Tema A · Noche tranquila (con los bordes de B)
+   Encuesta de adolescentes (12 a 17)
+
+   Un solo archivo con dos partes:
+   1. TOKENS (:root): las decisiones de diseño con nombre. El tema de adultos
+      reemplaza SOLO este bloque.
+   2. COMPONENTES: las clases que usa el motor. Colores, tipografías, tamaños
+      de letra, radios, bordes y duraciones salen SIEMPRE de un token; solo
+      algunos ajustes finos de padding están escritos a mano.
+   Las tipografías se sirven desde nuestro propio servidor (nada de CDN).
+   ========================================================================== */
+
+@font-face{font-family:"Space Grotesk";src:url(fuentes/space-grotesk-latin-wght-normal.woff2) format("woff2");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible Next";src:url(fuentes/atkinson-hyperlegible-next-latin-wght-normal.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+
+/* 1. TOKENS ================================================================ */
+:root{
+  /* Color · base */
+  --color-fondo:#16142B;
+  --color-superficie:#221F3F;
+  --color-superficie-hover:#2C2851;
+  --color-pista:#2E2A55;
+  --color-borde-suave:#3A3566;   /* divisores y contenedores: decorativo */
+  --color-borde:#8F88C9;         /* borde de controles: 5.6:1 sobre el fondo */
+  /* Color · texto */
+  --color-texto:#F1EEFA;         /* 15.7:1 */
+  --color-texto-2:#DAD6EE;       /* 12.7:1 */
+  --color-texto-3:#B7B1D6;       /*  8.8:1 */
+  /* Color · acentos */
+  --color-lila:#B8A8FF;
+  --color-agua:#7EDDD1;
+  --color-accion:#FF9600;        /* solo la acción principal · texto encima 8.0:1 */
+  --color-accion-hover:#FFAA33;
+  --color-sobre-accion:#1A1530;
+  --color-seleccion:var(--color-lila);
+  --color-sobre-seleccion:#16142B;
+  --color-foco:var(--color-agua);
+  --color-aviso-fondo:#2A2447;   /* avisos calmos: nunca rojo */
+  --color-aviso-borde:var(--color-accion);
+
+  /* Tipografía */
+  --fuente-titulo:"Space Grotesk","Trebuchet MS",system-ui,sans-serif;
+  --fuente-texto:"Atkinson Hyperlegible Next",system-ui,"Segoe UI",sans-serif;
+  --fuente-codigo:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --tam-cuerpo:16px;             /* mínimo: también evita el zoom de iOS */
+  --tam-opcion:17px;
+  --tam-cuerpo-l:18px;
+  --tam-lead:20px;
+  --tam-h3:22px;
+  --tam-h2:26px;
+  --tam-h1:34px;
+  --tam-pregunta:28px;
+  --tam-cierre:36px;
+  --tam-numero:40px;
+  --tam-codigo:13px;
+  --peso-titulo:600;
+  --peso-fuerte:600;
+  --interlineado-titulo:1.12;
+  --interlineado-texto:1.5;
+
+  /* Espaciado (base 4) */
+  --esp-1:4px;--esp-2:8px;--esp-3:12px;--esp-4:16px;--esp-5:20px;--esp-6:24px;--esp-7:32px;--esp-8:48px;
+  --margen-pantalla:24px;
+
+  /* Forma: los bordes de B */
+  --borde-ancho:2px;
+  --radio-s:8px;
+  --radio-m:12px;
+  --radio-l:18px;
+  --radio-pill:999px;
+
+  /* Interacción */
+  --toque-min:48px;
+  --alto-boton:52px;
+  --alto-opcion:56px;
+  --alto-punto:64px;
+  --foco-ancho:3px;
+  --foco-separacion:3px;
+
+  /* Movimiento · ritmo "tranquilo" (el que se usa por defecto).
+     El motor LEE --dur-salida y --pausa-autoavance desde acá: no hay que
+     repetir estos números en JavaScript. */
+  --curva-suave:cubic-bezier(.22,.61,.36,1);   /* entra y frena despacio */
+  --curva-salida:cubic-bezier(.55,0,1,.45);    /* se va acelerando, como al deslizar el dedo */
+  --curva-galeria:cubic-bezier(.16,1,.3,1);    /* llega rápido y se asienta suave, como una foto */
+  --dur-rapida:200ms;          /* cambio de estado de un control */
+  --dur-salida:260ms;          /* la pantalla actual se va (deslizamiento completo) */
+  --dur-entrada:520ms;         /* la siguiente llega */
+  --dur-lenta:900ms;           /* píxeles y barra de progreso */
+  --pausa-autoavance:900ms;    /* tiempo para ver lo elegido antes de pasar */
+  --retraso-escalonado:70ms;   /* entre opción y opción al aparecer */
+  --dur-ola:3200ms;            /* una subida y bajada completa de cada píxel */
+  --ola-altura:3px;            /* leve: apenas se nota */
+  --carrusel-distancia:calc(100% + var(--margen-pantalla)); /* pantalla completa, como pasar de foto en una galería */
+}
+
+/* Ritmos alternativos (Tweak "ritmo"): solo cambian tokens de movimiento */
+.ritmo-medio{--dur-salida:220ms;--dur-entrada:420ms;--pausa-autoavance:650ms;--retraso-escalonado:50ms}
+.ritmo-agil{--dur-salida:180ms;--dur-entrada:320ms;--pausa-autoavance:450ms;--retraso-escalonado:35ms}
+
+/* 2. COMPONENTES =========================================================== */
+
+body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family:var(--fuente-texto)}
+
+/* Pantalla: columna única, scrollea por dentro */
+.app{box-sizing:border-box;display:flex;flex-direction:column;overflow-x:hidden;overflow-y:auto;padding:var(--esp-4) var(--margen-pantalla) 0;background:var(--color-fondo);color:var(--color-texto);font-family:var(--fuente-texto);font-size:var(--tam-cuerpo);line-height:var(--interlineado-texto)}
+
+/* Barra superior: solo el indicador de anonimato, siempre visible */
+.barra{display:flex;align-items:center;min-height:var(--toque-min);flex-shrink:0}
+.anonima{margin:0 0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 10px;border:1px solid var(--color-borde-suave);border-radius:var(--radio-pill);color:var(--color-texto-2);font-size:var(--tam-cuerpo);font-weight:var(--peso-fuerte);line-height:1}
+.anonima span{font-weight:700;color:var(--color-accion)}   /* decisión de Juli en el editor: la palabra en naranja */
+
+/* Progreso: nombre de sección + barra discreta (sin segmentos ni premios) */
+.progreso-bloque{margin-top:var(--esp-3);display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+.progreso-seccion{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo);font-weight:500;letter-spacing:.01em;color:var(--color-texto-3)}
+.progreso{appearance:none;-webkit-appearance:none;display:block;width:100%;height:4px;border:0;border-radius:2px;background:var(--color-pista);overflow:hidden}
+.progreso::-webkit-progress-bar{background:var(--color-pista);border-radius:2px}
+.progreso::-webkit-progress-value{background:var(--color-agua);border-radius:2px;transition:width var(--dur-lenta) var(--curva-suave)}
+.progreso::-moz-progress-bar{background:var(--color-agua);border-radius:2px}
+
+/* Motivo de píxeles: ruido al principio, orden al final. Decorativo (aria-hidden).
+   Cada píxel llega con un pequeño retraso propio (inline), así se "acomodan" de a uno. */
+.motivo{position:relative;height:56px;margin-top:var(--esp-4);flex-shrink:0}
+/* Onda constante y leve: cada píxel sube y baja 3px; el desfase (animation-delay inline) la hace viajar */
+.px{position:absolute;width:6px;height:6px;animation:ola var(--dur-ola) ease-in-out infinite;transition:left var(--dur-lenta) var(--curva-suave),top var(--dur-lenta) var(--curva-suave),opacity var(--dur-lenta) ease,background-color var(--dur-lenta) ease}
+
+/* Contenido de cada pantalla: carrusel.
+   Adelante: la pregunta se va a la izquierda y la siguiente llega desde la derecha.
+   Atrás: al revés. Cada clase de entrada existe dos veces (-0 / -1) para que el
+   navegador reinicie la animación en cada cambio de pantalla. */
+.contenido{display:flex;flex-direction:column;flex:1 0 auto}
+.salir-adelante{animation:salir-adelante var(--dur-salida) var(--curva-salida) forwards;pointer-events:none}
+.salir-atras{animation:salir-atras var(--dur-salida) var(--curva-salida) forwards;pointer-events:none}
+.entrar-adelante-0{animation:entrar-adelante-0 var(--dur-entrada) var(--curva-galeria) both}
+.entrar-adelante-1{animation:entrar-adelante-1 var(--dur-entrada) var(--curva-galeria) both}
+.entrar-atras-0{animation:entrar-atras-0 var(--dur-entrada) var(--curva-galeria) both}
+.entrar-atras-1{animation:entrar-atras-1 var(--dur-entrada) var(--curva-galeria) both}
+/* Deslizamiento tipo galería: la pantalla entera se corre, sin desvanecerse */
+@keyframes salir-adelante{to{transform:translateX(calc(var(--carrusel-distancia) * -1))}}
+@keyframes salir-atras{to{transform:translateX(var(--carrusel-distancia))}}
+@keyframes entrar-adelante-0{from{transform:translateX(var(--carrusel-distancia))}to{transform:none}}
+@keyframes entrar-adelante-1{from{transform:translateX(var(--carrusel-distancia))}to{transform:none}}
+@keyframes entrar-atras-0{from{transform:translateX(calc(var(--carrusel-distancia) * -1))}to{transform:none}}
+@keyframes entrar-atras-1{from{transform:translateX(calc(var(--carrusel-distancia) * -1))}to{transform:none}}
+/* En la galería la pantalla llega entera: sin aparición escalonada adentro */
+[class*="entrar-adelante"] [class*="aparecer-"],[class*="entrar-atras"] [class*="aparecer-"]{animation:none}
+/* Primera carga (o cambio de escenario): aparece en el lugar, sin deslizarse */
+.entrar-quieto-0{animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+.entrar-quieto-1{animation:aparecer-1 var(--dur-entrada) var(--curva-suave) both}
+
+/* Aparición escalonada (opciones, puntos, bloques): solo opacidad y 6px, muy sutil.
+   El retraso de cada elemento va inline (animation-delay). */
+.aparecer-0{animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+.aparecer-1{animation:aparecer-1 var(--dur-entrada) var(--curva-suave) both}
+@keyframes aparecer-0{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes aparecer-1{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Textos */
+.portada-titulo{margin:var(--esp-2) 0 0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
+.portada-texto{margin:var(--esp-5) 0 0;font-size:var(--tam-lead);line-height:1.4;color:var(--color-texto);text-wrap:pretty}
+.puntos{margin:var(--esp-6) 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px}
+.punto-lista{display:flex;gap:14px;align-items:baseline;color:var(--color-texto-2);text-wrap:pretty}
+.punto-lista::before{content:"";flex-shrink:0;width:8px;height:8px;background:var(--color-agua);transform:translateY(-2px)}
+.punto-lista strong{color:var(--color-texto);font-weight:var(--peso-fuerte)}
+.portada-cierre{margin:var(--esp-6) 0 0;color:var(--color-texto-2);text-wrap:pretty}
+/* Decisión de Juli en el editor: texto justificado. En columnas angostas deja huecos entre
+   palabras; la división en sílabas (hyphens, con lang="es") los achica. */
+.portada-texto,.portada-cierre{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.pregunta-texto{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-pregunta);line-height:1.18;font-weight:var(--peso-titulo);letter-spacing:-.01em;text-wrap:balance}
+.pregunta-texto--larga{font-size:var(--tam-h3);line-height:1.25}
+.pista{margin:var(--esp-3) 0 0;color:var(--color-texto-3)}
+.seccion{margin-top:var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
+.seccion-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
+.seccion-desc{margin:0;font-size:var(--tam-cuerpo-l);color:var(--color-texto-2);text-wrap:pretty}
+.mensaje{margin-top:var(--esp-4);display:flex;flex-direction:column;gap:14px}
+.mensaje-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h2);line-height:1.15;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
+.cierre-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-cierre);line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
+.mensaje-texto{margin:0;font-size:var(--tam-cuerpo-l);color:var(--color-texto-2);text-wrap:pretty}
+
+/* Botones */
+.btn{box-sizing:border-box;min-height:var(--alto-boton);min-width:132px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:var(--borde-ancho) solid transparent;border-radius:var(--radio-m);font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);font-weight:var(--peso-titulo);text-decoration:none;cursor:pointer;transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease,color var(--dur-rapida) ease,transform var(--dur-rapida) ease}
+.btn:active{transform:scale(.98)}
+.btn--primario{background:var(--color-accion);border-color:var(--color-accion);color:var(--color-sobre-accion)}
+.btn--primario:hover{background:var(--color-accion-hover);border-color:var(--color-accion-hover)}
+.btn--secundario{background:transparent;border-color:var(--color-borde);color:var(--color-texto)}
+.btn--secundario:hover{background:var(--color-superficie-hover)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+/* Atrás: abajo a la izquierda, al alcance del pulgar. Sin borde para que no compita con la acción. */
+.btn-volver{min-height:var(--alto-boton);margin-left:-10px;padding:0 16px 0 8px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:0;border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
+.btn-volver:hover{color:var(--color-texto);background:var(--color-superficie)}
+.consentimiento{margin-top:auto;padding:var(--esp-7) 0 var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
+.consentimiento-pregunta{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h3);line-height:1.2;font-weight:var(--peso-titulo)}
+.consentimiento-botones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--esp-3)}
+.consentimiento-botones .btn{min-height:56px}
+
+/* Pie fijo: Atrás a la izquierda, la acción a la derecha. No se mueve con el carrusel. */
+.pie{position:sticky;bottom:0;margin-top:auto;padding:var(--esp-4) 0 var(--esp-6);display:flex;align-items:center;gap:var(--esp-3);background:var(--color-fondo);flex-shrink:0}
+.pie-accion{margin-left:auto}
+
+/* Contenedor de la pregunta (variante con tarjeta) */
+.sin-tarjeta{margin-top:var(--esp-2)}
+.tarjeta{margin-top:var(--esp-2);padding:var(--esp-5);border:var(--borde-ancho) solid var(--color-borde-suave);border-radius:var(--radio-l);background:var(--color-superficie)}
+.grupo{margin:0;padding:0;border:0;min-width:0}
+.grupo-leyenda{padding:0;margin:0;width:100%}
+
+/* Opción (única = radio, múltiple = checkbox). El input real queda oculto pero accesible. */
+.opciones{margin-top:var(--esp-5);display:flex;flex-direction:column;gap:10px}
+.opcion{position:relative;box-sizing:border-box;min-height:var(--alto-opcion);padding:12px 16px;display:flex;align-items:center;gap:14px;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);background:var(--color-superficie);color:var(--color-texto);font-size:var(--tam-opcion);line-height:1.35;cursor:pointer;transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease,color var(--dur-rapida) ease}
+.opcion:hover{background:var(--color-superficie-hover)}
+.opcion--marcada,.opcion--marcada:hover{background:var(--color-seleccion);border-color:var(--color-seleccion);color:var(--color-sobre-seleccion);font-weight:var(--peso-fuerte)}
+.opcion-input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.opcion-marca{flex-shrink:0;box-sizing:border-box;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid currentColor;transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease}
+.opcion--radio .opcion-marca{border-radius:50%}
+.opcion--check .opcion-marca{border-radius:6px}
+.opcion-marca svg{opacity:0}
+.opcion--marcada .opcion-marca{background:var(--color-sobre-seleccion);border-color:var(--color-sobre-seleccion);color:var(--color-seleccion)}
+.opcion--marcada .opcion-marca svg{opacity:1;animation:marcar var(--dur-entrada) var(--curva-suave) both}
+@keyframes ola{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--ola-altura) * -1))}}
+@keyframes marcar{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+.separador{height:0;margin:6px 0 2px;border-top:1px dashed var(--color-borde-suave)}
+
+/* Escala: los puntos se reparten solos (sirve para 1-5 y para 0-3 de adultos) */
+.escala{margin-top:var(--esp-7);display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--esp-2)}
+.punto{position:relative;box-sizing:border-box;height:var(--alto-punto);display:flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);background:var(--color-superficie);color:var(--color-texto);font-family:var(--fuente-titulo);font-size:var(--tam-h3);font-weight:var(--peso-titulo);cursor:pointer;transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease,color var(--dur-rapida) ease}
+.punto:hover{background:var(--color-superficie-hover)}
+.punto--marcado,.punto--marcado:hover{background:var(--color-seleccion);border-color:var(--color-seleccion);color:var(--color-sobre-seleccion)}
+.punto--marcado span:first-of-type{animation:marcar var(--dur-entrada) var(--curva-suave) both}
+.escala-extremos{margin-top:var(--esp-3);display:flex;justify-content:space-between;gap:var(--esp-4);color:var(--color-texto-3);line-height:1.3}
+.escala-extremos span{max-width:130px}
+.escala-extremos span:last-child{text-align:right}
+
+/* Campos */
+.campo{box-sizing:border-box;width:100%;padding:14px 16px;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);background:var(--color-superficie);color:var(--color-texto);font-family:var(--fuente-texto);font-size:var(--tam-cuerpo-l);line-height:var(--interlineado-texto);transition:border-color var(--dur-rapida) ease}
+.campo:focus{outline:var(--foco-ancho) solid var(--color-foco);outline-offset:var(--foco-separacion)}
+.campo[aria-invalid="true"]{border-color:var(--color-aviso-borde)}
+.campo--numero{margin-top:var(--esp-6);width:136px;padding:8px 12px;font-family:var(--fuente-titulo);font-size:var(--tam-numero);font-weight:var(--peso-titulo);text-align:center;letter-spacing:.04em}
+.campo--texto{margin-top:var(--esp-5);min-height:190px;resize:vertical}
+.contador{margin:var(--esp-2) 0 0;text-align:right;color:var(--color-texto-3);font-variant-numeric:tabular-nums}
+.contador--cerca{color:var(--color-accion)}
+
+/* Aviso calmo (edad fuera de rango, etc.): cálido, sin rojo, sin alarma */
+.aviso{margin:var(--esp-5) 0 0;padding:14px 16px;display:flex;gap:var(--esp-3);align-items:flex-start;border:var(--borde-ancho) solid var(--color-aviso-borde);border-radius:var(--radio-m);background:var(--color-aviso-fondo);color:var(--color-texto);line-height:1.45;animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+.aviso svg{flex-shrink:0;margin-top:2px;color:var(--color-accion)}
+
+/* Líneas de ayuda: visibles y tocables, sin tono alarmista */
+.ayuda{margin:var(--esp-7) 0 var(--esp-6);padding:var(--esp-5);display:flex;flex-direction:column;gap:var(--esp-3);border:var(--borde-ancho) solid var(--color-borde-suave);border-radius:var(--radio-l);background:var(--color-superficie)}
+.ayuda-intro{margin:0 0 var(--esp-1);color:var(--color-texto-2)}
+.linea{box-sizing:border-box;min-height:64px;padding:12px 14px;display:flex;align-items:center;gap:14px;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);background:var(--color-superficie);color:var(--color-texto);text-decoration:none;transition:background-color var(--dur-rapida) ease}
+.linea:hover{background:var(--color-superficie-hover)}
+.linea-icono{flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid var(--color-agua);border-radius:var(--radio-pill);color:var(--color-agua)}
+.linea-textos{display:flex;flex-direction:column;gap:2px}
+.linea-numero{font-family:var(--fuente-titulo);font-size:var(--tam-h3);font-weight:var(--peso-titulo);letter-spacing:.01em;color:var(--color-agua)}
+.linea-desc{line-height:1.35;color:var(--color-texto-2)}
+
+/* Foco visible en todo lo tocable. .es-foco solo sirve para documentar el estado. */
+.btn:focus-visible,.btn-volver:focus-visible,.linea:focus-visible,
+.opcion:has(.opcion-input:focus-visible),.punto:has(.opcion-input:focus-visible),
+.es-foco{outline:var(--foco-ancho) solid var(--color-foco);outline-offset:var(--foco-separacion)}
+
+/* Al cambiar de pantalla, el foco pasa al título (tabindex="-1") para que el lector
+   de pantalla lo anuncie; ese foco programático no necesita anillo. */
+.app h1:focus{outline:none}
+
+/* Solo para lectores de pantalla */
+.solo-lector{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Panel de desarrollo (solo prototipo): muestra el cuerpo del POST */
+.panel-dev{margin:0 0 var(--esp-6);padding:10px 12px;border:1px dashed var(--color-borde-suave);border-radius:var(--radio-m);color:var(--color-texto-3);font-size:var(--tam-cuerpo)}
+.panel-dev summary{cursor:pointer;min-height:var(--toque-min);display:flex;align-items:center}
+.panel-dev pre{margin:var(--esp-2) 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--fuente-codigo);font-size:var(--tam-codigo);line-height:1.45;color:var(--color-texto-2)}
+
+/* Quien pidió menos movimiento (sistema operativo): sin animaciones ni deslizamientos.
+   El motor también se saltea la fase de salida. La pausa para ver la selección se mantiene. */
+@media (prefers-reduced-motion: reduce){
+  .px{animation:none}
+  .px,.btn,.btn-volver,.opcion,.opcion-marca,.punto,.linea,.campo{transition:none}
+  .btn:active{transform:none}
+  .salir-adelante,.salir-atras,
+  .entrar-adelante-0,.entrar-adelante-1,.entrar-atras-0,.entrar-atras-1,
+  .entrar-quieto-0,.entrar-quieto-1,.aparecer-0,.aparecer-1,.aviso,
+  .opcion--marcada .opcion-marca svg,.punto--marcado span:first-of-type{animation:none}
+  .progreso::-webkit-progress-value{transition:none}
+}

@@ -234,7 +234,9 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
   - **141**: línea nacional gratuita de SEDRONAR para consumos y adicciones.
   Mismo texto en ambas encuestas, sin tono alarmista ("Si vos o alguien cercano quiere hablar sobre esto…"). **No se muestra el puntaje ni un "diagnóstico"** al encuestado: una encuesta no diagnostica.
 - **Consentimiento para la encuesta de adolescentes**: hoy la autorización institucional es solo de palabra. PROPUESTA fuerte: conseguir **por escrito** (un email alcanza) la autorización de la dirección de la escuela, y enviar una **nota informativa a las familias**. Es una encuesta a menores sobre un tema sensible: tenerlo por escrito protege a los chicos, a la escuela y a Juli. Es una cuestión institucional, no técnica, y no reemplaza el asesoramiento de la institución.
-- **Docentes con acceso al dashboard de adolescentes**: los docentes conocen a sus alumnos, así que en un curso chico edad + género alcanzan para adivinar quién respondió qué, y el comentario libre puede delatar a su autor aunque no tenga el nombre. Por eso (PROPUESTA): el dashboard de docentes muestra **solo datos agregados** y oculta cualquier cruce con menos de 5 respuestas; el Excel crudo y los comentarios libres los ve **solo Juli**, que decide qué compartir.
+- **Docentes con acceso al dashboard de adolescentes**: los docentes conocen a sus alumnos, así que en un curso chico edad + género alcanzan para adivinar quién respondió qué, y el comentario libre puede delatar a su autor aunque no tenga el nombre. Por eso (DECIDIDO): el dashboard de docentes muestra **solo datos agregados** y oculta cualquier celda con menos de 5 respuestas; el Excel crudo y los comentarios libres los ve **solo Juli**, que decide qué compartir.
+- **La misma regla de menos de 5 vale para el dashboard de adultos** (DECIDIDO): en un cruce como carrera × riesgo PGSI, una carrera chica puede dejar a una sola persona en una celda, y sus compañeros de cursada la reconocerían.
+- **«Prefiero no responder» en las preguntas sensibles de adultos** (DECIDIDO): si apostó en los últimos 12 meses, ingresos, deudas, deuda relativa, monto por apuesta y origen del dinero. Siguen siendo obligatorias (hay que elegir algo), pero obligar sin esa salida empuja a mentir o a abandonar. En las escalas se guarda en una columna aparte (`*_no_responde`), nunca como un número especial dentro de la escala. **El PGSI no la tiene**: es un instrumento validado y su puntaje necesita los 9 ítems. Quien no dice si apostó no ve ninguna de las dos ramas.
 - No se guardan direcciones IP en la base ni en logs propios.
 
 ## 8. Arquitectura técnica
@@ -252,11 +254,16 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
 - **Node.js + Express.**
 - Endpoints:
   - `POST /api/respuestas/adultos`, `POST /api/respuestas/adolescentes` — públicos.
-  - `GET /api/dashboard/:encuesta` — datos agregados. **Protegido.**
-  - `GET /api/export/:encuesta` — Excel. **Protegido.**
-- Protección de dashboard/export: contraseña distinta por encuesta, guardada en `.env` y nunca en el frontend (DECIDIDO):
-  - Adultos: el grupo que encargó el trabajo (dashboard + Excel).
-  - Adolescentes: un grupo de docentes (solo dashboard agregado, ver sección 7) y Juli (todo).
+  - `POST /api/eventos/:encuesta` — eventos del recorrido (8.7). Público.
+  - `POST /api/acceso`, `GET /api/sesion`, `POST /api/salir` — acceso a los resultados.
+  - `GET /api/resultados/:encuesta` — datos agregados. **Protegido.**
+  - `GET /api/exportar/:encuesta` — Excel. **Protegido.**
+- Protección de resultados (IMPLEMENTADO, `backend/acceso.js`): una contraseña por rol en `.env` (`CLAVE_JULI`, `CLAVE_ADULTOS`, `CLAVE_DOCENTES`), nunca en el frontend. Vacía = ese acceso no existe.
+  - Al ingresar se abre una sesión de 8 horas: una llave aleatoria en una cookie `HttpOnly` y `SameSite=Strict` (`Secure` con HTTPS). Las sesiones viven en memoria: si el servidor se reinicia, hay que volver a ingresar.
+  - Las contraseñas se comparan en tiempo constante. Hay 10 intentos fallidos cada 15 minutos por IP.
+  - Adultos: el grupo que encargó el trabajo (dashboard + Excel de resultados).
+  - Adolescentes: un grupo de docentes (solo dashboard agregado, ver sección 7).
+  - Juli: todo, sin ocultar, con el control de participación y el Excel completo.
 - **Anti-abuso** (el POST es público): límite de envíos por IP y por minuto (`express-rate-limit`), límite de tamaño del body, y validación estricta de cada campo (tipo, opciones permitidas, coherencia con la bifurcación).
 - **Ventanas de apertura** (PROPUESTA): las fechas (19 al 23/10) y las franjas horarias de cada encuesta se configuran en `.env`. Fuera de esas ventanas, el POST responde "encuesta cerrada" y el frontend muestra cuándo vuelve a abrir. Dashboard y export siguen andando siempre. Así lo que se habilita no depende de acordarse de prender o apagar nada a mano.
 - **Fuente única de verdad** (PROPUESTA): la definición de cada encuesta (preguntas, opciones, bifurcaciones) en un archivo propio del backend. De ahí salen la validación, los encabezados del Excel y los datos del dashboard, para no mantener la misma lista de opciones en cuatro lugares distintos.
@@ -271,8 +278,47 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
 - Librería Node: PROPUESTA **`@libsql/client`**. Habla el mismo SQL que SQLite y funciona tanto con un archivo local (`file:encuestas.db`) como con una base SQLite en la nube (Turso). El código no cambia si el hosting cambia (ver 8.5), así que esta decisión no queda atada a la de hosting.
 
 ### 8.4 Exportación
-1. **Excel** (`exceljs`): datos crudos, una fila por respuesta, una columna por opción de las preguntas múltiples, fecha sin hora. En adultos se incluye la columna calculada `pgsi_total` y su categoría.
-2. **Dashboard web** (una página por encuesta, protegida): gráficos con Chart.js alimentados por los endpoints de agregación. Los porcentajes de preguntas de rama usan como denominador **solo a quienes vieron la pregunta**.
+1. **Excel** (`exceljs`, IMPLEMENTADO en `backend/resultados/excel.js`), en dos versiones:
+   - **De resultados** (grupo y docentes): las mismas tablas del dashboard (Resumen, Preguntas, Cruces), con la regla de anonimato. **Sin filas por persona**: edad exacta + carrera + género alcanzan para reconocer a alguien de una carrera chica, y en esa fila están sus deudas y su riesgo PGSI. Si Juli decide compartir algo crudo, lo decide ella mirando los datos (PROPUESTA: si el grupo lo necesita, darle las respuestas con la edad agrupada y sin la carrera exacta).
+   - **Completa** (solo Juli): además, las respuestas crudas (una fila por respuesta, una columna por opción de las múltiples, fecha sin hora, `pgsi_total` y categoría, comentario libre), un diccionario de columnas y la participación.
+   - `exceljs` 4.4.0 trae una alerta moderada de `npm audit` en su dependencia `uuid` (GHSA-w5hq-g745-h8pq): afecta a los UUID v3/v5/v6 generados con un buffer propio, algo que este uso no hace. El «arreglo» que propone npm es bajar a exceljs 3.4.0, que es peor.
+2. **Dashboard web**: ver 8.6.
+
+### 8.6 Dashboards (DECIDIDO, en construcción)
+
+- **Un motor, dos configuraciones**, igual que las encuestas. La base se genera sola desde la definición de cada encuesta: cada pregunta de opción o escala es un gráfico de frecuencias. Encima, cada encuesta configura lo que no se deduce solo: cruces y bloques especiales (distribución PGSI).
+- **El servidor manda solo números agregados**, nunca filas individuales: aunque alguien abra las herramientas del navegador, las respuestas de una persona no llegan a su computadora.
+- **Celdas con menos de 5 respuestas: ocultas** en los dos dashboards (sección 7).
+- **Tamaño esperado: entre 70 y 100 respuestas por encuesta** (puede variar). Con ~30% de apostadores, el PGSI tendría **20 a 30 personas**: alcanza para mostrar su distribución, pero casi cualquier cruce del PGSI con otra variable deja celdas de menos de 5. Por eso:
+  - Los cruces principales usan **toda la muestra**: «apostó en el último año sí/no» según ingresos, deudas, entorno, publicidad y educación financiera.
+  - El PGSI se muestra como distribución, y cruzado solo en 2 grupos (sin riesgo o bajo / moderado o problemático) contra variables de 2 niveles.
+  - Los gráficos de una sola pregunta muestran todas las categorías.
+  - Cada porcentaje lleva su base (`n = 25`), y en preguntas de rama la base es solo quien vio la pregunta.
+- **Lenguaje**: la encuesta se toma una sola vez, así que muestra **asociaciones, no causas**. El dashboard dice «entre quienes tienen deudas, X% está en riesgo moderado o más», nunca «las deudas causan…».
+- **Preguntas de investigación propuestas para adultos** (a confirmar con el grupo): panorama (cuántos apostaron, distribución PGSI); situación económica (riesgo según ingresos, deudas y dependientes; origen del dinero); entorno y publicidad (familiares que apuestan, creencia de plata fácil, canales); educación financiera (¿quienes la recibieron apuestan menos o tienen menos riesgo? ¿cuántos quieren recibirla?).
+- **Accesos**:
+  - Juli: todo, en cualquier momento, incluida una sección de **control** durante la semana: embudo de participación (8.7), entradas y respuestas **por día** (no por franja: la hora no se guarda, por anonimato) y reparto por carrera, para detectar a tiempo si una carrera casi no respondió. Juli ve las cantidades sin ocultar.
+  - Grupo de adultos y docentes: el dashboard de su encuesta. Lo reciben **al terminar la semana**, junto con el Excel (adultos).
+  - Cada contraseña va en `.env`. **Mientras la de un grupo esté vacía, ese acceso no existe**: se carga recién al cerrar la encuesta, así nadie entra antes aunque tenga el link.
+- Gráficos servidos desde el propio servidor (la CSP no permite CDN).
+- **Implementado el cálculo** (`backend/resultados/`): distribución de cada pregunta, cruces configurados en `configuracion.js` y embudo. La regla de anonimato incluye **supresión secundaria**: si en una distribución o en una fila o columna de un cruce queda una sola celda oculta, se oculta otra, porque con el total a la vista una sola se despeja restando. `npm run resultados -- adultos` lo muestra en la terminal.
+  - En los cruces, la celda extra se elige completando un rectángulo de celdas ocultas, para no arrastrar filas enteras en cadena.
+  - Las opciones que abren una rama («Apostó: sí») **no se ocultan de más**: su cantidad ya es pública como base de las preguntas de esa rama. Límite conocido y aceptado: si todas las ramas de una pregunta son públicas, la opción que no abre ninguna («Prefiero no responder») se despeja restando del total. Protegerla obligaría a ocultar secciones enteras, y lo único que revela es que alguien no quiso contestar, sin ningún dato sobre esa persona. (Lo detectó la revisión de Claude Design.)
+- **Implementada la página** (`/resultados/`, `frontend/resultados/`) con la dirección **1a «Renglones»** de `design/dashboard/`. Se eligió sobre 1b porque:
+  - los renglones horizontales admiten cualquier cantidad de opciones y textos largos (la carrera tiene 9 opciones; en columnas no entran) y se leen bien en el celular;
+  - lo oculto se escribe en vez de dibujarse, así nunca insinúa su tamaño;
+  - se imprime prolijo.
+  - Las pantallas que el handoff dejó sin diseñar (acceso, índice, Control, estados, impresión) siguen el mismo lenguaje.
+
+### 8.7 Eventos del recorrido (DECIDIDO, implementado)
+
+Para saber **cuántos no participaron** y **en qué pantalla se abandona**, en las dos encuestas. Hoy la tabla de respuestas solo tiene a quienes terminaron.
+
+- Tabla `eventos`: `fecha` (sin hora), `encuesta`, `evento` y, si corresponde, `pregunta`. **Sin identificador de sesión, sin hora y sin IP**: los eventos no se pueden unir entre sí ni con una respuesta, solo contar. De solo agregar, como las respuestas.
+- Eventos: `entro` (vio la portada), `acepto`, `no_participa`, `edad_fuera` (puso una edad que no corresponde: detecta QR equivocados) y `vio` + pregunta (llegó a esa pantalla).
+- Cada evento se manda **una vez por pestaña** (se anota en `sessionStorage`): recargar o volver atrás no cuenta doble.
+- **Son aproximados**: quien abre la encuesta en dos celulares cuenta dos veces, y el endpoint es público (se valida que el evento y la pregunta existan, con límite por minuto). Sirven para ver tendencias, no como dato exacto. Fuera de horario no se registran.
+- Cómo se lee el abandono: comparar cuántos **vieron** preguntas que ve todo el mundo (las que no tienen `visibleSi`). Entre dos de ellas, la diferencia es la gente que se fue en ese tramo. Adentro de una rama, la caída se compara con quienes vieron la primera pregunta de esa rama.
 
 ### 8.5 Servidor y despliegue — DECIDIDO: se prueba la opción B (costo $0)
 
@@ -330,10 +376,10 @@ Encuesta-Ludopatia/
 
 1. ✅ **Base de datos**: `database/schema.sql` generado desde las definiciones, con CHECKs y triggers de solo agregar.
 2. ✅ **Backend núcleo**: Express, `@libsql/client`, definición de ambas encuestas, `POST /api/respuestas/:encuesta` con validación, límite de envíos, helmet y 32 tests automáticos.
-3. 🔄 **Diseño** (en conjunto, Claude Design): material listo en `docs/diseno/` (brief, guía con prompts, contrato, contenido generado). DECIDIDO: dos identidades distintas (adolescentes: curiosa y confiable, no divertida; adultos: editorial y detallada) sobre un mismo motor de componentes con dos temas. Sin restricciones de color.
-4. **Frontend**: implementación del diseño con la lógica de bifurcación.
-5. **Integración** frontend ↔ backend.
-6. **Dashboards** + **exportación Excel** + **autenticación**.
+3. ✅ **Diseño** (en conjunto, Claude Design): material listo en `docs/diseno/` (brief, guía con prompts, contrato, contenido generado). DECIDIDO: dos identidades distintas (adolescentes: curiosa y confiable, no divertida; adultos: editorial y detallada) sobre un mismo motor de componentes con dos temas. Sin restricciones de color.
+4. ✅ **Frontend**: adolescentes (tema "Noche tranquila") y adultos (tema "Papel y tinta") sobre el mismo motor sin framework, traducido de los prototipos de Claude Design. El motor elige cada componente por la forma de la pregunta (tramos, frecuencia PGSI, opciones agrupadas, nota de ayuda, pantalla info). Ambos probados de punta a punta en Chromium. Quedan textos marcados PROPUESTA para revisar con cada grupo.
+5. ✅ **Integración** frontend ↔ backend (ambas encuestas), con ventanas de apertura (`VENTANAS_*`) y pantalla de encuesta cerrada.
+6. ✅ **Dashboards** + **exportación Excel** + **autenticación**: cálculo con regla de anonimato, página `/resultados/` con acceso por rol, Control de participación y Excel en dos versiones. Probado de punta a punta en Chromium (escritorio, celular e impresión).
 7. **Prueba piloto** con 3-5 personas por encuesta: medir tiempos, detectar preguntas confusas.
 8. **Despliegue** + generación de los dos QR.
 9. **Cierre**: backup y apagado.
@@ -348,5 +394,8 @@ Encuesta-Ludopatia/
 | 5 | Verificar las líneas de ayuda 0800-444-4000 y 141 | Juli |
 | 6 | Franjas horarias de cada institución (19 al 23/10) | Juli |
 | 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
+| 9 | Preguntas de investigación del dashboard de adultos (hay una propuesta en 8.6) | Grupo |
+| 10 | Elegir las tres contraseñas de resultados (12+ caracteres, distintas) y cargar la del grupo y la de docentes recién al cerrar la encuesta | Juli |
+| 11 | Confirmar que el grupo recibe el Excel de resultados (sin filas por persona) y no el crudo (8.4) | Juli |
 
-**Ya decidido:** ingresos medidos en salarios mínimos; cortes del monto apostado ($10k / 25k / 50k / 100k); hosting opción B con la A de respaldo; respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard.
+**Ya decidido:** ingresos medidos en salarios mínimos; cortes del monto apostado ($10k / 25k / 50k / 100k); hosting opción B con la A de respaldo; respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard, «Prefiero no responder» en las preguntas sensibles de adultos, entre 70 y 100 respuestas esperadas por encuesta, contador anónimo de no participación y abandonos en ambas (8.7), regla de menos de 5 en ambos dashboards, dashboards entregados al final de la semana con control en vivo solo para Juli.

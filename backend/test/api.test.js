@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { crearApp } from '../app.js';
 import { crearCliente, inicializarBase } from '../db/conexion.js';
 import { scriptCompleto } from '../db/esquema.js';
+import { leerVentanas } from '../ventanas.js';
 import { ENCUESTAS } from '../encuestas/index.js';
 import { adultoQueApuesta, adolescenteQueNunca } from './datos-ejemplo.js';
 
@@ -14,8 +15,8 @@ let db;
 let servidor;
 let base;
 
-const enviar = (encuesta, cuerpo, opciones = {}) =>
-  fetch(`${base}/api/respuestas/${encuesta}`, {
+const enviar = (encuesta, cuerpo, opciones = {}, ruta = 'respuestas') =>
+  fetch(`${base}/api/${ruta}/${encuesta}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: typeof cuerpo === 'string' ? cuerpo : JSON.stringify(cuerpo),
@@ -105,6 +106,133 @@ describe('GET /api/encuestas/:encuesta', () => {
   });
 });
 
+describe('POST /api/eventos/:encuesta', () => {
+  const evento = (id, cuerpo) => enviar(id, cuerpo, {}, 'eventos');
+
+  test('guarda cada evento como una fila suelta, sin respuestas ni identificadores', async () => {
+    assert.equal((await evento('adolescentes', { evento: 'no_participa' })).status, 204);
+    assert.equal((await evento('adultos', { evento: 'vio', pregunta: 'ingresos_hogar' })).status, 204);
+    const { rows } = await db.execute("SELECT * FROM eventos WHERE encuesta = 'adultos' AND evento = 'vio'");
+    assert.deepEqual(Object.keys(rows[0]).sort(), ['encuesta', 'evento', 'fecha', 'id', 'pregunta']);
+    assert.equal(rows[0].pregunta, 'ingresos_hogar');
+    assert.match(rows[0].fecha, /^\d{4}-\d{2}-\d{2}$/, 'solo la fecha, sin hora');
+  });
+
+  test('rechaza eventos inventados y preguntas de otra encuesta', async () => {
+    assert.equal((await evento('adultos', { evento: 'hackeo' })).status, 400);
+    assert.equal((await evento('adultos', { evento: 'vio', pregunta: 'comentario' })).status, 400);
+    assert.equal((await evento('adultos', { evento: 'vio' })).status, 400);
+    assert.equal((await evento('adultos', { evento: 'entro', pregunta: 'edad' })).status, 400);
+    assert.equal((await evento('adultos', { evento: 'entro', edad: 30 })).status, 400);
+    assert.equal((await evento('nada', { evento: 'entro' })).status, 404);
+  });
+
+  test('los eventos tampoco se pueden modificar ni borrar', async () => {
+    await assert.rejects(db.execute("UPDATE eventos SET evento = 'acepto'"), /no se pueden modificar/);
+    await assert.rejects(db.execute('DELETE FROM eventos'), /no se pueden borrar/);
+  });
+});
+
+describe('ventanas de apertura', () => {
+  // App aparte con un reloj fijo, para simular "antes", "durante" y "después".
+  async function appConReloj(hora) {
+    const dbLocal = crearCliente({ url: ':memory:' });
+    await inicializarBase(dbLocal, ENCUESTAS);
+    const app = crearApp({
+      db: dbLocal,
+      encuestas: ENCUESTAS,
+      ventanas: { adolescentes: leerVentanas('2026-10-19 08:00-12:00') },
+      reloj: () => new Date(`${hora}:00-03:00`),
+    });
+    const srv = app.listen(0);
+    await new Promise((r) => srv.once('listening', r));
+    const url = `http://127.0.0.1:${srv.address().port}`;
+    return { url, db: dbLocal, cerrar: () => (srv.close(), dbLocal.close()) };
+  }
+
+  test('fuera de horario: la definición dice cerrada y el envío se rechaza con 403', async () => {
+    const { url, cerrar } = await appConReloj('2026-10-18T20:00');
+    try {
+      const def = await (await fetch(`${url}/api/encuestas/adolescentes`)).json();
+      assert.equal(def.abierta, false);
+      assert.ok(def.proximaApertura);
+      const res = await fetch(`${url}/api/respuestas/adolescentes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(adolescenteQueNunca()),
+      });
+      assert.equal(res.status, 403);
+      assert.equal((await res.json()).cerrada, true);
+      // Adultos no tiene ventanas configuradas: sigue abierta.
+      const defAdultos = await (await fetch(`${url}/api/encuestas/adultos`)).json();
+      assert.equal(defAdultos.abierta, true);
+    } finally {
+      cerrar();
+    }
+  });
+
+  test('fuera de horario los eventos se ignoran (204, sin guardar)', async () => {
+    const { url, db: dbLocal, cerrar } = await appConReloj('2026-10-18T20:00');
+    try {
+      const res = await fetch(`${url}/api/eventos/adolescentes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ evento: 'entro' }),
+      });
+      assert.equal(res.status, 204);
+      const { rows } = await dbLocal.execute('SELECT COUNT(*) AS n FROM eventos');
+      assert.equal(rows[0].n, 0);
+    } finally {
+      cerrar();
+    }
+  });
+
+  test('dentro del horario: acepta envíos', async () => {
+    const { url, cerrar } = await appConReloj('2026-10-19T09:00');
+    try {
+      const res = await fetch(`${url}/api/respuestas/adolescentes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(adolescenteQueNunca()),
+      });
+      assert.equal(res.status, 201);
+    } finally {
+      cerrar();
+    }
+  });
+});
+
+describe('páginas', () => {
+  test('sirve la encuesta de adolescentes con su tema y el motor', async () => {
+    const html = await fetch(`${base}/adolescentes/`);
+    assert.equal(html.status, 200);
+    assert.match(await html.text(), /<main class="app">/);
+    assert.equal((await fetch(`${base}/adolescentes/tema-a.css`)).status, 200);
+    assert.equal((await fetch(`${base}/motor/motor.js`)).status, 200);
+    const fuente = await fetch(`${base}/adolescentes/fuentes/space-grotesk-latin-wght-normal.woff2`);
+    assert.equal(fuente.status, 200);
+  });
+
+  test('sirve la encuesta de adultos con su tema y sus tipografías', async () => {
+    const html = await fetch(`${base}/adultos/`);
+    assert.equal(html.status, 200);
+    const texto = await html.text();
+    assert.match(texto, /<main class="app">/);
+    assert.match(texto, /tema-b\.css/);
+    assert.equal((await fetch(`${base}/adultos/tema-b.css`)).status, 200);
+    assert.equal((await fetch(`${base}/adultos/fuentes/newsreader-latin-wght-normal.woff2`)).status, 200);
+    assert.equal((await fetch(`${base}/adultos/fuentes/instrument-sans-latin-wght-normal.woff2`)).status, 200);
+  });
+
+  test('la política de seguridad solo permite recursos del propio servidor', async () => {
+    const res = await fetch(`${base}/adolescentes/`);
+    const csp = res.headers.get('content-security-policy');
+    assert.match(csp, /script-src 'self'/);
+    assert.match(csp, /font-src 'self'/);
+    assert.doesNotMatch(csp, /https:/);
+  });
+});
+
 describe('protección de los datos', () => {
   test('la base no permite modificar respuestas', async () => {
     await assert.rejects(
@@ -115,6 +243,19 @@ describe('protección de los datos', () => {
 
   test('la base no permite borrar respuestas', async () => {
     await assert.rejects(db.execute('DELETE FROM respuestas_adultos'), /no se pueden borrar/);
+  });
+
+  test('la base rechaza un número junto con la marca de «prefiero no responder»', async () => {
+    const { rows } = await db.execute('SELECT * FROM respuestas_adultos LIMIT 1');
+    const fila = { ...rows[0], id: undefined, ingresos_hogar: 3, ingresos_hogar_no_responde: 1 };
+    const columnas = Object.keys(fila).filter((c) => c !== 'id');
+    await assert.rejects(
+      db.execute({
+        sql: `INSERT INTO respuestas_adultos (${columnas.join(', ')}) VALUES (${columnas.map(() => '?').join(', ')})`,
+        args: columnas.map((c) => fila[c]),
+      }),
+      /CHECK constraint failed/,
+    );
   });
 
   test('la base rechaza valores fuera de rango aunque el validador fallara', async () => {

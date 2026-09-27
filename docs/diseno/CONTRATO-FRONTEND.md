@@ -11,10 +11,15 @@
 | `/adultos` | Página de la encuesta de adultos (QR 2) |
 | `GET /api/encuestas/:id` | Definición de la encuesta (`adultos` o `adolescentes`) |
 | `POST /api/respuestas/:id` | Envío de una respuesta completa |
+| `POST /api/eventos/:id` | Evento del recorrido para los conteos: `{ evento }` o `{ evento: 'vio', pregunta }`. Responde 204. Se manda una vez por pestaña y sus errores se ignoran |
 
 ## 1. Definición (`GET /api/encuestas/:id`)
 
-Devuelve `{ id, titulo, respuestasObligatorias, smvmReferencia, pantallas, secciones, preguntas }`.
+Devuelve `{ id, titulo, respuestasObligatorias, smvmReferencia, pantallas, secciones, preguntas, abierta, proximaApertura }`.
+
+- `abierta`: `false` fuera de los días y horarios configurados. En ese caso se muestra la pantalla de encuesta cerrada.
+- `proximaApertura`: fecha ISO de la próxima franja, o `null` si ya no quedan.
+- `pantallas.intro` puede traer `puntos: [{ destacado, texto }]` y `cierre`, además de `texto`.
 
 Cada pregunta tiene:
 
@@ -27,6 +32,8 @@ Cada pregunta tiene:
 | `opciones` | En `unica` y `multiple`: `[{ valor, texto, exclusiva?, grupo? }]` |
 | `min`, `max`, `etiquetas` | En `numero` y `escala`. `etiquetas` es `{ valor: texto }` (a veces solo para los extremos) |
 | `presentacion` | `'slider'` en algunas escalas de adultos |
+| `opcionNoResponde` | En algunas escalas: `{ valor, texto }` de «Prefiero no responder», que se ofrece además de los pasos |
+| `rangosSmvm` | En sliders de montos: `{ paso: [desde, hasta] }` en salarios mínimos (`hasta` es `null` en el último). Multiplicado por `smvmReferencia` da el equivalente en pesos |
 | `maxLargo` | En `texto` |
 | `ayuda` | Nota opcional «¿Por qué preguntamos esto?» |
 | `obligatoria` | Si está presente, pisa a `respuestasObligatorias` de la encuesta |
@@ -40,7 +47,7 @@ Cuerpo JSON con **solo las preguntas visibles que tienen respuesta**:
 
 | Tipo | Formato del valor |
 |---|---|
-| `numero`, `escala` | Número entero (no string): `24`, no `"24"` |
+| `numero`, `escala` | Número entero (no string): `24`, no `"24"`. En una escala con `opcionNoResponde`, su `valor` (texto) si la eligió |
 | `unica` | El `valor` de la opción: `"si"` |
 | `multiple` | Lista de `valor`es: `["redes", "tv"]`. Si no marcó nada, **no enviar la clave** |
 | `texto` | String |
@@ -56,6 +63,7 @@ Cuerpo JSON con **solo las preguntas visibles que tienen respuesta**:
 |---|---|
 | `201 { ok: true }` | Mostrar la pantalla final y borrar el borrador guardado |
 | `400 { ok: false, errores: [...] }` | Es un error del frontend: registrarlo en la consola y mostrar un mensaje genérico |
+| `403 { cerrada: true, proximaApertura }` | La franja cerró (pasados los 15 minutos de tolerancia): mostrar la pantalla de encuesta cerrada |
 | `429` | Demasiados envíos: esperar y reintentar sin perder las respuestas |
 | `5xx` / sin conexión | Reintento manual con un botón, sin perder las respuestas |
 
@@ -64,3 +72,18 @@ Cuerpo JSON con **solo las preguntas visibles que tienen respuesta**:
 - Guardar el progreso en `sessionStorage` para que recargar la página no borre lo respondido. Borrarlo al recibir el 201.
 - Validar en el cliente con las mismas reglas (rango, obligatoriedad, exclusivas) para dar feedback inmediato. **El backend valida igual.**
 - Sin recursos externos: tipografías, íconos y scripts servidos desde el propio servidor.
+
+## 4. Qué componente dibuja cada pregunta
+
+El motor (`frontend/motor/`) elige el componente por la **forma** de la pregunta, nunca por el nombre de la encuesta:
+
+| Forma | Componente |
+|---|---|
+| `escala` con `presentacion: 'slider'` | Tramos: 5 escalones hechos con radios, arrancan sin valor, sin autoavance |
+| `escala` con etiqueta en **cada** punto (PGSI) | Frecuencia: renglones anclados abajo, con «Pregunta n de N» |
+| `escala` con etiquetas solo en los extremos | Escala de puntos |
+| Opciones con `grupo` | Un `role="group"` rotulado por grupo |
+| Pregunta con `ayuda` | Botón «¿Por qué preguntamos esto?» debajo del título |
+| `info` | Pantalla de lectura: no se responde ni cuenta en el progreso |
+
+Lo que cambia entre temas y no es CSS (tarjeta alrededor de la pregunta, cuándo una pregunta es «larga», flecha en «Enviar») lo pasa cada página al motor en `presentacion`.

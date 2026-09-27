@@ -64,6 +64,7 @@ for (const encuesta of Object.values(ENCUESTAS)) {
     test('tiene todos los textos de pantalla', () => {
       const { intro, consentimiento, edadFueraDeRango, cierre } = encuesta.pantallas;
       assert.ok(intro.titulo && intro.texto);
+      for (const punto of intro.puntos ?? []) assert.ok(punto.destacado && punto.texto);
       assert.ok(consentimiento.pregunta && consentimiento.si && consentimiento.no);
       assert.ok(edadFueraDeRango);
       assert.ok(cierre.titulo && cierre.texto);
@@ -76,4 +77,50 @@ test('docs/diseno/contenido-*.md están actualizados (correr `npm run contenido`
     const ruta = new URL(`../../docs/diseno/contenido-${encuesta.id}.md`, import.meta.url);
     assert.equal(readFileSync(ruta, 'utf8'), contenidoDe(encuesta), encuesta.id);
   }
+});
+
+// El frontend elige el componente de cada escala por su forma (design/adultos/HANDOFF.md):
+// un slider muestra la etiqueta del paso elegido, así que necesita una para cada paso.
+for (const encuesta of Object.values(ENCUESTAS)) {
+  describe(`escalas de ${encuesta.id}`, () => {
+    test('los sliders tienen etiqueta en cada paso', () => {
+      for (const p of encuesta.preguntas.filter((q) => q.presentacion === 'slider')) {
+        for (let v = p.min; v <= p.max; v++) assert.ok(p.etiquetas?.[v], `${p.id}: falta la etiqueta del paso ${v}`);
+      }
+    });
+
+    test('rangosSmvm cubre cada paso, sin huecos ni solapamientos', () => {
+      for (const p of encuesta.preguntas.filter((q) => q.rangosSmvm)) {
+        assert.ok(encuesta.smvmReferencia > 0, `${p.id}: la encuesta no tiene smvmReferencia`);
+        let hastaAnterior = 0;
+        for (let v = p.min; v <= p.max; v++) {
+          const rango = p.rangosSmvm[v];
+          assert.ok(rango, `${p.id}: falta el rango del paso ${v}`);
+          const [desde, hasta] = rango;
+          assert.equal(desde, hastaAnterior, `${p.id}: el paso ${v} no empieza donde terminó el anterior`);
+          if (v === p.max) assert.equal(hasta, null, `${p.id}: el último paso no debe tener tope`);
+          else assert.ok(hasta > desde, `${p.id}: el paso ${v} está vacío o invertido`);
+          hastaAnterior = hasta;
+        }
+      }
+    });
+  });
+}
+
+describe('«Prefiero no responder»', () => {
+  test('en escalas usa un valor con formato válido y no choca con ningún paso', () => {
+    for (const encuesta of Object.values(ENCUESTAS)) {
+      for (const p of encuesta.preguntas.filter((q) => q.opcionNoResponde)) {
+        assert.equal(p.tipo, 'escala', `${p.id}: opcionNoResponde solo tiene sentido en escalas`);
+        assert.match(p.opcionNoResponde.valor, FORMATO_ID);
+        assert.ok(p.opcionNoResponde.texto);
+      }
+    }
+  });
+
+  test('el PGSI no la tiene: su puntaje necesita los 9 ítems respondidos', () => {
+    for (const p of ENCUESTAS.adultos.preguntas.filter((q) => q.seccion === 'pgsi')) {
+      assert.equal(p.opcionNoResponde, undefined, p.id);
+    }
+  });
 });
