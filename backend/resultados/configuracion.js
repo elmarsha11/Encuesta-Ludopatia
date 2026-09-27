@@ -58,7 +58,7 @@ export const CONFIGURACION = {
       dependientes: { texto: 'Personas a cargo', ...siNo('alguien_depende', 'Alguien depende de su ingreso', 'Nadie depende de su ingreso') },
       familiares: { texto: 'Entorno', ...siNo('familiares_apuestan', 'Familiares o amigos apuestan', 'Familiares o amigos no apuestan') },
       plata_facil: {
-        texto: '¿Se puede generar plata fácil apostando?',
+        texto: 'Creencia de que se puede generar plata fácil apostando',
         columna: 'plata_facil',
         niveles: [nivel('si', 'Cree que sí o a veces', ['si', 'a_veces']), nivel('no', 'Cree que no', ['no'])],
       },

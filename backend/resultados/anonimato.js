@@ -17,16 +17,21 @@ const esChica = (n, umbral) => n > 0 && n < umbral;
  * En ese caso se oculta también la celda visible más chica («supresión secundaria»).
  * En una opción múltiple las celdas no suman la base, así que la resta no sirve.
  *
+ * Las celdas PÚBLICAS (su cantidad ya aparece en otro lado, por ejemplo como base de
+ * las preguntas de su rama) nunca se eligen para esa supresión secundaria: ocultarlas
+ * no protege nada y solo le quita datos al dashboard.
+ *
  * @param {{ valor: string, n: number }[]} celdas
- * @param {{ umbral?: number, particion: boolean }} opciones - umbral 1 = no ocultar nada
+ * @param {{ umbral?: number, particion: boolean, publicas?: Set<string> }} opciones - umbral 1 = no ocultar nada
  * @returns {{ valor: string, n: number | null, oculto: boolean }[]}
  */
-export function ocultarCeldas(celdas, { umbral = UMBRAL, particion }) {
+export function ocultarCeldas(celdas, { umbral = UMBRAL, particion, publicas = new Set() }) {
   const oculta = celdas.map((c) => esChica(c.n, umbral));
 
   if (particion && oculta.filter(Boolean).length === 1) {
     let menor = -1;
     celdas.forEach((c, i) => {
+      if (publicas.has(c.valor)) return;
       if (!oculta[i] && c.n > 0 && (menor === -1 || c.n < celdas[menor].n)) menor = i;
     });
     if (menor !== -1) oculta[menor] = true;
@@ -40,11 +45,11 @@ export function ocultarCeldas(celdas, { umbral = UMBRAL, particion }) {
  * «3 personas de Trabajo Social respondieron» ya es demasiado específico, y con una
  * base tan chica los porcentajes no significan nada.
  */
-export function ocultarDistribucion(base, celdas, { umbral = UMBRAL, particion }) {
+export function ocultarDistribucion(base, celdas, { umbral = UMBRAL, particion, publicas }) {
   if (esChica(base, umbral)) {
     return { base: null, oculto: true, celdas: celdas.map((c) => ({ ...c, n: null, oculto: true })) };
   }
-  return { base, oculto: false, celdas: ocultarCeldas(celdas, { umbral, particion }) };
+  return { base, oculto: false, celdas: ocultarCeldas(celdas, { umbral, particion, publicas }) };
 }
 
 /**

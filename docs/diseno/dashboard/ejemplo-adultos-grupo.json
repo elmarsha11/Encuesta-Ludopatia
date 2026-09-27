@@ -289,14 +289,14 @@
         {
           "valor": "si",
           "texto": "Sí",
-          "n": null,
-          "oculto": true
+          "n": 35,
+          "oculto": false
         },
         {
           "valor": "no",
           "texto": "No",
-          "n": 48,
-          "oculto": false
+          "n": null,
+          "oculto": true
         },
         {
           "valor": "prefiero_no_responder",
@@ -363,8 +363,8 @@
         {
           "valor": "si",
           "texto": "Sí",
-          "n": null,
-          "oculto": true
+          "n": 32,
+          "oculto": false
         },
         {
           "valor": "no",
@@ -1537,7 +1537,7 @@
     {
       "id": "aposto_plata_facil",
       "seccion": "Entorno y publicidad",
-      "factor": "¿Se puede generar plata fácil apostando?",
+      "factor": "Creencia de que se puede generar plata fácil apostando",
       "resultado": "Apostó en los últimos 12 meses",
       "columnas": [
         {

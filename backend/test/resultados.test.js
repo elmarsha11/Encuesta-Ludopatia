@@ -189,3 +189,23 @@ describe('configuración de los dashboards', () => {
     }
   });
 });
+
+describe('cantidades que ya son públicas', () => {
+  test('la opción que abre una rama no se oculta de más: su cantidad es la base de la rama', () => {
+    // 1 «prefiero no responder»: se oculta. Antes también se ocultaba «Sí», que es la base de hábitos.
+    const filas = [
+      ...repetir(8, () => fila(adultos, adultoQueApuesta())),
+      ...repetir(12, () => fila(adultos, adultoQueNoApuesta())),
+      fila(adultos, (() => {
+        const c = { ...adultoQueNoApuesta(), aposto_12m: 'prefiero_no_responder' };
+        delete c.penso_apostar;
+        delete c.motivo_no_apuesta;
+        return c;
+      })()),
+    ];
+    const lista = distribuciones(adultos, filas, CONFIGURACION.adultos, { umbral: 5 });
+    const aposto = distribucion(lista, 'aposto_12m');
+    assert.deepEqual(aposto.celdas.map((c) => c.n), [8, 12, null]);
+    assert.equal(distribucion(lista, 'frecuencia').base, 8, 'la base de la rama es la misma cifra');
+  });
+});

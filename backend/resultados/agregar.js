@@ -59,13 +59,34 @@ function conteoDePregunta(p, filas, config) {
   }
 }
 
+/**
+ * Opciones de una pregunta cuya cantidad ya es pública: las que abren una rama.
+ * «Apostó: sí» es la base de todas las preguntas de hábitos, así que se ve igual.
+ *
+ * Límite conocido: si todas las ramas de una pregunta son públicas, la opción que no
+ * abre ninguna («Prefiero no responder») se despeja restando del total. Protegerla
+ * obligaría a ocultar secciones enteras; lo que revela es que alguien no quiso contestar,
+ * sin ningún dato sobre esa persona. Ver docs/PLAN-encuesta-ludopatia.md, 8.6.
+ */
+export function opcionesPublicas(encuesta, pregunta) {
+  const publicas = new Set();
+  for (const q of encuesta.preguntas) {
+    if (q.visibleSi?.pregunta === pregunta.id && q.visibleSi.es.length === 1) publicas.add(q.visibleSi.es[0]);
+  }
+  return publicas;
+}
+
 /** Distribución de cada pregunta, en el orden de la encuesta, más las columnas calculadas. */
 export function distribuciones(encuesta, filas, config, { umbral }) {
   const resultado = [];
   for (const p of encuesta.preguntas) {
     const conteo = conteoDePregunta(p, filas, config);
     if (!conteo) continue;
-    const protegida = ocultarDistribucion(conteo.base, conteo.celdas, { umbral, particion: conteo.particion });
+    const protegida = ocultarDistribucion(conteo.base, conteo.celdas, {
+      umbral,
+      particion: conteo.particion,
+      publicas: opcionesPublicas(encuesta, p),
+    });
     resultado.push({ id: p.id, seccion: p.seccion, tipo: p.tipo, texto: p.texto, ...protegida });
   }
   for (const c of config.calculadas ?? []) {

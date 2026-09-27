@@ -11,28 +11,9 @@
 // que la política de seguridad (CSP) del servidor permite.
 
 import * as L from './logica.js';
+import { h } from './dom.js';
 
 const NBSP = ' ';
-
-// --- Construcción de elementos -------------------------------------------------
-
-/** Crea un elemento: h('p', { class: 'x', on: { click } , estilo: { left: '4px' } }, 'texto', otroNodo) */
-function h(etiqueta, atributos = {}, ...hijos) {
-  const el = document.createElement(etiqueta);
-  for (const [clave, valor] of Object.entries(atributos)) {
-    if (valor === undefined || valor === null || valor === false) continue;
-    if (clave === 'class') el.className = valor;
-    else if (clave === 'on') for (const [evento, fn] of Object.entries(valor)) el.addEventListener(evento, fn);
-    else if (clave === 'estilo') Object.assign(el.style, valor);
-    else if (clave in el && typeof valor !== 'string') el[clave] = valor; // checked, disabled, etc.
-    else el.setAttribute(clave, valor === true ? '' : valor);
-  }
-  for (const hijo of hijos.flat()) {
-    if (hijo === null || hijo === undefined || hijo === false) continue;
-    el.append(hijo instanceof Node ? hijo : document.createTextNode(String(hijo)));
-  }
-  return el;
-}
 
 // Íconos: trazos SVG del prototipo.
 const ICONOS = {

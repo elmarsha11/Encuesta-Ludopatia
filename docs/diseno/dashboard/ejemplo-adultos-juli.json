@@ -1537,7 +1537,7 @@
     {
       "id": "aposto_plata_facil",
       "seccion": "Entorno y publicidad",
-      "factor": "¿Se puede generar plata fácil apostando?",
+      "factor": "Creencia de que se puede generar plata fácil apostando",
       "resultado": "Apostó en los últimos 12 meses",
       "columnas": [
         {

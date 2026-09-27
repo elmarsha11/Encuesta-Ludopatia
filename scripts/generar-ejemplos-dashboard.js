@@ -8,6 +8,7 @@
 //   npm run ejemplos-dashboard
 
 import { writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { crearCliente, inicializarBase, guardarRespuesta, guardarEvento } from '../backend/db/conexion.js';
 import { ENCUESTAS } from '../backend/encuestas/index.js';
 import { esVisible } from '../backend/encuestas/condiciones.js';
@@ -56,9 +57,8 @@ function respuestaAlAzar(encuesta, { minEdad, maxEdad }) {
   return r;
 }
 
-async function generar(encuesta, cantidad, edades) {
-  const db = crearCliente({ url: ':memory:' });
-  await inicializarBase(db, ENCUESTAS);
+/** Carga respuestas y eventos inventados en una base ya inicializada (también la usan las pruebas en navegador). */
+export async function poblar(db, encuesta, cantidad, edades) {
   const evento = (e, pregunta) => guardarEvento(db, encuesta, { evento: e, pregunta });
 
   for (let i = 0; i < cantidad; i++) {
@@ -82,20 +82,30 @@ async function generar(encuesta, cantidad, edades) {
     for (const p of encuesta.preguntas.filter((q) => !q.visibleSi).slice(0, hasta)) await evento('vio', p.id);
   }
   await evento('edad_fuera');
+}
 
+async function generar(encuesta, cantidad, edades) {
+  const db = crearCliente({ url: ':memory:' });
+  await inicializarBase(db, ENCUESTAS);
+  await poblar(db, encuesta, cantidad, edades);
   const paraGrupo = await resultados(db, encuesta);
   const paraJuli = await resultados(db, encuesta, { umbral: 1, control: true });
   db.close();
   return { paraGrupo, paraJuli };
 }
 
-const DESTINO = new URL('../docs/diseno/dashboard/', import.meta.url);
-const guardar = (nombre, datos) => writeFileSync(new URL(nombre, DESTINO), `${JSON.stringify(datos, null, 2)}\n`);
+export const EDADES = { adultos: { minEdad: 18, maxEdad: 52 }, adolescentes: { minEdad: 12, maxEdad: 17 } };
 
-const adultos = await generar(ENCUESTAS.adultos, 84, { minEdad: 18, maxEdad: 52 });
-const adolescentes = await generar(ENCUESTAS.adolescentes, 91, { minEdad: 12, maxEdad: 17 });
-guardar('ejemplo-adultos-grupo.json', adultos.paraGrupo);
-guardar('ejemplo-adultos-juli.json', adultos.paraJuli);
-guardar('ejemplo-adolescentes-docentes.json', adolescentes.paraGrupo);
-guardar('ejemplo-adolescentes-juli.json', adolescentes.paraJuli);
-console.log('Ejemplos generados en docs/diseno/dashboard/ (datos inventados).');
+// Solo genera los archivos si se ejecuta como script (no al importarlo).
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const DESTINO = new URL('../docs/diseno/dashboard/', import.meta.url);
+  const guardar = (nombre, datos) => writeFileSync(new URL(nombre, DESTINO), `${JSON.stringify(datos, null, 2)}\n`);
+
+  const adultos = await generar(ENCUESTAS.adultos, 84, EDADES.adultos);
+  const adolescentes = await generar(ENCUESTAS.adolescentes, 91, EDADES.adolescentes);
+  guardar('ejemplo-adultos-grupo.json', adultos.paraGrupo);
+  guardar('ejemplo-adultos-juli.json', adultos.paraJuli);
+  guardar('ejemplo-adolescentes-docentes.json', adolescentes.paraGrupo);
+  guardar('ejemplo-adolescentes-juli.json', adolescentes.paraJuli);
+  console.log('Ejemplos generados en docs/diseno/dashboard/ (datos inventados).');
+}

@@ -447,9 +447,14 @@ export default {
 
   // Columnas que no responde la persona: las calcula el backend a partir de las respuestas.
   columnasCalculadas: [
-    { nombre: 'pgsi_total', sql: 'INTEGER CHECK (pgsi_total BETWEEN 0 AND 27)' },
+    {
+      nombre: 'pgsi_total',
+      sql: 'INTEGER CHECK (pgsi_total BETWEEN 0 AND 27)',
+      descripcion: 'Puntaje PGSI: suma de los 9 ítems (0 a 27). Vacío si no apostó en los últimos 12 meses.',
+    },
     {
       nombre: 'pgsi_categoria',
+      descripcion: 'Categoría PGSI: sin_riesgo (0) · riesgo_bajo (1-2) · riesgo_moderado (3-7) · juego_problematico (8+).',
       sql: "TEXT CHECK (pgsi_categoria IN ('sin_riesgo', 'riesgo_bajo', 'riesgo_moderado', 'juego_problematico'))",
     },
   ],
