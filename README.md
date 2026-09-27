@@ -23,6 +23,16 @@ npm run ejemplos-dashboard      # regenera los datos de ejemplo del dashboard (i
                                 # resultados: http://localhost:3000/resultados/ (CLAVE_* en .env)
 ```
 
+## Probar en tu PC, con datos inventados
+
+```bash
+npm run prueba
+```
+
+Arranca un servidor de prueba con su propia base (`datos-prueba.db`, que nunca se sube a GitHub), la llena con respuestas **inventadas** la primera vez, deja las encuestas siempre abiertas e imprime tres contraseñas de prueba para `/resultados/`. No toca la base real ni usa las contraseñas de `.env`. Para empezar de cero, borrá `datos-prueba.db`.
+
+Desde el celular, conectado al mismo wifi: `http://<IP de la PC>:3000/adultos/` (la IP sale con `ipconfig` en Windows o `ipconfig getifaddr en0` en Mac).
+
 ## Cómo está organizado
 
 | Carpeta | Qué hay |
