@@ -12,7 +12,8 @@
     "dev": "node --watch --env-file-if-exists=.env backend/server.js",
     "test": "node --test \"backend/test/**/*.test.js\"",
     "schema": "node scripts/generar-schema.js",
-    "contenido": "node scripts/generar-contenido.js"
+    "contenido": "node scripts/generar-contenido.js",
+    "resultados": "node --env-file-if-exists=.env scripts/resultados.js"
   },
   "dependencies": {
     "@libsql/client": "0.18.0",

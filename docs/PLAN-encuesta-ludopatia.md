@@ -289,10 +289,11 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
 - **Lenguaje**: la encuesta se toma una sola vez, así que muestra **asociaciones, no causas**. El dashboard dice «entre quienes tienen deudas, X% está en riesgo moderado o más», nunca «las deudas causan…».
 - **Preguntas de investigación propuestas para adultos** (a confirmar con el grupo): panorama (cuántos apostaron, distribución PGSI); situación económica (riesgo según ingresos, deudas y dependientes; origen del dinero); entorno y publicidad (familiares que apuestan, creencia de plata fácil, canales); educación financiera (¿quienes la recibieron apuestan menos o tienen menos riesgo? ¿cuántos quieren recibirla?).
 - **Accesos**:
-  - Juli: todo, en cualquier momento, incluida una sección de **control** durante la semana (respuestas por día, por franja y por carrera, para detectar a tiempo si una carrera casi no respondió).
+  - Juli: todo, en cualquier momento, incluida una sección de **control** durante la semana: embudo de participación (8.7), entradas y respuestas **por día** (no por franja: la hora no se guarda, por anonimato) y reparto por carrera, para detectar a tiempo si una carrera casi no respondió. Juli ve las cantidades sin ocultar.
   - Grupo de adultos y docentes: el dashboard de su encuesta. Lo reciben **al terminar la semana**, junto con el Excel (adultos).
   - Cada contraseña va en `.env`. **Mientras la de un grupo esté vacía, ese acceso no existe**: se carga recién al cerrar la encuesta, así nadie entra antes aunque tenga el link.
 - Gráficos servidos desde el propio servidor (la CSP no permite CDN).
+- **Implementado el cálculo** (`backend/resultados/`): distribución de cada pregunta, cruces configurados en `configuracion.js` y embudo. La regla de anonimato incluye **supresión secundaria**: si en una distribución o en una fila o columna de un cruce queda una sola celda oculta, se oculta otra, porque con el total a la vista una sola se despeja restando. `npm run resultados -- adultos` lo muestra en la terminal. Falta el acceso con contraseña y la página.
 
 ### 8.7 Eventos del recorrido (DECIDIDO, implementado)
 

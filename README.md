@@ -18,6 +18,7 @@ npm run dev              # servidor en http://localhost:3000, se reinicia al gua
                          # encuesta de adolescentes: http://localhost:3000/adolescentes/
                          # encuesta de adultos:       http://localhost:3000/adultos/
 npm test                 # corre todas las pruebas automáticas
+npm run resultados -- adultos   # resultados en la terminal (--control, --sin-ocultar)
 ```
 
 ## Cómo está organizado
@@ -28,6 +29,7 @@ npm test                 # corre todas las pruebas automáticas
 | `backend/validacion.js` | Valida una respuesta contra su definición antes de guardarla. |
 | `backend/db/` | Conexión a SQLite/Turso y generación de las tablas. |
 | `backend/app.js` | Rutas de la API (Express). |
+| `backend/resultados/` | Cálculo de resultados para el dashboard: conteos, cruces, regla de anonimato y embudo. |
 | `backend/ventanas.js` | Días y horarios de apertura (`VENTANAS_*` en `.env`). |
 | `backend/test/` | Pruebas automáticas (backend y lógica del frontend). |
 | `frontend/motor/` | Motor común a las dos encuestas: `logica.js` (reglas puras, con tests) y `motor.js` (pantallas). |
