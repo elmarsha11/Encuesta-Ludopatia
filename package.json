@@ -14,7 +14,8 @@
     "schema": "node scripts/generar-schema.js",
     "contenido": "node scripts/generar-contenido.js",
     "resultados": "node --env-file-if-exists=.env scripts/resultados.js",
-    "ejemplos-dashboard": "node scripts/generar-ejemplos-dashboard.js"
+    "ejemplos-dashboard": "node scripts/generar-ejemplos-dashboard.js",
+    "prueba": "node scripts/servidor-de-prueba.js"
   },
   "dependencies": {
     "@libsql/client": "0.18.0",
