@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="design/adultos/tema-b.css">
+<style>body{margin:0;background:#E9E2D4}a{color:var(--color-acento)}a:hover{color:var(--color-texto)}</style>
+</helmet>
+<section style="--pgsi-0:var(--color-seleccion-fondo);--pgsi-1:color-mix(in oklch, var(--color-acento) 38%, var(--color-seleccion-fondo));--pgsi-2:color-mix(in oklch, var(--color-acento) 72%, var(--color-seleccion-fondo));--pgsi-3:var(--color-acento);--trama-oculto:repeating-linear-gradient(135deg, var(--color-pista) 0 1.5px, var(--color-superficie) 1.5px 8px);padding:56px;display:flex;flex-direction:column;gap:32px;font-family:var(--fuente-texto);color:var(--color-texto)">
+  <div style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+    <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Turno 1 · Direcciones visuales para los gráficos</p>
+    <h1 style="margin:0;font-family:var(--fuente-titulo);font-size:38px;font-weight:500;line-height:1.1;letter-spacing:-.015em">Renglones o casilleros</h1>
+    <p style="margin:0;font-family:var(--fuente-titulo);font-size:19px;line-height:1.5;color:var(--color-texto-2);text-wrap:pretty">Los dos usan los mismos datos (ejemplo-adultos-grupo.json, umbral 5) y la tipografía y los colores de Papel y tinta. Cambia cómo se dibujan las distribuciones, los cruces y las celdas ocultas.</p>
+  </div>
+  <div style="display:flex;gap:48px;align-items:flex-start;flex-wrap:wrap">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="padding:2px 8px;border:1.5px solid var(--color-texto);font-weight:600;font-size:15px">1a</span>
+        <span style="font-family:var(--fuente-titulo);font-size:19px;color:var(--color-texto-2)">Renglones: barras horizontales, como el índice de opciones de la encuesta. Lo oculto no se dibuja, se escribe.</span>
+      </div>
+      <div data-screen-label="1a Renglones" style="box-sizing:border-box;width:1040px;padding:40px 48px 56px;background:var(--color-fondo);display:flex;flex-direction:column;gap:48px">
+        <header style="display:flex;flex-direction:column;gap:8px;padding-bottom:20px;border-bottom:1px solid var(--color-texto)">
+          <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Resultados · Encuesta de adultos</p>
+          <h2 style="margin:0;font-family:var(--fuente-titulo);font-size:38px;font-weight:500;line-height:1.1;letter-spacing:-.015em">{{ titulo }}</h2>
+          <p style="margin:4px 0 0;font-size:16px;color:var(--color-texto-2)">{{ respuestas }} respuestas completas · Datos de ejemplo</p>
+          <p style="margin:0;font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-3)">Las cantidades menores a 5 no se muestran, para proteger el anonimato.</p>
+        </header>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Hallazgos principales</p>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,2fr);border-top:1px solid var(--color-texto);border-bottom:1px solid var(--color-borde-suave)">
+            <div style="padding:20px 24px 24px 0;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--color-borde-suave)">
+              <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Respondieron</p>
+              <p style="margin:0;font-family:var(--fuente-titulo);font-size:56px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums">{{ respuestas }}</p>
+              <p style="margin:0;font-size:16px;color:var(--color-texto-2)">encuestas completas</p>
+            </div>
+            <div style="padding:20px 24px 24px;display:flex;flex-direction:column;gap:6px;border-right:1px solid var(--color-borde-suave)">
+              <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Apostó en los últimos 12 meses</p>
+              <p style="margin:6px 0 0;font-family:var(--fuente-titulo);font-style:italic;font-size:26px;line-height:1.15;color:var(--color-texto-2)">Oculto por anonimato</p>
+              <p style="margin:0;font-size:16px;line-height:1.45;color:var(--color-texto-2);text-wrap:pretty">No apostó: <b style="font-weight:600;color:var(--color-texto)">{{ aposto.noPct }}</b> · {{ aposto.noN }} de {{ aposto.base }}. «Sí» y «Prefiero no responder» se omiten juntos para que ninguno se despeje restando.</p>
+            </div>
+            <div style="padding:20px 0 24px 24px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+                <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Riesgo según el PGSI · quienes apostaron</p>
+                <p style="margin:0;font-size:15px;color:var(--color-texto-3);font-variant-numeric:tabular-nums">n = {{ pgsi.base }}</p>
+              </div>
+              <div role="img" aria-label="{{ pgsi.resumen }}" style="display:flex;height:28px;background:var(--color-borde-suave)">
+                <sc-for list="{{ pgsi.segs }}" as="s" hint-placeholder-count="4">
+                  <div style="height:100%;width:{{ s.width }};background:{{ s.color }}"></div>
+                </sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+                <sc-for list="{{ pgsi.segs }}" as="s" hint-placeholder-count="4">
+                  <div style="display:flex;flex-direction:column;gap:2px">
+                    <div style="display:flex;gap:6px;align-items:center">
+                      <span style="width:10px;height:10px;flex-shrink:0;background:{{ s.color }};outline:1px solid var(--color-acento);outline-offset:-1px"></span>
+                      <span style="font-size:14px;line-height:1.25;color:var(--color-texto-2)">{{ s.texto }}</span>
+                    </div>
+                    <span style="font-family:var(--fuente-titulo);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums">{{ s.pctTxt }}</span>
+                    <span style="font-size:14px;color:var(--color-texto-3)">{{ s.n }} personas</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">{{ preg.seccion }}</p>
+          <div style="display:flex;justify-content:space-between;gap:24px;align-items:baseline">
+            <h3 style="margin:0;font-family:var(--fuente-titulo);font-size:24px;font-weight:500;line-height:1.2;text-wrap:balance">{{ preg.texto }}</h3>
+            <p style="margin:0;flex-shrink:0;font-size:15px;color:var(--color-texto-3);font-variant-numeric:tabular-nums">n = {{ preg.base }} · una respuesta por persona</p>
+          </div>
+          <div style="display:flex;flex-direction:column;border-top:1px solid var(--color-borde-suave)">
+            <sc-for list="{{ preg.filas }}" as="f" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:300px minmax(0,1fr) 64px 56px;gap:16px;align-items:center;min-height:48px;padding:6px 0;border-bottom:1px solid var(--color-borde-suave)">
+                <span style="font-size:16px;line-height:1.3">{{ f.texto }}</span>
+                <sc-if value="{{ f.visible }}" hint-placeholder-val="{{ true }}">
+                  <div style="height:12px;background:var(--color-borde-suave)"><div style="height:100%;width:{{ f.width }};background:var(--color-acento)"></div></div>
+                  <span style="text-align:right;font-family:var(--fuente-titulo);font-size:20px;font-weight:500;font-variant-numeric:tabular-nums">{{ f.pctTxt }}</span>
+                  <span style="text-align:right;font-size:15px;color:var(--color-texto-3);font-variant-numeric:tabular-nums">{{ f.n }}</span>
+                </sc-if>
+                <sc-if value="{{ f.oculto }}" hint-placeholder-val="{{ false }}">
+                  <div style="grid-column:2 / span 3;display:flex;align-items:center;gap:10px">
+                    <span style="width:24px;border-top:2px dotted var(--color-borde)"></span>
+                    <span style="font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-2)">Oculto para proteger el anonimato</span>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin:0;font-size:15px;color:var(--color-texto-3)">Oculto: menos de 5 personas, o una cifra que permitiría despejar otra restando. La última columna es la cantidad de personas.</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <span style="width:48px;height:2px;background:var(--color-terracota)"></span>
+            <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Cruces · Situación económica</p>
+            <p style="margin:0;padding:12px 16px;background:var(--color-nota-fondo);font-family:var(--fuente-titulo);font-size:17px;line-height:1.45">Muestra cómo se relacionan dos respuestas; no indica que una cause la otra.</p>
+          </div>
+          <sc-for list="{{ cruces }}" as="c" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:14px;padding-top:20px;border-top:1px solid var(--color-texto)">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <h3 style="margin:0;font-family:var(--fuente-titulo);font-size:24px;font-weight:500;line-height:1.2">{{ c.resultado }}, <span style="color:var(--color-texto-2)">según {{ c.factorMin }}</span></h3>
+                <sc-if value="{{ c.visible }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;font-size:15px;color:var(--color-texto-2)">
+                    <span>Se lee por fila: cada fila suma 100%.</span>
+                    <sc-for list="{{ c.columnas }}" as="col" hint-placeholder-count="2">
+                      <span style="display:inline-flex;gap:6px;align-items:center"><span style="width:12px;height:12px;background:{{ col.bg }}"></span>{{ col.texto }}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ c.visible }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column">
+                  <sc-for list="{{ c.filas }}" as="f" hint-placeholder-count="3">
+                    <div style="display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;align-items:center;min-height:60px;padding:6px 0;border-bottom:1px solid var(--color-borde-suave)">
+                      <div style="display:flex;flex-direction:column;gap:2px">
+                        <span style="font-size:16px;line-height:1.3">{{ f.texto }}</span>
+                        <span style="font-size:14px;color:var(--color-texto-3);font-variant-numeric:tabular-nums">n = {{ f.base }}</span>
+                      </div>
+                      <sc-if value="{{ f.visible }}" hint-placeholder-val="{{ true }}">
+                        <div style="display:flex;height:32px">
+                          <sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="2">
+                            <div style="box-sizing:border-box;height:100%;width:{{ x.width }};padding:0 10px;display:flex;align-items:center;background:{{ x.bg }};color:{{ x.fg }};font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden">{{ x.pctTxt }}</div>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ f.oculto }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;align-items:center;gap:10px">
+                          <span style="width:24px;border-top:2px dotted var(--color-borde)"></span>
+                          <span style="font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-2)">Oculto para proteger el anonimato</span>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ c.completoOculto }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:20px 24px;background:var(--color-superficie);display:flex;flex-direction:column;gap:12px">
+                  <p style="margin:0;font-family:var(--fuente-titulo);font-size:20px;font-weight:500">Este cruce no se muestra.</p>
+                  <p style="margin:0;font-family:var(--fuente-titulo);font-size:17px;line-height:1.5;color:var(--color-texto-2);max-width:640px;text-wrap:pretty">No hay suficientes respuestas en cada grupo para mostrarlo sin arriesgar el anonimato. Con más participación, o en la vista completa, aparecería acá.</p>
+                  <div style="display:flex;gap:32px;flex-wrap:wrap">
+                    <sc-for list="{{ c.filas }}" as="f" hint-placeholder-count="2">
+                      <span style="font-size:15px;color:var(--color-texto-3)">{{ f.texto }} · n = {{ f.base }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="padding:2px 8px;border:1.5px solid var(--color-texto);font-weight:600;font-size:15px">1b</span>
+        <span style="font-family:var(--fuente-titulo);font-size:19px;color:var(--color-texto-2)">Casilleros: números primero, columnas para escalas, cruces como tabla sombreada. Lo oculto es una trama pareja.</span>
+      </div>
+      <div data-screen-label="1b Casilleros" style="box-sizing:border-box;width:1040px;padding:40px 48px 56px;background:var(--color-fondo);display:flex;flex-direction:column;gap:48px">
+        <header style="display:flex;flex-direction:column;gap:8px;padding-bottom:20px;border-bottom:1px solid var(--color-texto)">
+          <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Resultados · Encuesta de adultos</p>
+          <h2 style="margin:0;font-family:var(--fuente-titulo);font-size:38px;font-weight:500;line-height:1.1;letter-spacing:-.015em">{{ titulo }}</h2>
+          <p style="margin:4px 0 0;font-size:16px;color:var(--color-texto-2)">{{ respuestas }} respuestas completas · Datos de ejemplo</p>
+          <div style="margin-top:4px;display:flex;gap:10px;align-items:center">
+            <span style="width:28px;height:18px;background:var(--trama-oculto);outline:1px solid var(--color-pista)"></span>
+            <span style="font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-3)">Oculto: las cantidades menores a 5 no se muestran, para proteger el anonimato.</span>
+          </div>
+        </header>
+
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,2fr);gap:32px">
+          <div style="padding-top:14px;border-top:2px solid var(--color-texto);display:flex;flex-direction:column;gap:8px">
+            <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Respondieron</p>
+            <p style="margin:0;font-family:var(--fuente-titulo);font-size:72px;font-weight:500;line-height:.95;font-variant-numeric:tabular-nums">{{ respuestas }}</p>
+            <p style="margin:0;font-size:16px;color:var(--color-texto-2)">encuestas completas</p>
+          </div>
+          <div style="padding-top:14px;border-top:2px solid var(--color-texto);display:flex;flex-direction:column;gap:8px">
+            <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Apostó en 12 meses</p>
+            <div style="height:68px;background:var(--trama-oculto);display:flex;align-items:center;padding:0 10px">
+              <span style="padding:2px 8px;background:var(--color-superficie);font-family:var(--fuente-titulo);font-style:italic;font-size:18px;color:var(--color-texto-2)">Oculto</span>
+            </div>
+            <p style="margin:0;font-size:16px;line-height:1.45;color:var(--color-texto-2);text-wrap:pretty">No apostó: <b style="font-weight:600;color:var(--color-texto)">{{ aposto.noPct }}</b> ({{ aposto.noN }} de {{ aposto.base }}). «Sí» se omite para que no se despeje restando.</p>
+          </div>
+          <div style="padding-top:14px;border-top:2px solid var(--color-texto);display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:baseline">
+              <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Riesgo PGSI · quienes apostaron</p>
+              <p style="margin:0;font-size:15px;color:var(--color-texto-3)">n = {{ pgsi.base }}</p>
+            </div>
+            <div role="img" aria-label="{{ pgsi.resumen }}" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:end;height:132px;border-bottom:1px solid var(--color-texto)">
+              <sc-for list="{{ pgsi.segs }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:4px;height:100%">
+                  <span style="font-family:var(--fuente-titulo);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums">{{ s.pctTxt }}</span>
+                  <div style="height:{{ s.alto }};background:{{ s.color }};outline:1px solid var(--color-acento);outline-offset:-1px"></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+              <sc-for list="{{ pgsi.segs }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column">
+                  <span style="font-size:14px;line-height:1.25;color:var(--color-texto)">{{ s.texto }}</span>
+                  <span style="font-size:14px;color:var(--color-texto-3)">{{ s.n }} pers.</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">{{ preg.seccion }}</p>
+          <div style="display:flex;justify-content:space-between;gap:24px;align-items:baseline">
+            <h3 style="margin:0;font-family:var(--fuente-titulo);font-size:24px;font-weight:500;line-height:1.2;text-wrap:balance">{{ preg.texto }}</h3>
+            <p style="margin:0;flex-shrink:0;font-size:15px;color:var(--color-texto-3)">n = {{ preg.base }} · una respuesta por persona</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:end;height:200px;border-bottom:1px solid var(--color-texto)">
+            <sc-for list="{{ preg.filas }}" as="f" hint-placeholder-count="6">
+              <div style="height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:4px">
+                <sc-if value="{{ f.visible }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-family:var(--fuente-titulo);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums">{{ f.pctTxt }}</span>
+                  <div style="height:{{ f.alto }};background:var(--color-acento)"></div>
+                </sc-if>
+                <sc-if value="{{ f.oculto }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-2)">Oculto</span>
+                  <div style="height:10px;background:var(--trama-oculto);outline:1px solid var(--color-pista);outline-offset:-1px"></div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px">
+            <sc-for list="{{ preg.filas }}" as="f" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:15px;line-height:1.3">{{ f.texto }}</span>
+                <span style="font-size:14px;color:var(--color-texto-3)">{{ f.nTxt }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div style="display:flex;justify-content:space-between;gap:24px;align-items:flex-end;padding-bottom:12px;border-bottom:2px solid var(--color-texto)">
+            <p style="margin:0;font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">Cruces · Situación económica</p>
+            <p style="margin:0;font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-2)">Muestra cómo se relacionan dos respuestas; no indica que una cause la otra.</p>
+          </div>
+          <sc-for list="{{ cruces }}" as="c" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <h3 style="margin:0;font-family:var(--fuente-titulo);font-size:24px;font-weight:500;line-height:1.2">{{ c.resultado }}, <span style="color:var(--color-texto-2)">según {{ c.factorMin }}</span></h3>
+              <sc-if value="{{ c.completoOculto }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:0;font-family:var(--fuente-titulo);font-size:18px;line-height:1.5;color:var(--color-texto);max-width:680px;text-wrap:pretty">Este cruce no se muestra: no hay suficientes respuestas en cada grupo para mostrarlo sin arriesgar el anonimato.</p>
+              </sc-if>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="display:grid;grid-template-columns:{{ c.gridCols }};gap:4px">
+                  <span style="font-size:14px;color:var(--color-texto-3)">Se lee por fila →</span>
+                  <sc-for list="{{ c.columnas }}" as="col" hint-placeholder-count="2">
+                    <span style="font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)">{{ col.texto }}</span>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ c.filas }}" as="f" hint-placeholder-count="3">
+                  <div style="display:grid;grid-template-columns:{{ c.gridCols }};gap:4px">
+                    <div style="display:flex;flex-direction:column;justify-content:center;gap:2px;min-height:72px;border-top:1px solid var(--color-borde-suave)">
+                      <span style="font-size:16px;line-height:1.3">{{ f.texto }}</span>
+                      <span style="font-size:14px;color:var(--color-texto-3)">n = {{ f.base }}</span>
+                    </div>
+                    <sc-for list="{{ f.celdas }}" as="x" hint-placeholder-count="2">
+                      <div style="min-height:72px;padding:10px 14px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;background:{{ x.fondo }}">
+                        <sc-if value="{{ x.visible }}" hint-placeholder-val="{{ true }}">
+                          <span style="font-family:var(--fuente-titulo);font-size:28px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums">{{ x.pctTxt }}</span>
+                          <span style="margin-top:4px;font-size:14px;color:var(--color-texto-2)">{{ x.n }} de {{ f.base }}</span>
+                        </sc-if>
+                        <sc-if value="{{ x.oculto }}" hint-placeholder-val="{{ false }}">
+                          <span style="align-self:flex-start;padding:2px 8px;background:var(--color-superficie);font-family:var(--fuente-titulo);font-style:italic;font-size:17px;color:var(--color-texto-2)">Oculto</span>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { d: null };
+  componentDidMount() {
+    fetch('docs/diseno/dashboard/ejemplo-adultos-grupo.json').then(r => r.json()).then(d => this.setState({ d }));
+  }
+  renderVals() {
+    const d = this.state.d;
+    if (!d) return { listo: false };
+    const pct = (n, b) => Math.round(100 * n / b);
+    const dist = id => d.distribuciones.find(x => x.id === id);
+    const sec = id => (d.secciones.find(s => s.id === id) || {}).titulo;
+
+    const ap = dist('aposto_12m'), apNo = ap.celdas.find(c => c.valor === 'no');
+    const pg = dist('pgsi_categoria');
+    const colores = ['var(--pgsi-0)', 'var(--pgsi-1)', 'var(--pgsi-2)', 'var(--pgsi-3)'];
+    const pmax = Math.max(...pg.celdas.map(c => c.n || 0));
+    const segs = pg.celdas.map((c, i) => ({ texto: c.texto, n: c.n, pctTxt: pct(c.n, pg.base) + '%', width: pct(c.n, pg.base) + '%', alto: (c.n / pmax * 100) + '%', color: colores[i] }));
+
+    const q = dist('ingresos_hogar');
+    const qmax = Math.max(...q.celdas.map(c => c.n || 0));
+    const filas = q.celdas.map(c => ({
+      texto: c.texto, oculto: c.oculto, visible: !c.oculto, n: c.n,
+      nTxt: c.oculto ? 'oculto' : c.n + ' personas',
+      pctTxt: c.oculto ? '' : pct(c.n, q.base) + '%',
+      width: c.oculto ? '0' : pct(c.n, q.base) + '%',
+      alto: c.oculto ? '0' : (c.n / qmax * 100) + '%'
+    }));
+
+    const cr = ['aposto_ingresos', 'riesgo_deudas'].map(id => d.cruces.find(c => c.id === id)).map(c => {
+      const fs = c.filas.map(f => {
+        const oc = f.oculto || f.celdas.some(x => x.oculto);
+        return { texto: f.texto, base: f.base, oculto: oc, visible: !oc,
+          celdas: f.celdas.map((x, i) => {
+            const p = x.oculto ? 0 : pct(x.n, f.base);
+            return { texto: x.texto, n: x.n, oculto: x.oculto, visible: !x.oculto, pctTxt: p + '%', width: p + '%',
+              bg: i === 0 ? 'var(--color-acento)' : 'var(--color-borde-suave)',
+              fg: i === 0 ? 'var(--color-sobre-seleccion)' : 'var(--color-texto)',
+              fondo: x.oculto ? 'var(--trama-oculto)' : `color-mix(in oklch, var(--color-acento) ${Math.round(p * 0.45)}%, var(--color-superficie))` };
+          }) };
+      });
+      const todo = fs.every(f => f.oculto);
+      return { resultado: c.resultado, factorMin: c.factor.charAt(0).toLowerCase() + c.factor.slice(1),
+        completoOculto: todo, visible: !todo, filas: fs,
+        columnas: c.columnas.map((k, i) => ({ texto: k.texto, bg: i === 0 ? 'var(--color-acento)' : 'var(--color-borde-suave)' })),
+        gridCols: `260px repeat(${c.columnas.length}, minmax(0,1fr))` };
+    });
+
+    return {
+      listo: true, titulo: d.titulo, respuestas: d.respuestas,
+      aposto: { noPct: pct(apNo.n, ap.base) + '%', noN: apNo.n, base: ap.base },
+      pgsi: { base: pg.base, segs, resumen: segs.map(s => `${s.texto}: ${s.pctTxt} (${s.n})`).join('; ') },
+      preg: { texto: q.texto, base: q.base, seccion: sec(q.seccion), filas },
+      cruces: cr
+    };
+  }
+}
+</script>
+</body>
+</html>
