@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Componentes · Tema B</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tema-b.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.doc{box-sizing:border-box;padding:56px;display:flex;flex-direction:column;gap:56px;background:var(--color-fondo);color:var(--color-texto);font-family:var(--fuente-texto)}
+.doc-cabecera{display:flex;flex-direction:column;gap:8px;padding-bottom:20px;border-bottom:1px solid var(--color-texto)}
+.doc-titulo{margin:0;font-family:var(--fuente-titulo);font-size:44px;font-weight:500;letter-spacing:-.015em}
+.doc-sub{margin:0;color:var(--color-texto-3);font-size:17px}
+.doc-fila{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;align-items:start}
+.doc-celda{display:flex;flex-direction:column;gap:14px;min-width:0}
+.doc-rotulo{margin:0;padding-bottom:8px;border-bottom:1px solid var(--color-borde-suave);font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)}
+.doc-codigo{font-family:var(--fuente-codigo);font-size:13px;color:var(--color-acento);text-transform:none;letter-spacing:0;font-weight:400}
+.doc-nota{margin:0;font-size:15px;line-height:1.45;color:var(--color-texto-3)}
+.doc-marco{padding:24px;background:var(--color-fondo);border:1px dashed var(--color-borde-suave)}
+.doc-botones{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+</style>
+</helmet>
+<div class="doc" style="width: 1440px; height: 3000px">
+<header class="doc-cabecera">
+<h1 class="doc-titulo">Componentes · Tema B · Papel y tinta</h1>
+<p class="doc-sub">Cada componente en sus estados, con los nombres de clase de tema-b.css. Los marcados NUEVO no existen en adolescentes.</p>
+</header>
+
+<div class="doc-fila">
+<section class="doc-celda">
+<p class="doc-rotulo">Opción única <span class="doc-codigo">.opcion.opcion--radio</span></p>
+<div class="doc-marco">
+<fieldset class="grupo"><legend class="grupo-leyenda"><span class="pregunta-texto" style="display: block">¿Dependés económicamente de alguien?</span></legend>
+<div class="opciones">
+<label class="opcion opcion--radio opcion--marcada"><input class="opcion-input" type="radio" name="c1" checked=""><span class="opcion-marca" aria-hidden="true"></span><span>Sí</span></label>
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c1"><span class="opcion-marca" aria-hidden="true"></span><span>No</span></label>
+<label class="opcion opcion--radio es-foco" style="outline-offset: -3px"><input class="opcion-input" type="radio" name="c1"><span class="opcion-marca" aria-hidden="true"></span><span>Con foco de teclado</span></label>
+</div>
+</fieldset>
+</div>
+<p class="doc-nota">Marcada: fondo verde agua, texto y aro en verde azulado. Foco: anillo terracota (nunca el mismo color que la selección). Autoavanza solo con toque o clic.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">Múltiple con exclusiva <span class="doc-codigo">.opcion--check · .separador</span></p>
+<div class="doc-marco">
+<p class="pista" style="margin-top: 0">Podés marcar más de una.</p>
+<div class="opciones" style="margin-top: 12px">
+<label class="opcion opcion--check opcion--marcada"><input class="opcion-input" type="checkbox" checked=""><span class="opcion-marca" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span>Redes sociales</span></label>
+<label class="opcion opcion--check"><input class="opcion-input" type="checkbox"><span class="opcion-marca" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span>Videojuegos</span></label>
+<label class="opcion opcion--check opcion--marcada"><input class="opcion-input" type="checkbox" checked=""><span class="opcion-marca" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span>Streamers y/o influencers</span></label>
+<div class="separador" aria-hidden="true"></div>
+<label class="opcion opcion--check"><input class="opcion-input" type="checkbox"><span class="opcion-marca" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span>Ninguno</span></label>
+</div>
+</div>
+<p class="doc-nota">Marcar «Ninguno» desmarca las demás, y viceversa. El separador deja un respiro y abre un filete nuevo.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">NUEVO · Agrupadas <span class="doc-codigo">.opciones-grupo · .opciones-grupo-titulo</span></p>
+<div class="doc-marco">
+<div class="opciones" style="margin-top: 0">
+<div class="opciones-grupo">
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c3"><span class="opcion-marca" aria-hidden="true"></span><span>Educación Inicial</span></label>
+</div>
+<div class="opciones-grupo" role="group" aria-labelledby="g-prof">
+<p class="opciones-grupo-titulo" id="g-prof">Profesorados</p>
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c3"><span class="opcion-marca" aria-hidden="true"></span><span>Inglés</span></label>
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c3"><span class="opcion-marca" aria-hidden="true"></span><span>Matemáticas</span></label>
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c3"><span class="opcion-marca" aria-hidden="true"></span><span>Literatura</span></label>
+</div>
+<div class="opciones-grupo" role="group" aria-labelledby="g-tec">
+<p class="opciones-grupo-titulo" id="g-tec">Tecnicaturas</p>
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c3"><span class="opcion-marca" aria-hidden="true"></span><span>Ciencia de Datos e IA</span></label>
+<label class="opcion opcion--radio opcion--marcada"><input class="opcion-input" type="radio" name="c3" checked=""><span class="opcion-marca" aria-hidden="true"></span><span>Administración Financiera</span></label>
+<label class="opcion opcion--radio"><input class="opcion-input" type="radio" name="c3"><span class="opcion-marca" aria-hidden="true"></span><span>…</span></label>
+</div>
+</div>
+</div>
+<p class="doc-nota">Todas las opciones siguen siendo UN grupo de radios (mismo name). Un grupo de una sola opción con el mismo nombre («Educación Inicial») no lleva rótulo.</p>
+</section>
+</div>
+
+<div class="doc-fila">
+<section class="doc-celda">
+<p class="doc-rotulo">NUEVO · ¿Por qué preguntamos esto? <span class="doc-codigo">.porque</span></p>
+<div class="doc-marco">
+<div class="porque" style="margin-top: 0">
+<button type="button" class="porque-boton" aria-expanded="false"><span class="porque-icono" aria-hidden="true">i</span><span class="porque-boton-texto">¿Por qué preguntamos esto?</span></button>
+</div>
+<div class="porque">
+<button type="button" class="porque-boton" aria-expanded="true" aria-controls="n1"><span class="porque-icono" aria-hidden="true">i</span><span class="porque-boton-texto">¿Por qué preguntamos esto?</span></button>
+<p class="porque-texto" id="n1" style="animation: none">Sumá todos los ingresos de las personas con las que vivís. Lo usamos para ver si la situación económica se relaciona con las apuestas; una aproximación alcanza.</p>
+</div>
+</div>
+<p class="doc-nota">Cerrada / abierta. Es un &lt;button aria-expanded&gt;, no un &lt;details&gt;: así el motor la cierra al cambiar de pantalla. Va entre la pregunta y las respuestas, empuja el contenido y nunca lo tapa.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">NUEVO · Tramos, sin valor <span class="doc-codigo">.tramos</span></p>
+<div class="doc-marco">
+<div class="tramos" style="margin-top: 0">
+<div class="tramos-lectura" aria-hidden="true"><p class="tramos-vacio">Elegí el escalón que más se acerque.</p></div>
+<div class="tramos-escalones">
+<label class="tramo"><input class="opcion-input" type="radio" name="t1"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Sin ingresos o hasta 1 salario mínimo</span></label>
+<label class="tramo"><input class="opcion-input" type="radio" name="t1"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Entre 1 y 2 salarios mínimos</span></label>
+<label class="tramo"><input class="opcion-input" type="radio" name="t1"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Entre 2 y 3 salarios mínimos</span></label>
+<label class="tramo"><input class="opcion-input" type="radio" name="t1"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Entre 3 y 5 salarios mínimos</span></label>
+<label class="tramo"><input class="opcion-input" type="radio" name="t1"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Más de 5 salarios mínimos</span></label>
+</div>
+<div class="tramos-extremos" aria-hidden="true"><span>Menos</span><span>Más</span></div>
+</div>
+</div>
+<p class="doc-nota">Arranca sin nada marcado y «Siguiente» deshabilitado. Son 5 radios: las flechas del teclado recorren los escalones. No autoavanza.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">NUEVO · Tramos, elegido <span class="doc-codigo">.tramo--marcado · .tramo--debajo</span></p>
+<div class="doc-marco">
+<div class="tramos" style="margin-top: 0">
+<div class="tramos-lectura" aria-hidden="true"><p class="tramos-valor">Entre 2 y 3 salarios mínimos</p><p class="tramos-pesos">$767.600 a $1.151.400 por mes</p></div>
+<div class="tramos-escalones">
+<label class="tramo tramo--debajo"><input class="opcion-input" type="radio" name="t2"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Sin ingresos o hasta 1 salario mínimo</span></label>
+<label class="tramo tramo--debajo"><input class="opcion-input" type="radio" name="t2"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Entre 1 y 2 salarios mínimos</span></label>
+<label class="tramo tramo--marcado"><input class="opcion-input" type="radio" name="t2" checked=""><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Entre 2 y 3 salarios mínimos</span></label>
+<label class="tramo"><input class="opcion-input" type="radio" name="t2"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Entre 3 y 5 salarios mínimos</span></label>
+<label class="tramo"><input class="opcion-input" type="radio" name="t2"><span class="tramo-barra" aria-hidden="true"></span><span class="solo-lector">Más de 5 salarios mínimos</span></label>
+</div>
+<div class="tramos-extremos" aria-hidden="true"><span>Menos</span><span>Más</span></div>
+</div>
+</div>
+<p class="doc-nota">La línea de pesos aparece solo si la pregunta trae rangosSmvm (ingresos). En deuda y monto por vez, solo la etiqueta.</p>
+</section>
+</div>
+
+<div class="doc-fila">
+<section class="doc-celda">
+<p class="doc-rotulo">NUEVO · Frecuencia (PGSI) <span class="doc-codigo">.frecuencia-opcion</span></p>
+<div class="doc-marco">
+<p class="frecuencia-contexto">Pregunta <b>3 de 9</b></p>
+<div class="frecuencia">
+<label class="frecuencia-opcion"><input class="opcion-input" type="radio" name="f1"><span class="frecuencia-grado" aria-hidden="true"><i></i><i></i><i></i></span><span>Nunca</span><span class="opcion-marca" aria-hidden="true"></span></label>
+<label class="frecuencia-opcion frecuencia-opcion--marcada"><input class="opcion-input" type="radio" name="f1" checked=""><span class="frecuencia-grado" aria-hidden="true"><i class="on"></i><i></i><i></i></span><span>A veces</span><span class="opcion-marca" aria-hidden="true"></span></label>
+<label class="frecuencia-opcion"><input class="opcion-input" type="radio" name="f1"><span class="frecuencia-grado" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span><span>La mayoría de las veces</span><span class="opcion-marca" aria-hidden="true"></span></label>
+<label class="frecuencia-opcion"><input class="opcion-input" type="radio" name="f1"><span class="frecuencia-grado" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i></span><span>Casi siempre</span><span class="opcion-marca" aria-hidden="true"></span></label>
+</div>
+</div>
+<p class="doc-nota">En pantalla va anclada abajo (.frecuencia-zona con margin-top:auto): mismo lugar en las 9 preguntas, sin importar cuántos renglones tenga cada una. Las barritas son decorativas.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">NUEVO · Pantalla informativa <span class="doc-codigo">.info</span></p>
+<div class="doc-marco">
+<div class="info" style="margin-top: 0">
+<h2 class="info-titulo">¿Qué es la educación financiera?</h2>
+<p class="info-texto">Es el conjunto de conocimientos y hábitos que nos ayudan a manejar el dinero: armar un presupuesto, ahorrar, entender cuánto cuesta realmente un crédito o una compra en cuotas, y tomar decisiones informadas antes de gastar, endeudarnos o invertir. No se trata de tener mucho dinero, sino de decidir mejor con el que tenemos.</p>
+</div>
+</div>
+<p class="doc-nota">Filete terracota de apertura y capitular. No cuenta en el progreso y no se envía.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">Botones y pie <span class="doc-codigo">.btn · .btn-volver</span></p>
+<div class="doc-marco" style="display: flex; flex-direction: column; gap: 20px">
+<div class="doc-botones">
+<button type="button" class="btn btn--primario">Siguiente</button>
+<button type="button" class="btn btn--primario" disabled="">Siguiente</button>
+</div>
+<div class="doc-botones">
+<button type="button" class="btn btn--secundario">No, gracias</button>
+<button type="button" class="btn btn--primario es-foco">Con foco</button>
+</div>
+<div class="doc-botones">
+<button type="button" class="btn-volver"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg><span>Atrás</span></button>
+</div>
+</div>
+<p class="doc-nota">Deshabilitado = contorno apagado: se sigue viendo dónde va a estar la acción. No existe «Saltar» en adultos.</p>
+</section>
+</div>
+
+<div class="doc-fila">
+<section class="doc-celda">
+<p class="doc-rotulo">Edad y aviso <span class="doc-codigo">.campo--numero · .aviso</span></p>
+<div class="doc-marco">
+<label for="e1" class="pregunta-texto" style="display: block">¿Qué edad tenés?</label>
+<input id="e1" class="campo campo--numero" type="text" inputmode="numeric" value="17" aria-invalid="true" aria-describedby="a1">
+<p class="aviso" id="a1" role="status" style="animation: none"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg><span>Esta encuesta es para personas de 18 años o más. Gracias por tu interés.</span></p>
+</div>
+<p class="doc-nota">Se valida al tocar «Siguiente». El aviso es cálido (terracota), nunca rojo.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">Líneas de ayuda <span class="doc-codigo">.ayuda · .linea</span></p>
+<div class="doc-marco">
+<section class="ayuda" style="margin: 0" aria-labelledby="ay">
+<p id="ay" class="ayuda-intro">Si vos o alguien cercano quiere hablar sobre el juego o las apuestas, hay ayuda gratuita y confidencial:</p>
+<a class="linea" href="tel:08004444000"><span class="linea-icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg></span><span class="linea-textos"><span class="linea-numero">0800-444-4000</span><span class="linea-desc">Provincia de Buenos Aires, las 24 horas.</span></span></a>
+<a class="linea" href="tel:141"><span class="linea-icono" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"></path></svg></span><span class="linea-textos"><span class="linea-numero">141</span><span class="linea-desc">SEDRONAR, línea nacional.</span></span></a>
+</section>
+</div>
+<p class="doc-nota">Enlaces tel:. Números PENDIENTES de verificación final.</p>
+</section>
+
+<section class="doc-celda">
+<p class="doc-rotulo">Título de sección <span class="doc-codigo">.seccion</span></p>
+<div class="doc-marco">
+<div class="seccion" style="margin-top: 0">
+<h2 class="seccion-titulo">Tu entorno y la publicidad</h2>
+<p class="seccion-desc">Estas preguntas son para todos, hayas apostado o no.</p>
+</div>
+</div>
+<p class="doc-nota">Filete terracota como apertura de capítulo. El rótulo de progreso queda vacío en esta pantalla (igual que en adolescentes).</p>
+</section>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":3000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

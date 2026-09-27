@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Tokens · Tema B</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="tema-b.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.doc{box-sizing:border-box;padding:56px;display:flex;flex-direction:column;gap:48px;background:var(--color-fondo);color:var(--color-texto);font-family:var(--fuente-texto)}
+.doc-cabecera{display:flex;flex-direction:column;gap:8px;padding-bottom:20px;border-bottom:1px solid var(--color-texto)}
+.doc-titulo{margin:0;font-family:var(--fuente-titulo);font-size:44px;font-weight:500;letter-spacing:-.015em}
+.doc-sub{margin:0;color:var(--color-texto-3);font-size:17px}
+.doc-seccion{display:flex;flex-direction:column;gap:20px}
+.doc-seccion-titulo{margin:0;padding-bottom:8px;border-bottom:1px solid var(--color-borde-suave);font-size:14px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--color-texto-3)}
+.muestras{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:24px}
+.muestra{display:flex;flex-direction:column;gap:6px}
+.muestra-color{height:72px;border:1px solid var(--color-borde-suave);border-radius:4px}
+.muestra-nombre{margin:0;font-family:var(--fuente-codigo);font-size:13px;color:var(--color-acento)}
+.muestra-hex{margin:0;font-family:var(--fuente-codigo);font-size:13px;color:var(--color-texto-3)}
+.tipo-fila{display:grid;grid-template-columns:280px minmax(0,1fr);gap:32px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--color-borde-suave)}
+.tipo-meta{margin:0;font-family:var(--fuente-codigo);font-size:13px;color:var(--color-texto-3)}
+</style>
+</helmet>
+<div class="doc" style="width: 1440px; height: 1500px">
+<header class="doc-cabecera">
+<h1 class="doc-titulo">Tokens · Tema B · Papel y tinta</h1>
+<p class="doc-sub">Referencia visual. Si algo difiere de tema-b.css, manda tema-b.css.</p>
+</header>
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Color</h2>
+<div class="muestras">
+<div class="muestra"><div class="muestra-color" style="background: #F4EEE2"></div><p class="muestra-nombre">--color-fondo</p><p class="muestra-hex">#F4EEE2 · papel</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #FBF8F1"></div><p class="muestra-nombre">--color-superficie</p><p class="muestra-hex">#FBF8F1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #EFE7D8"></div><p class="muestra-nombre">--color-superficie-hover</p><p class="muestra-hex">#EFE7D8</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #DDD3C1"></div><p class="muestra-nombre">--color-borde-suave</p><p class="muestra-hex">#DDD3C1 · filetes</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #D3C8B5"></div><p class="muestra-nombre">--color-pista</p><p class="muestra-hex">#D3C8B5</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #7D7668"></div><p class="muestra-nombre">--color-borde</p><p class="muestra-hex">#7D7668 · 3.9:1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #1B2A44"></div><p class="muestra-nombre">--color-texto / accion</p><p class="muestra-hex">#1B2A44 · tinta · 12.4:1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #3A4659"></div><p class="muestra-nombre">--color-texto-2</p><p class="muestra-hex">#3A4659 · 8.3:1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #5B6270"></div><p class="muestra-nombre">--color-texto-3</p><p class="muestra-hex">#5B6270 · 5.3:1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #0D5C58"></div><p class="muestra-nombre">--color-acento</p><p class="muestra-hex">#0D5C58 · lo elegido · 6.8:1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #E3ECE7"></div><p class="muestra-nombre">--color-seleccion-fondo</p><p class="muestra-hex">#E3ECE7</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #A5462A"></div><p class="muestra-nombre">--color-terracota / foco</p><p class="muestra-hex">#A5462A · 5.2:1</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #EDE3D2"></div><p class="muestra-nombre">--color-nota-fondo</p><p class="muestra-hex">#EDE3D2</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #F4E2D6"></div><p class="muestra-nombre">--color-aviso-fondo</p><p class="muestra-hex">#F4E2D6</p></div>
+<div class="muestra"><div class="muestra-color" style="background: #8A8477"></div><p class="muestra-nombre">--color-deshabilitado</p><p class="muestra-hex">#8A8477</p></div>
+</div>
+</section>
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Tipografía · Newsreader (leer) + Instrument Sans (operar)</h2>
+<div>
+<div class="tipo-fila"><p class="tipo-meta">portada · Newsreader 44 / 500</p><p style="margin: 0; font-family: var(--fuente-titulo); font-size: 44px; font-weight: 500; line-height: 1.02">Apuestas, dinero y decisiones</p></div>
+<div class="tipo-fila"><p class="tipo-meta">--tam-h1 · sección 38 / 500</p><p style="margin: 0; font-family: var(--fuente-titulo); font-size: 38px; font-weight: 500">Tu entorno y la publicidad</p></div>
+<div class="tipo-fila"><p class="tipo-meta">--tam-pregunta · 29 / 500</p><p style="margin: 0; font-family: var(--fuente-titulo); font-size: 29px; font-weight: 500">¿Tenés deudas actualmente?</p></div>
+<div class="tipo-fila"><p class="tipo-meta">--tam-tramo · 28 / 500 · acento</p><p style="margin: 0; font-family: var(--fuente-titulo); font-size: 28px; font-weight: 500; color: var(--color-acento)">Entre 1 y 2 salarios mínimos</p></div>
+<div class="tipo-fila"><p class="tipo-meta">--tam-lead · lectura 19 / 1.55</p><p style="margin: 0; font-family: var(--fuente-titulo); font-size: 19px; line-height: 1.55; color: var(--color-texto-2)">Datos generales para describir al grupo que responde. Nada de esto te identifica.</p></div>
+<div class="tipo-fila"><p class="tipo-meta">nota · Newsreader itálica 17</p><p style="margin: 0; font-family: var(--fuente-titulo); font-style: italic; font-size: 17px; color: var(--color-texto-3)">Pregunta 3 de 9</p></div>
+<div class="tipo-fila"><p class="tipo-meta">--tam-opcion · Instrument Sans 17</p><p style="margin: 0; font-size: 17px">Trabajo en relación de dependencia</p></div>
+<div class="tipo-fila"><p class="tipo-meta">--tam-chico · versalitas 14 / 600</p><p style="margin: 0; font-size: 14px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--color-texto-3)">Profesorados</p></div>
+</div>
+</section>
+<section class="doc-seccion">
+<h2 class="doc-seccion-titulo">Forma y movimiento</h2>
+<div class="tipo-fila"><p class="tipo-meta">radios</p><p style="margin: 0">2 / 4 / 6 px · filete 1 px · borde de control 1.5 px · toque mínimo 48 px</p></div>
+<div class="tipo-fila"><p class="tipo-meta">movimiento (lo lee el motor)</p><p style="margin: 0">--dur-salida 220 ms · --dur-entrada 460 ms · --pausa-autoavance 650 ms. Un poco más ágil que adolescentes: el bloque PGSI son 9 pantallas seguidas.</p></div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
