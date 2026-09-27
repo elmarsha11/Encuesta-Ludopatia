@@ -64,6 +64,6 @@ new Motor({
   raiz: document.querySelector('.app'),
   id: 'adultos',
   ui: UI,
-  // Sin tarjeta: la página es la tarjeta. Preguntas más largas antes de achicar la letra.
-  presentacion: { tarjeta: false, largoPreguntaLarga: 70, flechaAlEnviar: false },
+  // Cada pregunta en una tarjeta de papel (como el dashboard). Preguntas más largas antes de achicar la letra.
+  presentacion: { tarjeta: true, largoPreguntaLarga: 70, flechaAlEnviar: false },
 }).iniciar();

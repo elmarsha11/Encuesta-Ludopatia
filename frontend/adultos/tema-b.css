@@ -4,7 +4,7 @@
 
    Mismo contrato que tema-a.css:
    1. TOKENS (:root): mismos nombres de variables que el tema A. El motor lee
-      --dur-salida y --pausa-autoavance desde acá.
+      --dur-salida desde acá.
    2. COMPONENTES: mismas clases que el tema A para lo que ya existía, y clases
       propias para lo nuevo de adultos (marcadas con «NUEVO»).
    Tipografías con licencia OFL, servidas desde nuestro propio servidor (nada de CDN).
@@ -93,7 +93,7 @@
   --foco-ancho:3px;
   --foco-separacion:3px;
 
-  /* Movimiento. El motor LEE --dur-salida y --pausa-autoavance desde acá.
+  /* Movimiento. El motor LEE --dur-salida desde acá. Sin autoavance: siempre «Siguiente».
      Adultos: un poco más ágil que adolescentes (el bloque PGSI son 9 pantallas seguidas). */
   --curva-suave:cubic-bezier(.22,.61,.36,1);
   --curva-salida:cubic-bezier(.55,0,1,.45);
@@ -102,7 +102,6 @@
   --dur-salida:220ms;
   --dur-entrada:460ms;
   --dur-lenta:700ms;
-  --pausa-autoavance:650ms;
   --retraso-escalonado:45ms;
   --dur-ola:3200ms;              /* sin uso en adultos (no hay motivo de píxeles); se mantiene el nombre */
   --ola-altura:0px;
@@ -110,8 +109,8 @@
 }
 
 /* Ritmos alternativos (Tweak "ritmo"): solo cambian tokens de movimiento */
-.ritmo-tranquilo{--dur-salida:260ms;--dur-entrada:520ms;--pausa-autoavance:900ms;--retraso-escalonado:70ms}
-.ritmo-agil{--dur-salida:160ms;--dur-entrada:320ms;--pausa-autoavance:450ms;--retraso-escalonado:30ms}
+.ritmo-tranquilo{--dur-salida:260ms;--dur-entrada:520ms;--retraso-escalonado:70ms}
+.ritmo-agil{--dur-salida:160ms;--dur-entrada:320ms;--retraso-escalonado:30ms}
 
 /* 2. COMPONENTES =========================================================== */
 
@@ -123,13 +122,13 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .barra{display:flex;align-items:center;min-height:var(--toque-min);flex-shrink:0;border-bottom:var(--filete) solid var(--color-texto)}
 .anonima{margin:0 0 0 auto;display:inline-flex;align-items:center;gap:6px;color:var(--color-acento);font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;line-height:1}
 
-/* Progreso: rótulo de sección en versalitas + hilo de tinta */
+/* Progreso: rótulo de sección en versalitas + hilo verde (el mismo acento que el dashboard) */
 .progreso-bloque{margin-top:var(--esp-3);display:flex;flex-direction:column;gap:var(--esp-2);flex-shrink:0}
 .progreso-seccion{margin:0;min-height:1.5em;font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;color:var(--color-texto-3);line-height:1.5}
-.progreso{appearance:none;-webkit-appearance:none;display:block;width:100%;height:2px;border:0;border-radius:0;background:var(--color-pista);overflow:hidden}
+.progreso{appearance:none;-webkit-appearance:none;display:block;width:100%;height:3px;border:0;border-radius:0;background:var(--color-pista);overflow:hidden}
 .progreso::-webkit-progress-bar{background:var(--color-pista)}
-.progreso::-webkit-progress-value{background:var(--color-texto);transition:width var(--dur-lenta) var(--curva-suave)}
-.progreso::-moz-progress-bar{background:var(--color-texto)}
+.progreso::-webkit-progress-value{background:var(--color-acento);transition:width var(--dur-lenta) var(--curva-suave)}
+.progreso::-moz-progress-bar{background:var(--color-acento)}
 
 /* Carrusel entre pantallas (mismo comportamiento que el tema A) */
 .contenido{display:flex;flex-direction:column;flex:1 0 auto;padding-top:var(--esp-7)}
@@ -164,10 +163,17 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .pregunta-texto{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-pregunta);line-height:var(--interlineado-titulo);font-weight:var(--peso-titulo);letter-spacing:-.01em;text-wrap:balance}
 .pregunta-texto--larga{font-size:25px;line-height:1.2}
 .pista{margin:var(--esp-3) 0 0;font-family:var(--fuente-titulo);font-style:italic;font-size:var(--tam-opcion);color:var(--color-texto-3)}
-/* Título de sección: un filete corto en terracota, como apertura de capítulo */
-.seccion{margin-top:var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
-.seccion::before{content:"";width:48px;height:2px;background:var(--color-terracota)}
-.seccion-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.06;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
+/* Portada de cada parte, como apertura de capítulo: centrada en el alto disponible, con el
+   número en serif terracota, «Parte X de N» en versalitas y un segmento por parte. */
+.seccion{margin:auto 0;padding:var(--esp-6) 0 var(--esp-8);display:flex;flex-direction:column;gap:var(--esp-4)}
+.seccion-numero{margin:0;display:flex;flex-direction:column;gap:var(--esp-2)}
+.seccion-cifra{font-family:var(--fuente-titulo);font-size:88px;line-height:.85;font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--color-terracota)}
+.seccion-de{font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;color:var(--color-texto-3)}
+.seccion-marcas{margin-top:var(--esp-3);display:flex;gap:6px}
+.seccion-marcas span{width:32px;height:3px;background:var(--color-pista)}
+.seccion-marcas .hecha{background:var(--color-texto)}
+.seccion-marcas .actual{background:var(--color-terracota)}
+.seccion-titulo{margin:0;font-family:var(--fuente-titulo);font-size:clamp(var(--tam-h1),8vw,46px);line-height:1.06;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
 .seccion-desc{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-lead);line-height:var(--interlineado-lectura);color:var(--color-texto-2);text-wrap:pretty}
 .mensaje{margin-top:var(--esp-4);display:flex;flex-direction:column;gap:var(--esp-4)}
 .mensaje-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h2);line-height:1.15;font-weight:var(--peso-titulo);letter-spacing:-.01em;text-wrap:balance}
@@ -183,7 +189,8 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .btn--secundario:hover{background:var(--color-superficie-hover)}
 /* Obligatoria sin responder: el botón se ve apagado (contorno), no desaparece */
 .btn:disabled,.btn:disabled:hover{background:transparent;border-color:var(--color-pista);color:var(--color-deshabilitado);cursor:not-allowed;transform:none}
-.btn-volver{min-height:var(--alto-boton);margin-left:-10px;padding:0 14px 0 8px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:0;border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-texto);font-size:var(--tam-opcion);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
+/* Atrás con marco: se lee como botón, sin competir con la acción (que va rellena en tinta). */
+.btn-volver{box-sizing:border-box;min-height:var(--alto-boton);padding:0 18px 0 12px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-texto);font-size:var(--tam-opcion);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
 .btn-volver:hover{color:var(--color-texto);background:var(--color-superficie-hover)}
 .consentimiento{margin-top:auto;padding:var(--esp-5) 0 var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4);border-top:var(--filete) solid var(--color-borde-suave)}
 .consentimiento-pregunta{margin:var(--esp-2) 0 0;font-family:var(--fuente-titulo);font-size:var(--tam-h3);line-height:1.2;font-weight:var(--peso-titulo)}
@@ -194,9 +201,10 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .pie{position:sticky;bottom:0;margin-top:auto;padding:var(--esp-3) 0 var(--esp-6);display:flex;align-items:center;gap:var(--esp-3);background:var(--color-fondo);border-top:var(--filete) solid var(--color-borde-suave);flex-shrink:0}
 .pie-accion{margin-left:auto;min-width:148px}
 
-/* Contenedor de pregunta. En adultos no hay tarjeta: la página es la tarjeta. */
+/* Contenedor de pregunta: una hoja de papel más clara sobre el fondo, con una sombra suave de
+   tinta (las mismas tarjetas que el dashboard de resultados). */
 .sin-tarjeta{margin-top:0}
-.tarjeta{margin-top:0;padding:var(--esp-5);border:var(--filete) solid var(--color-borde-suave);border-radius:var(--radio-l);background:var(--color-superficie)}
+.tarjeta{margin-top:0;padding:var(--esp-6) var(--esp-6) var(--esp-7);border-radius:var(--radio-l);background:var(--color-superficie);box-shadow:0 1px 2px rgb(27 42 68 / .06),0 6px 20px rgb(27 42 68 / .07)}
 .grupo{margin:0;padding:0;border:0;min-width:0}
 .grupo-leyenda{padding:0;margin:0;width:100%}
 
@@ -330,7 +338,7 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .panel-dev summary{cursor:pointer;min-height:var(--toque-min);display:flex;align-items:center}
 .panel-dev pre{margin:var(--esp-2) 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--fuente-codigo);font-size:var(--tam-codigo);line-height:1.45;color:var(--color-texto-2)}
 
-/* Menos movimiento: sin animaciones ni deslizamientos. La pausa para ver la selección se mantiene. */
+/* Menos movimiento: sin animaciones ni deslizamientos. */
 @media (prefers-reduced-motion: reduce){
   .btn,.btn-volver,.opcion,.opcion-marca,.punto,.linea,.campo,.tramo-barra,.frecuencia-opcion,.porque-icono{transition:none}
   .btn:active{transform:none}

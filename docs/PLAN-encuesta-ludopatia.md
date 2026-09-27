@@ -247,6 +247,8 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
 - Sin recursos externos (tipografías servidas desde el propio servidor, sin analytics): por la anonimidad y para no depender de Google.
 - Mobile-first: se entra por QR desde el celular.
 - **Una pregunta (o un grupo chico) por pantalla**, con transiciones suaves y barra de progreso. Con bifurcaciones, el total de pasos cambia según la rama: la barra se calcula sobre la rama actual.
+- **Sin pase automático (decisión de Juli):** elegir una opción nunca pasa de pantalla; siempre se confirma con «Siguiente». La persona ve lo que eligió y puede corregirlo. «Atrás» lleva marco, para que se lea como botón.
+- **Portada de cada parte:** número grande, «Parte X de N» y una marca por parte, centrado en el alto de la pantalla. N usa la misma regla que la barra de progreso (una rama sin decidir ya cuenta), así el total nunca crece a mitad de camino.
 - La lógica de bifurcación vive en el frontend para que la experiencia sea fluida. **El backend vuelve a validar todo** antes de guardar.
 - Guardado: **un solo envío al final** (`fetch` POST en JSON). PROPUESTA: guardar el progreso en `sessionStorage` para que un refresh accidental no borre lo respondido.
 

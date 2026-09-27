@@ -72,6 +72,26 @@ describe('progreso', () => {
     assert.ok(fila.every((px) => px.y === 24));
     assert.equal(fila.at(-1).x, 336);
   });
+
+  test('píxeles: el desorden del principio también ocupa todo el ancho', () => {
+    const angosto = Math.max(...L.pixeles(0, true, 342).map((px) => px.x));
+    const ancho = Math.max(...L.pixeles(0, true, 600).map((px) => px.x));
+    assert.ok(angosto <= 342 - 6);
+    assert.ok(ancho > 500 && ancho <= 600 - 6, `el píxel más a la derecha quedó en ${ancho}`);
+  });
+
+  test('«Parte X de N»: el total no crece cuando se decide una rama', () => {
+    const numeros = (r) => {
+      const lista = L.pasos(def, r);
+      return lista.flatMap((paso, i) => (paso.clase === 'seccion' ? [L.ubicacionSeccion(def, r, i, lista)] : []));
+    };
+    // Antes de contestar si apostó: la sección de la rama ya está en el total.
+    const antes = numeros({ edad: 15 });
+    const despues = numeros({ edad: 15, aposto_alguna_vez: 'si_ultimo_anio' });
+    assert.equal(antes[0].total, despues[0].total);
+    assert.deepEqual(despues.map((u) => u.numero), despues.map((_, i) => i + 1));
+    assert.equal(despues.at(-1).numero, despues.at(-1).total);
+  });
 });
 
 describe('lo que envía el frontend lo acepta el backend', () => {

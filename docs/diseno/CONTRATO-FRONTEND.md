@@ -79,11 +79,13 @@ El motor (`frontend/motor/`) elige el componente por la **forma** de la pregunta
 
 | Forma | Componente |
 |---|---|
-| `escala` con `presentacion: 'slider'` | Tramos: 5 escalones hechos con radios, arrancan sin valor, sin autoavance |
+| `escala` con `presentacion: 'slider'` | Tramos: 5 escalones hechos con radios, arrancan sin valor |
 | `escala` con etiqueta en **cada** punto (PGSI) | Frecuencia: renglones anclados abajo, con «Pregunta n de N» |
 | `escala` con etiquetas solo en los extremos | Escala de puntos |
 | Opciones con `grupo` | Un `role="group"` rotulado por grupo |
 | Pregunta con `ayuda` | Botón «¿Por qué preguntamos esto?» debajo del título |
 | `info` | Pantalla de lectura: no se responde ni cuenta en el progreso |
+
+Ningún componente pasa de pantalla al elegir: siempre se confirma con «Siguiente».
 
 Lo que cambia entre temas y no es CSS (tarjeta alrededor de la pregunta, cuándo una pregunta es «larga», flecha en «Enviar») lo pasa cada página al motor en `presentacion`.

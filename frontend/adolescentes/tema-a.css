@@ -79,8 +79,8 @@
   --foco-separacion:3px;
 
   /* Movimiento · ritmo "tranquilo" (el que se usa por defecto).
-     El motor LEE --dur-salida y --pausa-autoavance desde acá: no hay que
-     repetir estos números en JavaScript. */
+     El motor LEE --dur-salida desde acá: no hay que repetir ese número en
+     JavaScript. (Sin autoavance: elegir nunca pasa de pantalla, siempre «Siguiente».) */
   --curva-suave:cubic-bezier(.22,.61,.36,1);   /* entra y frena despacio */
   --curva-salida:cubic-bezier(.55,0,1,.45);    /* se va acelerando, como al deslizar el dedo */
   --curva-galeria:cubic-bezier(.16,1,.3,1);    /* llega rápido y se asienta suave, como una foto */
@@ -88,7 +88,6 @@
   --dur-salida:260ms;          /* la pantalla actual se va (deslizamiento completo) */
   --dur-entrada:520ms;         /* la siguiente llega */
   --dur-lenta:900ms;           /* píxeles y barra de progreso */
-  --pausa-autoavance:900ms;    /* tiempo para ver lo elegido antes de pasar */
   --retraso-escalonado:70ms;   /* entre opción y opción al aparecer */
   --dur-ola:3200ms;            /* una subida y bajada completa de cada píxel */
   --ola-altura:3px;            /* leve: apenas se nota */
@@ -96,8 +95,8 @@
 }
 
 /* Ritmos alternativos (Tweak "ritmo"): solo cambian tokens de movimiento */
-.ritmo-medio{--dur-salida:220ms;--dur-entrada:420ms;--pausa-autoavance:650ms;--retraso-escalonado:50ms}
-.ritmo-agil{--dur-salida:180ms;--dur-entrada:320ms;--pausa-autoavance:450ms;--retraso-escalonado:35ms}
+.ritmo-medio{--dur-salida:220ms;--dur-entrada:420ms;--retraso-escalonado:50ms}
+.ritmo-agil{--dur-salida:180ms;--dur-entrada:320ms;--retraso-escalonado:35ms}
 
 /* 2. COMPONENTES =========================================================== */
 
@@ -170,9 +169,18 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .pregunta-texto{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-pregunta);line-height:1.18;font-weight:var(--peso-titulo);letter-spacing:-.01em;text-wrap:balance}
 .pregunta-texto--larga{font-size:var(--tam-h3);line-height:1.25}
 .pista{margin:var(--esp-3) 0 0;color:var(--color-texto-3)}
-.seccion{margin-top:var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
-.seccion-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
-.seccion-desc{margin:0;font-size:var(--tam-cuerpo-l);color:var(--color-texto-2);text-wrap:pretty}
+/* Portada de cada parte: centrada en el alto disponible (margin auto dentro de la columna
+   flex), con el número grande, «Parte X de N» y una marca cuadrada por parte, como los píxeles. */
+.seccion{margin:auto 0;padding:var(--esp-7) 0 var(--esp-8);display:flex;flex-direction:column;gap:var(--esp-4)}
+.seccion-numero{margin:0;display:flex;flex-direction:column;gap:var(--esp-2)}
+.seccion-cifra{font-family:var(--fuente-titulo);font-size:76px;line-height:.9;font-weight:700;letter-spacing:-.04em;color:var(--color-lila)}
+.seccion-de{font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo);font-weight:500;letter-spacing:.02em;color:var(--color-texto-3)}
+.seccion-titulo{margin:0;font-family:var(--fuente-titulo);font-size:clamp(var(--tam-h1),8vw,44px);line-height:1.06;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
+.seccion-desc{margin:0;font-size:var(--tam-lead);line-height:1.45;color:var(--color-texto-2);text-wrap:pretty}
+.seccion-marcas{margin-top:var(--esp-3);display:flex;gap:var(--esp-2)}
+.seccion-marcas span{width:10px;height:10px;background:var(--color-pista)}
+.seccion-marcas .hecha{background:var(--color-agua)}
+.seccion-marcas .actual{background:var(--color-lila)}
 .mensaje{margin-top:var(--esp-4);display:flex;flex-direction:column;gap:14px}
 .mensaje-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h2);line-height:1.15;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
 .cierre-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-cierre);line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
@@ -186,9 +194,10 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .btn--secundario{background:transparent;border-color:var(--color-borde);color:var(--color-texto)}
 .btn--secundario:hover{background:var(--color-superficie-hover)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-/* Atrás: abajo a la izquierda, al alcance del pulgar. Sin borde para que no compita con la acción. */
-.btn-volver{min-height:var(--alto-boton);margin-left:-10px;padding:0 16px 0 8px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:0;border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
-.btn-volver:hover{color:var(--color-texto);background:var(--color-superficie)}
+/* Atrás: abajo a la izquierda, al alcance del pulgar. Con marco (se lee como botón) pero sin
+   relleno: la acción principal sigue siendo la naranja. */
+.btn-volver{box-sizing:border-box;min-height:var(--alto-boton);padding:0 18px 0 12px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
+.btn-volver:hover{color:var(--color-texto);border-color:var(--color-texto-3);background:var(--color-superficie)}
 .consentimiento{margin-top:auto;padding:var(--esp-7) 0 var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
 .consentimiento-pregunta{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h3);line-height:1.2;font-weight:var(--peso-titulo)}
 .consentimiento-botones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--esp-3)}
@@ -271,7 +280,7 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .panel-dev pre{margin:var(--esp-2) 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--fuente-codigo);font-size:var(--tam-codigo);line-height:1.45;color:var(--color-texto-2)}
 
 /* Quien pidió menos movimiento (sistema operativo): sin animaciones ni deslizamientos.
-   El motor también se saltea la fase de salida. La pausa para ver la selección se mantiene. */
+   El motor también se saltea la fase de salida. */
 @media (prefers-reduced-motion: reduce){
   .px{animation:none}
   .px,.btn,.btn-volver,.opcion,.opcion-marca,.punto,.linea,.campo{transition:none}

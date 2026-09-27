@@ -86,6 +86,21 @@ export function progreso(def, respuestas, indice, lista) {
 }
 
 /**
+ * Ubicación de la pantalla de sección `indice`: { numero, total } («Parte 2 de 4»).
+ * El total usa la misma regla que la barra de progreso (cuenta): una sección cuya rama
+ * todavía no se decidió ya se cuenta, así el total nunca crece a mitad de camino.
+ */
+export function ubicacionSeccion(def, respuestas, indice, lista) {
+  const pasadas = pasadasHasta(lista, indice);
+  const secciones = [];
+  for (const p of def.preguntas) {
+    if (cuenta(p, respuestas, pasadas) && secciones.at(-1) !== p.seccion) secciones.push(p.seccion);
+  }
+  const actual = lista[indice]?.seccion?.id;
+  return { numero: secciones.indexOf(actual) + 1, total: secciones.length };
+}
+
+/**
  * Avance del motivo de píxeles, de 0 (portada) a 1 (final). Cuenta TODAS las pantallas
  * (portada, títulos de sección y preguntas), así cambia desde la primera.
  */
@@ -202,7 +217,9 @@ export const CANTIDAD_PIXELES = PX_X.length;
 export function pixeles(valorCalma, aparecido, ancho = 342) {
   const c = Math.max(0, Math.min(1, valorCalma));
   return PX_X.map((x, i) => {
-    const sx = Math.round(x / 6) * 6;
+    // Las posiciones del prototipo son para 342px: se estiran al ancho real, así el
+    // desorden del principio también va de margen a margen.
+    const sx = Math.round((x * ancho) / 342 / 6) * 6;
     const sy = Math.round(PX_Y[i] / 6) * 6;
     const y = Math.round(sy + (24 - sy) * c);
     const tx = Math.round((i * (ancho - 6)) / (PX_X.length - 1));

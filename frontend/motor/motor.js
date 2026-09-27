@@ -153,7 +153,6 @@ export class Motor {
       aparecido: false,
       ayudaAbierta: false, // nota «¿Por qué preguntamos esto?»
     };
-    this.temporizador = null; // autoavance
     this.temporizadorTransicion = null; // fase de salida de la galería
     this.controles = null; // referencias a los controles de la pantalla actual
   }
@@ -237,11 +236,6 @@ export class Motor {
     this.temporizadorTransicion = setTimeout(aplicar, this.leerMs('--dur-salida', 260));
   }
 
-  limpiarTemporizador() {
-    clearTimeout(this.temporizador);
-    this.temporizador = null;
-  }
-
   limpiarTransicion() {
     clearTimeout(this.temporizadorTransicion);
     this.temporizadorTransicion = null;
@@ -272,7 +266,6 @@ export class Motor {
   }
 
   irAPaso(i, direccion) {
-    this.limpiarTemporizador();
     const dir = direccion ?? (i >= this.estado.paso ? 'adelante' : 'atras');
     const lista = this.lista();
     if (i < 0) return this.navegar({ pantalla: 'inicio', paso: 0 }, 'atras');
@@ -280,6 +273,8 @@ export class Motor {
     this.navegar({ pantalla: 'recorrido', paso: i, ...this.extraParaPaso(lista[i], this.estado.respuestas) }, dir);
   }
 
+  // Elegir una opción nunca pasa de pantalla: siempre se confirma con «Siguiente».
+  // Así la persona ve lo que eligió, puede corregirlo, y el ritmo lo decide ella.
   responder(id, valor) {
     const r = { ...this.estado.respuestas };
     if (valor === undefined || valor === '' || (Array.isArray(valor) && valor.length === 0)) delete r[id];
@@ -292,20 +287,6 @@ export class Motor {
   guardarProgreso() {
     const { pantalla, paso, respuestas } = this.estado;
     if (pantalla === 'recorrido') guardarBorrador(this.claveBorrador, { paso, respuestas });
-  }
-
-  /** Autoavance: solo si el toque fue con dedo o mouse (detail > 0). Con teclado se elige sin saltar. */
-  programarAvance(evento) {
-    if (!(evento.detail > 0)) return;
-    const pasoAlTocar = this.estado.paso;
-    if (pasoAlTocar >= this.lista().length - 1) return; // nunca enviar solo por tocar
-    this.limpiarTemporizador();
-    this.temporizador = setTimeout(() => {
-      this.temporizador = null;
-      if (this.estado.pantalla === 'recorrido' && this.estado.paso === pasoAlTocar && !this.temporizadorTransicion) {
-        this.irAPaso(pasoAlTocar + 1, 'adelante');
-      }
-    }, this.leerMs('--pausa-autoavance', 900));
   }
 
   confirmarEdad(pregunta) {
@@ -332,7 +313,6 @@ export class Motor {
   }
 
   async enviar() {
-    this.limpiarTemporizador();
     const inicio = Date.now();
     this.navegar({ pantalla: 'enviando' }, 'adelante');
     let destino;
@@ -491,12 +471,27 @@ export class Motor {
         const paso = this.pasoActual();
         if (!paso) return [];
         if (paso.clase === 'seccion') {
+          // Portada de cada parte: número grande, «Parte X de N», título y una marca por parte.
+          // Le dice a la persona cuánto le falta, que es lo que más ayuda a no abandonar.
+          const { numero, total } = L.ubicacionSeccion(d, this.estado.respuestas, this.estado.paso, this.lista());
+          const marca = (i) => (i < numero - 1 ? 'hecha' : i === numero - 1 ? 'actual' : null);
           return [
             h(
               'div',
               { class: 'seccion' },
+              h(
+                'p',
+                { class: `seccion-numero${aparecer}`, estilo: { animationDelay: '40ms' } },
+                h('span', { class: 'seccion-cifra', 'aria-hidden': 'true' }, String(numero).padStart(2, '0')),
+                h('span', { class: 'seccion-de' }, `Parte ${numero} de ${total}`),
+              ),
               h('h1', { class: `seccion-titulo${aparecer}`, tabindex: '-1', estilo: { animationDelay: '120ms' } }, paso.seccion.titulo),
               h('p', { class: `seccion-desc${aparecer}`, estilo: { animationDelay: '300ms' } }, paso.seccion.descripcion),
+              h(
+                'div',
+                { class: `seccion-marcas${aparecer}`, 'aria-hidden': 'true', estilo: { animationDelay: '420ms' } },
+                Array.from({ length: total }, (_, i) => h('span', { class: marca(i) })),
+              ),
             ),
           ];
         }
@@ -603,7 +598,6 @@ export class Motor {
             {
               class: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${aparecer}`,
               estilo: retraso(i++, 160),
-              on: { click: (e) => !multiple && this.programarAvance(e) },
             },
             input,
             h('span', { class: 'opcion-marca', 'aria-hidden': 'true' }, icono('check')),
@@ -657,7 +651,7 @@ export class Motor {
           });
           const label = h(
             'label',
-            { class: `punto${aparecer}`, estilo: retraso(v - p.min, 160), on: { click: (e) => this.programarAvance(e) } },
+            { class: `punto${aparecer}`, estilo: retraso(v - p.min, 160) },
             input,
             h('span', {}, String(v)),
             etiqueta && h('span', { class: 'solo-lector' }, `, ${etiqueta}`),
@@ -794,7 +788,6 @@ export class Motor {
   /**
    * Tramos: slider de 5 pasos hecho con radios (no un <input type="range">, que nunca puede
    * estar vacío). Las flechas del teclado recorren los escalones sin código extra.
-   * Sin autoavance: se confirma con «Siguiente».
    */
   tramos(p, titulo, ayuda) {
     const pesos = (v) => L.textoPesos(p, v, this.def.smvmReferencia, this.ui.pesos);
@@ -884,7 +877,7 @@ export class Motor {
       for (let k = 1; k <= p.max - p.min; k++) grado.push(h('i', { class: k <= v - p.min ? 'on' : null }));
       const label = h(
         'label',
-        { class: 'frecuencia-opcion', on: { click: (e) => this.programarAvance(e) } },
+        { class: 'frecuencia-opcion' },
         input,
         h('span', { class: 'frecuencia-grado', 'aria-hidden': 'true' }, grado),
         h('span', {}, p.etiquetas[v]),
