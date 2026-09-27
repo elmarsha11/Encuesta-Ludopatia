@@ -1,0 +1,868 @@
+{
+  "encuesta": "adolescentes",
+  "titulo": "¿Cuándo el juego deja de ser un juego?",
+  "umbral": 5,
+  "respuestas": 91,
+  "secciones": [
+    {
+      "id": "sobre_vos",
+      "titulo": "Sobre vos..."
+    },
+    {
+      "id": "experiencia",
+      "titulo": "Tu experiencia con las apuestas"
+    },
+    {
+      "id": "entorno",
+      "titulo": "Tu entorno y tu opinión"
+    },
+    {
+      "id": "espacio_abierto",
+      "titulo": "Un breve espacio para leerte"
+    }
+  ],
+  "distribuciones": [
+    {
+      "id": "edad",
+      "seccion": "sobre_vos",
+      "tipo": "numero",
+      "texto": "¿Cuál es tu edad?",
+      "base": 91,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "12",
+          "texto": "12",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "13",
+          "texto": "13",
+          "n": 14,
+          "oculto": false
+        },
+        {
+          "valor": "14",
+          "texto": "14",
+          "n": 14,
+          "oculto": false
+        },
+        {
+          "valor": "15",
+          "texto": "15",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "16",
+          "texto": "16",
+          "n": 14,
+          "oculto": false
+        },
+        {
+          "valor": "17",
+          "texto": "17",
+          "n": 20,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "genero",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Cómo te percibís?",
+      "base": 87,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "varon",
+          "texto": "Varón",
+          "n": 25,
+          "oculto": false
+        },
+        {
+          "valor": "mujer",
+          "texto": "Mujer",
+          "n": 27,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": 20,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_decir",
+          "texto": "Prefiero no decir",
+          "n": 15,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_alguna_vez",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Alguna vez apostaste plata o algo que vale plata (por ejemplo, skins)?",
+      "base": 79,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si_no_ultimo_anio",
+          "texto": "Sí, pero no en el último año",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "si_ultimo_anio",
+          "texto": "Sí, en el último año",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "nunca",
+          "texto": "Nunca",
+          "n": 47,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": 0,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "en_que_aposto",
+      "seccion": "experiencia",
+      "tipo": "multiple",
+      "texto": "¿En qué apostaste?",
+      "base": 27,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "deportivas_online",
+          "texto": "Apuestas deportivas online",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "casino_online",
+          "texto": "Casino online",
+          "n": 7,
+          "oculto": false
+        },
+        {
+          "valor": "cartas",
+          "texto": "Juego de cartas (póker, truco, etc.) por plata",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "quiniela_loteria",
+          "texto": "Quiniela, Lotería",
+          "n": 5,
+          "oculto": false
+        },
+        {
+          "valor": "skins",
+          "texto": "Skins o cajas de videojuegos",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "frecuencia_ultimo_anio",
+      "seccion": "experiencia",
+      "tipo": "unica",
+      "texto": "En el último año, ¿con qué frecuencia apostaste?",
+      "base": 29,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "ninguna",
+          "texto": "Ninguna vez en el último año",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "menos_mensual",
+          "texto": "Menos de una vez al mes",
+          "n": 0,
+          "oculto": false
+        },
+        {
+          "valor": "algunas_mes",
+          "texto": "Algunas veces al mes",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "semanal",
+          "texto": "Una vez por semana",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "varias_semana",
+          "texto": "Varias veces a la semana",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "casi_diario",
+          "texto": "Casi todos los días",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "motivo",
+      "seccion": "experiencia",
+      "tipo": "multiple",
+      "texto": "¿Qué te llevó a apostar?",
+      "base": 26,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "diversion",
+          "texto": "Diversión",
+          "n": 9,
+          "oculto": false
+        },
+        {
+          "valor": "publicidad_influencers",
+          "texto": "Publicidad o influencers",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "curiosidad",
+          "texto": "Curiosidad",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "ganar_plata",
+          "texto": "Ganar plata",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "aburrimiento",
+          "texto": "Aburrimiento",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "amigos_familia",
+          "texto": "Amigos o familia que también apuestan",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "como_accedio",
+      "seccion": "experiencia",
+      "tipo": "unica",
+      "texto": "¿Cómo accediste?",
+      "base": 31,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "cuenta_propia",
+          "texto": "Con mi propia cuenta",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "cuenta_ajena",
+          "texto": "Con la cuenta o los datos de otra persona",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "en_persona",
+          "texto": "En persona",
+          "n": 17,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": 6,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "conoce_alguien",
+      "seccion": "entorno",
+      "tipo": "unica",
+      "texto": "¿Conocés a alguien de tu entorno que apueste?",
+      "base": 87,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 27,
+          "oculto": false
+        },
+        {
+          "valor": "si_una",
+          "texto": "Sí, conozco a una persona",
+          "n": 22,
+          "oculto": false
+        },
+        {
+          "valor": "si_varias",
+          "texto": "Sí, conozco a varias personas",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": 17,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "frecuencia_publicidad",
+      "seccion": "entorno",
+      "tipo": "unica",
+      "texto": "¿Con qué frecuencia ves publicidad de apuestas?",
+      "base": 85,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "nunca_casi_nunca",
+          "texto": "Nunca o casi nunca",
+          "n": 17,
+          "oculto": false
+        },
+        {
+          "valor": "algunas_mes",
+          "texto": "Algunas veces al mes",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "algunas_semana",
+          "texto": "Algunas veces por semana",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "todos_los_dias",
+          "texto": "Todos los días",
+          "n": 17,
+          "oculto": false
+        },
+        {
+          "valor": "no_se",
+          "texto": "No sé",
+          "n": 19,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "donde_publicidad",
+      "seccion": "entorno",
+      "tipo": "multiple",
+      "texto": "¿Dónde ves más publicidad?",
+      "base": 81,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "redes",
+          "texto": "Redes sociales (Instagram, TikTok, Facebook, X, etc.)",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "streamers",
+          "texto": "Streamers y/o influencers",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "tv",
+          "texto": "TV",
+          "n": 23,
+          "oculto": false
+        },
+        {
+          "valor": "videojuegos",
+          "texto": "Videojuegos",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "calle",
+          "texto": "La calle",
+          "n": 22,
+          "oculto": false
+        },
+        {
+          "valor": "no_veo",
+          "texto": "No veo publicidad de apuestas",
+          "n": 5,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "escala_perder_control",
+      "seccion": "entorno",
+      "tipo": "escala",
+      "texto": "Es fácil perder el control con las apuestas online.",
+      "base": 81,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "1",
+          "texto": "Nada de acuerdo",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "2",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "3",
+          "n": 14,
+          "oculto": false
+        },
+        {
+          "valor": "4",
+          "texto": "4",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "5",
+          "texto": "Totalmente de acuerdo",
+          "n": 14,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "escala_pasatiempo_inofensivo",
+      "seccion": "entorno",
+      "tipo": "escala",
+      "texto": "Apostar online es un pasatiempo inofensivo.",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "1",
+          "texto": "Nada de acuerdo",
+          "n": 11,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "2",
+          "n": 18,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "3",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "4",
+          "texto": "4",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "5",
+          "texto": "Totalmente de acuerdo",
+          "n": 15,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "percepcion_por_que",
+      "seccion": "entorno",
+      "tipo": "multiple",
+      "texto": "¿Por qué creés que apuestan las personas de tu edad?",
+      "base": 85,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "diversion",
+          "texto": "Diversión",
+          "n": 9,
+          "oculto": false
+        },
+        {
+          "valor": "publicidad_influencers",
+          "texto": "Publicidad o influencers",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "curiosidad",
+          "texto": "Curiosidad",
+          "n": 14,
+          "oculto": false
+        },
+        {
+          "valor": "ganar_plata",
+          "texto": "Ganar plata",
+          "n": 20,
+          "oculto": false
+        },
+        {
+          "valor": "aburrimiento",
+          "texto": "Aburrimiento",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "amigos_familia",
+          "texto": "Amigos o familia que también apuestan",
+          "n": 17,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "no_se",
+          "texto": "No sé",
+          "n": 14,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "escala_ganar_plata",
+      "seccion": "entorno",
+      "tipo": "escala",
+      "texto": "Alguien de mi edad puede ganar plata apostando.",
+      "base": 81,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "1",
+          "texto": "Nada de acuerdo",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "2",
+          "n": 12,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "3",
+          "n": 23,
+          "oculto": false
+        },
+        {
+          "valor": "4",
+          "texto": "4",
+          "n": 9,
+          "oculto": false
+        },
+        {
+          "valor": "5",
+          "texto": "Totalmente de acuerdo",
+          "n": 18,
+          "oculto": false
+        }
+      ]
+    }
+  ],
+  "cruces": [
+    {
+      "id": "aposto_edad",
+      "seccion": "Quiénes responden",
+      "factor": "Edad",
+      "resultado": "Apostó alguna vez",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó alguna vez"
+        },
+        {
+          "valor": "no",
+          "texto": "Nunca apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "12_14",
+          "texto": "12 a 14",
+          "base": 40,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 17,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 23,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "15_17",
+          "texto": "15 a 17",
+          "base": 39,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 15,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 24,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_genero",
+      "seccion": "Quiénes responden",
+      "factor": "Género",
+      "resultado": "Apostó alguna vez",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó alguna vez"
+        },
+        {
+          "valor": "no",
+          "texto": "Nunca apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "varon",
+          "texto": "Varón",
+          "base": 22,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 7,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 15,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "mujer",
+          "texto": "Mujer",
+          "base": 25,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 10,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 15,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_conoce",
+      "seccion": "Entorno y publicidad",
+      "factor": "Entorno",
+      "resultado": "Apostó alguna vez",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó alguna vez"
+        },
+        {
+          "valor": "no",
+          "texto": "Nunca apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Conoce a alguien que apuesta",
+          "base": 36,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 11,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 25,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No conoce a nadie",
+          "base": 25,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 13,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 12,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_publicidad",
+      "seccion": "Entorno y publicidad",
+      "factor": "Publicidad",
+      "resultado": "Apostó alguna vez",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó alguna vez"
+        },
+        {
+          "valor": "no",
+          "texto": "Nunca apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "frecuente",
+          "texto": "Ve publicidad todas las semanas o más",
+          "base": 26,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 13,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 13,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "poca",
+          "texto": "Ve publicidad menos seguido",
+          "base": 33,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 12,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 21,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    }
+  ]
+}

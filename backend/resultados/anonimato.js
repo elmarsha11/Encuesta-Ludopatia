@@ -63,12 +63,24 @@ export function ocultarTabla(filas, { umbral = UMBRAL }) {
   const oculta = filas.map((f, r) => f.celdas.map((c) => filaOculta[r] || esChica(c.n, umbral)));
   const columnas = filas[0]?.celdas.length ?? 0;
 
-  // Entre las posiciones visibles, oculta la de menor cantidad (prefiriendo las no vacías).
-  const ocultarMenor = (posiciones) => {
-    const visibles = posiciones.filter(([r, c]) => !oculta[r][c]);
-    if (visibles.length === 0) return false;
+  const ocultasEnFila = (r) => oculta[r].filter(Boolean).length;
+  const ocultasEnColumna = (c) => oculta.filter((f) => f[c]).length;
+
+  // Oculta una celda visible más de la línea. Preferencias, en orden:
+  // 1. Que su OTRA línea ya tenga una oculta: así se arma un rectángulo de celdas
+  //    ocultas (que ya no se despeja restando) en vez de abrir una fila o columna
+  //    nueva con una sola oculta, que obligaría a ocultar otra más (y así en cadena).
+  // 2. Que no sea un 0 (un 0 oculto protege poco).
+  // 3. La de menor cantidad (se pierde menos información).
+  const ocultarMenor = (posiciones, otraLineaTieneOcultas) => {
+    let candidatas = posiciones.filter(([r, c]) => !oculta[r][c]);
+    if (candidatas.length === 0) return false;
     const n = ([r, c]) => filas[r].celdas[c].n;
-    const candidatas = visibles.some((p) => n(p) > 0) ? visibles.filter((p) => n(p) > 0) : visibles;
+    const filtrar = (condicion) => {
+      if (candidatas.some(condicion)) candidatas = candidatas.filter(condicion);
+    };
+    filtrar(otraLineaTieneOcultas);
+    filtrar((p) => n(p) > 0);
     const [r, c] = candidatas.reduce((menor, p) => (n(p) < n(menor) ? p : menor));
     oculta[r][c] = true;
     return true;
@@ -81,11 +93,11 @@ export function ocultarTabla(filas, { umbral = UMBRAL }) {
     filas.forEach((f, r) => {
       if (filaOculta[r]) return; // su base no se muestra: no hay total para restar
       const linea = f.celdas.map((_, c) => [r, c]);
-      if (unaSola(linea) && ocultarMenor(linea)) cambio = true;
+      if (unaSola(linea) && ocultarMenor(linea, ([, c]) => ocultasEnColumna(c) > 0)) cambio = true;
     });
     for (let c = 0; c < columnas; c++) {
       const linea = filas.map((_, r) => [r, c]);
-      if (unaSola(linea) && ocultarMenor(linea)) cambio = true;
+      if (unaSola(linea) && ocultarMenor(linea, ([r]) => ocultasEnFila(r) > 0)) cambio = true;
     }
   }
 

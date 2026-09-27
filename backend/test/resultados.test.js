@@ -39,6 +39,17 @@ describe('regla de anonimato', () => {
     assert.deepEqual(visibles(ocultarCeldas(celdas(1, 2, 30), { umbral: 1, particion: true })), [1, 2, 30]);
   });
 
+  test('tablas cruzadas: oculta en rectángulo, sin arrastrar filas que no hace falta', () => {
+    // Un 4 en la primera fila. Lo correcto: ocultar un rectángulo (filas 1 y 3) y mostrar la del medio.
+    const filas = [
+      { base: 16, celdas: [{ n: 4 }, { n: 12 }] },
+      { base: 27, celdas: [{ n: 14 }, { n: 13 }] },
+      { base: 36, celdas: [{ n: 13 }, { n: 23 }] },
+    ];
+    const r = ocultarTabla(filas, {});
+    assert.deepEqual(r.map((f) => f.celdas.map((c) => c.n)), [[null, null], [14, 13], [null, null]]);
+  });
+
   test('tablas cruzadas: ninguna fila ni columna queda con UNA sola celda oculta (500 tablas al azar)', () => {
     let semilla = 7;
     const azar = (max) => (semilla = (semilla * 1103515245 + 12345) % 2 ** 31) % max;

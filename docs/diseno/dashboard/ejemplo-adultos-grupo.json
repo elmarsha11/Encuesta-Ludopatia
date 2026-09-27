@@ -1,0 +1,1926 @@
+{
+  "encuesta": "adultos",
+  "titulo": "Apuestas, dinero y decisiones",
+  "umbral": 5,
+  "respuestas": 84,
+  "secciones": [
+    {
+      "id": "sobre_vos",
+      "titulo": "Sobre vos"
+    },
+    {
+      "id": "apuestas",
+      "titulo": "Apuestas"
+    },
+    {
+      "id": "habitos",
+      "titulo": "Tus hábitos de apuesta"
+    },
+    {
+      "id": "pgsi",
+      "titulo": "Pensando en los últimos 12 meses…"
+    },
+    {
+      "id": "mirada",
+      "titulo": "Tu mirada sobre las apuestas"
+    },
+    {
+      "id": "entorno",
+      "titulo": "Tu entorno y la publicidad"
+    },
+    {
+      "id": "educacion_financiera",
+      "titulo": "Educación financiera"
+    }
+  ],
+  "distribuciones": [
+    {
+      "id": "edad",
+      "seccion": "sobre_vos",
+      "tipo": "numero",
+      "texto": "¿Qué edad tenés?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "18_24",
+          "texto": "18 a 24",
+          "n": 23,
+          "oculto": false
+        },
+        {
+          "valor": "25_34",
+          "texto": "25 a 34",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "35_mas",
+          "texto": "35 o más",
+          "n": 45,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "carrera",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Qué carrera estás cursando?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "educacion_inicial",
+          "texto": "Educación Inicial",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "prof_ingles",
+          "texto": "Inglés",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "prof_matematicas",
+          "texto": "Matemáticas",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "prof_literatura",
+          "texto": "Literatura",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "tec_ciencia_datos_ia",
+          "texto": "Ciencia de Datos e IA",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "tec_seguridad_higiene",
+          "texto": "Seguridad e Higiene",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "tec_adm_financiera",
+          "texto": "Administración Financiera",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "tec_acompanante_terapeutico",
+          "texto": "Acompañante Terapéutico",
+          "n": 17,
+          "oculto": false
+        },
+        {
+          "valor": "tec_trabajo_social",
+          "texto": "Trabajo Social",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "genero",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Con qué género te identificás?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "masculino",
+          "texto": "Masculino",
+          "n": 24,
+          "oculto": false
+        },
+        {
+          "valor": "femenino",
+          "texto": "Femenino",
+          "n": 22,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": 22,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_decir",
+          "texto": "Prefiero no decir",
+          "n": 16,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "situacion_laboral",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿En qué condición laboral te encontrás?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "trabajo_propio",
+          "texto": "Trabajo por cuenta propia",
+          "n": 30,
+          "oculto": false
+        },
+        {
+          "valor": "relacion_dependencia",
+          "texto": "Trabajo en relación de dependencia",
+          "n": 29,
+          "oculto": false
+        },
+        {
+          "valor": "no_trabajo",
+          "texto": "No trabajo",
+          "n": 25,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "depende_economicamente",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Dependés económicamente de alguien?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 40,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 44,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "alguien_depende",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Alguien depende económicamente de vos?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 50,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 34,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "ingresos_hogar",
+      "seccion": "sobre_vos",
+      "tipo": "escala",
+      "texto": "¿Cuánto dinero ingresa por mes en tu hogar, aproximadamente?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "1",
+          "texto": "Sin ingresos o hasta 1 salario mínimo",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "Entre 1 y 2 salarios mínimos",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "Entre 2 y 3 salarios mínimos",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "4",
+          "texto": "Entre 3 y 5 salarios mínimos",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "5",
+          "texto": "Más de 5 salarios mínimos",
+          "n": 16,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "tiene_deudas",
+      "seccion": "sobre_vos",
+      "tipo": "unica",
+      "texto": "¿Tenés deudas actualmente?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 48,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "deuda_relativa",
+      "seccion": "sobre_vos",
+      "tipo": "escala",
+      "texto": "¿Cuánto representa tu deuda comparada con lo que ingresa por mes en tu hogar?",
+      "base": 35,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "1",
+          "texto": "Menos de medio mes de ingresos",
+          "n": 6,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "Entre medio mes y 1 mes",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "Entre 1 y 3 meses",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "4",
+          "texto": "Entre 3 y 6 meses",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "5",
+          "texto": "Más de 6 meses de ingresos",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": 0,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_12m",
+      "seccion": "apuestas",
+      "tipo": "unica",
+      "texto": "En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 51,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "frecuencia",
+      "seccion": "habitos",
+      "tipo": "unica",
+      "texto": "¿Con qué frecuencia apostás?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "menos_mensual",
+          "texto": "Menos de una vez al mes",
+          "n": 5,
+          "oculto": false
+        },
+        {
+          "valor": "algunas_mes",
+          "texto": "Algunas veces al mes",
+          "n": 6,
+          "oculto": false
+        },
+        {
+          "valor": "semanal",
+          "texto": "Una vez por semana",
+          "n": 5,
+          "oculto": false
+        },
+        {
+          "valor": "varias_semana",
+          "texto": "Varias veces por semana",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "casi_diario",
+          "texto": "Casi todos los días",
+          "n": 6,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "motivo",
+      "seccion": "habitos",
+      "tipo": "multiple",
+      "texto": "¿Por qué apostás?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "diversion",
+          "texto": "Diversión",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "ganar_dinero",
+          "texto": "Ganar dinero",
+          "n": 9,
+          "oculto": false
+        },
+        {
+          "valor": "influencia_social",
+          "texto": "Influencia social",
+          "n": 17,
+          "oculto": false
+        },
+        {
+          "valor": "otra",
+          "texto": "Otra",
+          "n": 11,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "tipo_apuesta",
+      "seccion": "habitos",
+      "tipo": "multiple",
+      "texto": "¿Qué tipo de apuestas hacés?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "casino_presencial",
+          "texto": "Casino presencial",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "casino_online",
+          "texto": "Casino online",
+          "n": 15,
+          "oculto": false
+        },
+        {
+          "valor": "deportivas",
+          "texto": "Apuestas deportivas",
+          "n": 13,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "plataforma_legal",
+      "seccion": "habitos",
+      "tipo": "unica",
+      "texto": "¿Reconocés si apostás en una plataforma legal?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 23,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 9,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "incluyo_a_alguien",
+      "seccion": "habitos",
+      "tipo": "unica",
+      "texto": "¿Incluiste a alguien para que se involucre en el mundo de las apuestas?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 12,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 11,
+          "oculto": false
+        },
+        {
+          "valor": "no_se",
+          "texto": "No sé",
+          "n": 9,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "monto_por_vez",
+      "seccion": "habitos",
+      "tipo": "escala",
+      "texto": "¿Cuánto dinero solés apostar cada vez?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "1",
+          "texto": "Menos de $10.000",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "2",
+          "texto": "Entre $10.000 y $25.000",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "Entre $25.000 y $50.000",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "4",
+          "texto": "Entre $50.000 y $100.000",
+          "n": 6,
+          "oculto": false
+        },
+        {
+          "valor": "5",
+          "texto": "Más de $100.000",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "origen_dinero",
+      "seccion": "habitos",
+      "tipo": "multiple",
+      "texto": "¿De dónde proviene el dinero que usás para apostar?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "sueldo",
+          "texto": "Sueldo",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "prestamo",
+          "texto": "Préstamo",
+          "n": 10,
+          "oculto": false
+        },
+        {
+          "valor": "planes_sociales",
+          "texto": "Planes sociales",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": 7,
+          "oculto": false
+        },
+        {
+          "valor": "prefiero_no_responder",
+          "texto": "Prefiero no responder",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_1",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Apostaste más de lo que realmente podías permitirte perder?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_2",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Necesitaste apostar cantidades cada vez mayores para sentir la misma emoción?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 18,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": 6,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": 0,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "pgsi_3",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Volviste otro día para intentar recuperar el dinero que habías perdido?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 25,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_4",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Pediste dinero prestado o vendiste algo para conseguir dinero para apostar?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": 9,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_5",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Sentiste que podrías tener un problema con el juego?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 20,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": 5,
+          "oculto": false
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_6",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿El juego te causó problemas de salud, incluido estrés o ansiedad?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 20,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": 0,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "pgsi_7",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Otras personas criticaron tus apuestas o te dijeron que tenías un problema con el juego, más allá de que vos creyeras que era cierto o no?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 15,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": 12,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_8",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿El juego te causó problemas económicos a vos o a tu hogar?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": null,
+          "oculto": true
+        }
+      ]
+    },
+    {
+      "id": "pgsi_9",
+      "seccion": "pgsi",
+      "tipo": "escala",
+      "texto": "¿Te sentiste culpable por la forma en que apostás o por lo que pasa cuando apostás?",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "0",
+          "texto": "Nunca",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "1",
+          "texto": "A veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "2",
+          "texto": "La mayoría de las veces",
+          "n": null,
+          "oculto": true
+        },
+        {
+          "valor": "3",
+          "texto": "Casi siempre",
+          "n": 0,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "penso_apostar",
+      "seccion": "mirada",
+      "tipo": "unica",
+      "texto": "¿Pensaste alguna vez en hacerlo?",
+      "base": 51,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 23,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 28,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "motivo_no_apuesta",
+      "seccion": "mirada",
+      "tipo": "unica",
+      "texto": "¿Cuál es el motivo principal por el que no apostás?",
+      "base": 51,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "no_me_interesa",
+          "texto": "No me interesa",
+          "n": 12,
+          "oculto": false
+        },
+        {
+          "valor": "miedo_perder_plata",
+          "texto": "Miedo a perder plata",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "miedo_adiccion",
+          "texto": "Miedo a volverme adicto/a",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "no_se_como",
+          "texto": "No sé cómo se hace",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "otro",
+          "texto": "Otro",
+          "n": 10,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "familiares_apuestan",
+      "seccion": "entorno",
+      "tipo": "unica",
+      "texto": "¿Tenés familiares o amigos cercanos que apuesten regularmente?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 38,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 26,
+          "oculto": false
+        },
+        {
+          "valor": "no_se",
+          "texto": "No sé",
+          "n": 20,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "plata_facil",
+      "seccion": "entorno",
+      "tipo": "unica",
+      "texto": "¿Creés que se puede generar plata fácil apostando?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 28,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 31,
+          "oculto": false
+        },
+        {
+          "valor": "a_veces",
+          "texto": "A veces",
+          "n": 25,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "canales_publicidad",
+      "seccion": "entorno",
+      "tipo": "multiple",
+      "texto": "¿Por qué canales ves más publicidad de apuestas?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "redes",
+          "texto": "Redes sociales",
+          "n": 23,
+          "oculto": false
+        },
+        {
+          "valor": "videojuegos",
+          "texto": "Videojuegos",
+          "n": 20,
+          "oculto": false
+        },
+        {
+          "valor": "streamers",
+          "texto": "Streamers y/o influencers",
+          "n": 19,
+          "oculto": false
+        },
+        {
+          "valor": "tv",
+          "texto": "TV",
+          "n": 21,
+          "oculto": false
+        },
+        {
+          "valor": "calle",
+          "texto": "La calle",
+          "n": 27,
+          "oculto": false
+        },
+        {
+          "valor": "ninguno",
+          "texto": "Ninguno",
+          "n": 8,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "sabe_que_es_ef",
+      "seccion": "educacion_financiera",
+      "tipo": "unica",
+      "texto": "¿Sabés qué es la educación financiera?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 36,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 48,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "recibio_ef",
+      "seccion": "educacion_financiera",
+      "tipo": "unica",
+      "texto": "¿Recibiste educación financiera?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 33,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 30,
+          "oculto": false
+        },
+        {
+          "valor": "no_se",
+          "texto": "No sé",
+          "n": 21,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "donde_recibio_ef",
+      "seccion": "educacion_financiera",
+      "tipo": "multiple",
+      "texto": "¿Dónde la recibiste?",
+      "base": 33,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "casa",
+          "texto": "En casa",
+          "n": 13,
+          "oculto": false
+        },
+        {
+          "valor": "escuela",
+          "texto": "En la escuela",
+          "n": 15,
+          "oculto": false
+        },
+        {
+          "valor": "internet",
+          "texto": "En internet",
+          "n": 15,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "quiere_recibir_ef",
+      "seccion": "educacion_financiera",
+      "tipo": "unica",
+      "texto": "¿Te gustaría recibirla?",
+      "base": 84,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "si",
+          "texto": "Sí",
+          "n": 43,
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No",
+          "n": 41,
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "pgsi_categoria",
+      "seccion": "pgsi",
+      "tipo": "calculada",
+      "texto": "Categoría de riesgo según el PGSI",
+      "base": 32,
+      "oculto": false,
+      "celdas": [
+        {
+          "valor": "sin_riesgo",
+          "texto": "Sin riesgo",
+          "n": 0,
+          "oculto": false
+        },
+        {
+          "valor": "riesgo_bajo",
+          "texto": "Riesgo bajo",
+          "n": 8,
+          "oculto": false
+        },
+        {
+          "valor": "riesgo_moderado",
+          "texto": "Riesgo moderado",
+          "n": 18,
+          "oculto": false
+        },
+        {
+          "valor": "juego_problematico",
+          "texto": "Juego problemático",
+          "n": 6,
+          "oculto": false
+        }
+      ]
+    }
+  ],
+  "cruces": [
+    {
+      "id": "aposto_ingresos",
+      "seccion": "Situación económica",
+      "factor": "Ingresos del hogar",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "bajo",
+          "texto": "Hasta 1 salario mínimo",
+          "base": 16,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "medio",
+          "texto": "Entre 1 y 3 salarios mínimos",
+          "base": 27,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 14,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 13,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "alto",
+          "texto": "Más de 3 salarios mínimos",
+          "base": 36,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_deudas",
+      "seccion": "Situación económica",
+      "factor": "Deudas",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Tiene deudas",
+          "base": 35,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 10,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 25,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No tiene deudas",
+          "base": 47,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 21,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 26,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_dependientes",
+      "seccion": "Situación económica",
+      "factor": "Personas a cargo",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Alguien depende de su ingreso",
+          "base": 49,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 16,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 33,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "Nadie depende de su ingreso",
+          "base": 34,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 16,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 18,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "riesgo_deudas",
+      "seccion": "Situación económica",
+      "factor": "Deudas",
+      "resultado": "Riesgo PGSI",
+      "columnas": [
+        {
+          "valor": "bajo",
+          "texto": "Sin riesgo o riesgo bajo"
+        },
+        {
+          "valor": "alto",
+          "texto": "Riesgo moderado o juego problemático"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Tiene deudas",
+          "base": 10,
+          "celdas": [
+            {
+              "valor": "bajo",
+              "texto": "Sin riesgo o riesgo bajo",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "alto",
+              "texto": "Riesgo moderado o juego problemático",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No tiene deudas",
+          "base": 21,
+          "celdas": [
+            {
+              "valor": "bajo",
+              "texto": "Sin riesgo o riesgo bajo",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "alto",
+              "texto": "Riesgo moderado o juego problemático",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_familiares",
+      "seccion": "Entorno y publicidad",
+      "factor": "Entorno",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Familiares o amigos apuestan",
+          "base": 37,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 13,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 24,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "Familiares o amigos no apuestan",
+          "base": 26,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 9,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 17,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_plata_facil",
+      "seccion": "Entorno y publicidad",
+      "factor": "¿Se puede generar plata fácil apostando?",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Cree que sí o a veces",
+          "base": 52,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 20,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 32,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "Cree que no",
+          "base": 31,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 12,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 19,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_recibio_ef",
+      "seccion": "Educación financiera",
+      "factor": "Educación financiera",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Recibió educación financiera",
+          "base": 33,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 8,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 25,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No recibió",
+          "base": 30,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 11,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 19,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_sabe_ef",
+      "seccion": "Educación financiera",
+      "factor": "Conocimiento de educación financiera",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Sabe qué es",
+          "base": 36,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 12,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 24,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No sabe qué es",
+          "base": 47,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 20,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 27,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "riesgo_recibio_ef",
+      "seccion": "Educación financiera",
+      "factor": "Educación financiera",
+      "resultado": "Riesgo PGSI",
+      "columnas": [
+        {
+          "valor": "bajo",
+          "texto": "Sin riesgo o riesgo bajo"
+        },
+        {
+          "valor": "alto",
+          "texto": "Riesgo moderado o juego problemático"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "si",
+          "texto": "Recibió educación financiera",
+          "base": 8,
+          "celdas": [
+            {
+              "valor": "bajo",
+              "texto": "Sin riesgo o riesgo bajo",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "alto",
+              "texto": "Riesgo moderado o juego problemático",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "no",
+          "texto": "No recibió",
+          "base": 11,
+          "celdas": [
+            {
+              "valor": "bajo",
+              "texto": "Sin riesgo o riesgo bajo",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "alto",
+              "texto": "Riesgo moderado o juego problemático",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_edad",
+      "seccion": "Quiénes responden",
+      "factor": "Edad",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "18_24",
+          "texto": "18 a 24",
+          "base": 23,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "25_34",
+          "texto": "25 a 34",
+          "base": 16,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "35_mas",
+          "texto": "35 o más",
+          "base": 44,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 22,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 22,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    },
+    {
+      "id": "aposto_carrera",
+      "seccion": "Quiénes responden",
+      "factor": "Carrera",
+      "resultado": "Apostó en los últimos 12 meses",
+      "columnas": [
+        {
+          "valor": "si",
+          "texto": "Apostó"
+        },
+        {
+          "valor": "no",
+          "texto": "No apostó"
+        }
+      ],
+      "filas": [
+        {
+          "valor": "inicial",
+          "texto": "Educación Inicial",
+          "base": 8,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "profesorados",
+          "texto": "Profesorados",
+          "base": 21,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": null,
+              "oculto": true
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": null,
+              "oculto": true
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "tecnicaturas",
+          "texto": "Tecnicaturas",
+          "base": 54,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó",
+              "n": 20,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "No apostó",
+              "n": 34,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        }
+      ]
+    }
+  ]
+}
