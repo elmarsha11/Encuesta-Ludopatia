@@ -18,12 +18,20 @@ export const preguntasConRespuesta = (encuesta) => encuesta.preguntas.filter((p)
 // Nombre de la columna que guarda una opción de una pregunta de respuesta múltiple.
 export const columnaDeOpcion = (pregunta, opcion) => `${pregunta.id}_${opcion.valor}`;
 
+// Una escala con `opcionNoResponde` se guarda en DOS columnas: el número y una marca
+// de «prefirió no responder». Así el número nunca mezcla un código especial con la
+// escala (un 0 o un 99 arruinaría cualquier promedio sin que nadie lo note).
+export const columnaNoResponde = (pregunta) => `${pregunta.id}_no_responde`;
+const eligioNoResponder = (pregunta, valor) =>
+  pregunta.tipo === 'escala' && pregunta.opcionNoResponde !== undefined && valor === pregunta.opcionNoResponde.valor;
+
 // Revisa un valor ya presente según el tipo de pregunta.
 // Devuelve un mensaje de error, o null si el valor es válido.
 function errorDeValor(pregunta, valor) {
   switch (pregunta.tipo) {
     case 'numero':
     case 'escala':
+      if (eligioNoResponder(pregunta, valor)) return null;
       if (!Number.isInteger(valor) || valor < pregunta.min || valor > pregunta.max) {
         return `debe ser un número entero entre ${pregunta.min} y ${pregunta.max}`;
       }
@@ -69,6 +77,12 @@ function aColumnas(pregunta, valor) {
     );
   }
   if (pregunta.tipo === 'texto' && valor !== null) return { [pregunta.id]: valor.trim() };
+  if (pregunta.tipo === 'escala' && pregunta.opcionNoResponde) {
+    // null en las dos = no se le preguntó; 1 en la marca = prefirió no responder.
+    if (valor === null) return { [pregunta.id]: null, [columnaNoResponde(pregunta)]: null };
+    const noResponde = eligioNoResponder(pregunta, valor);
+    return { [pregunta.id]: noResponde ? null : valor, [columnaNoResponde(pregunta)]: Number(noResponde) };
+  }
   return { [pregunta.id]: valor };
 }
 

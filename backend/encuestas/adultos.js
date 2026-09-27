@@ -2,9 +2,12 @@
 // Fuentes: docs/fuentes/adultos-preguntas-1.jpeg y docs/fuentes/adultos-preguntas-2-no-apuesta.jpg,
 // con los ajustes acordados en docs/PLAN-encuesta-ludopatia.md (sección 4).
 //
-// Todas las respuestas son obligatorias: no se avanza sin contestar.
+// Todas las respuestas son obligatorias: no se avanza sin contestar. En las preguntas
+// sensibles (plata, deudas, si apostó) una de las respuestas es «Prefiero no responder»:
+// obligar sin esa salida empuja a mentir o a abandonar, y las dos cosas ensucian los datos.
+// El PGSI NO la tiene: es un instrumento validado y su puntaje necesita los 9 ítems.
 
-import { SI_NO, SI_NO_NOSE } from './opciones-comunes.js';
+import { SI_NO, SI_NO_NOSE, PREFIERO_NO_RESPONDER } from './opciones-comunes.js';
 
 // Salario Mínimo, Vital y Móvil usado como referencia en la pregunta de ingresos.
 // Valor de septiembre de 2026. PENDIENTE: actualizar al valor vigente en octubre de 2026.
@@ -202,6 +205,7 @@ export default {
       // Cuántos salarios mínimos abarca cada paso: [desde, hasta] (null = sin tope).
       // El frontend lo multiplica por smvmReferencia para mostrar el equivalente en pesos.
       rangosSmvm: { 1: [0, 1], 2: [1, 2], 3: [2, 3], 4: [3, 5], 5: [5, null] },
+      opcionNoResponde: PREFIERO_NO_RESPONDER,
       etiquetas: {
         1: 'Sin ingresos o hasta 1 salario mínimo',
         2: 'Entre 1 y 2 salarios mínimos',
@@ -216,7 +220,7 @@ export default {
       tipo: 'unica',
       texto: '¿Tenés deudas actualmente?',
       ayuda: 'Por ejemplo: préstamos, tarjeta de crédito impaga, cuotas atrasadas o dinero que le debés a alguien.',
-      opciones: SI_NO,
+      opciones: [...SI_NO, PREFIERO_NO_RESPONDER],
     },
     {
       id: 'deuda_relativa',
@@ -233,6 +237,7 @@ export default {
         4: 'Entre 3 y 6 meses',
         5: 'Más de 6 meses de ingresos',
       },
+      opcionNoResponde: PREFIERO_NO_RESPONDER,
       visibleSi: { pregunta: 'tiene_deudas', es: ['si'] },
     },
 
@@ -243,7 +248,8 @@ export default {
       tipo: 'unica',
       texto:
         'En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?',
-      opciones: SI_NO,
+      // Quien prefiere no responder no ve ni la rama SÍ ni la rama NO: sigue en «entorno».
+      opciones: [...SI_NO, PREFIERO_NO_RESPONDER],
     },
 
     // Rama SÍ — Tus hábitos de apuesta
@@ -318,6 +324,7 @@ export default {
         4: 'Entre $50.000 y $100.000',
         5: 'Más de $100.000',
       },
+      opcionNoResponde: PREFIERO_NO_RESPONDER,
     },
     {
       id: 'origen_dinero',
@@ -330,6 +337,7 @@ export default {
         { valor: 'prestamo', texto: 'Préstamo' },
         { valor: 'planes_sociales', texto: 'Planes sociales' },
         { valor: 'otro', texto: 'Otro' },
+        { ...PREFIERO_NO_RESPONDER, exclusiva: true },
       ],
     },
     ...preguntasPgsi,

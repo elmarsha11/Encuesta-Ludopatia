@@ -178,3 +178,13 @@ describe('pantalla informativa', () => {
     assert.equal(alFinal.hechas, alFinal.total);
   });
 });
+
+describe('«Prefiero no responder» en escalas', () => {
+  test('viaja como texto; los pasos, como número', () => {
+    const p = deAdultos('ingresos_hogar');
+    const r = { edad: 30, ingresos_hogar: 'prefiero_no_responder' };
+    assert.equal(L.cuerpo(defAdultos, r).ingresos_hogar, 'prefiero_no_responder');
+    assert.equal(L.cuerpo(defAdultos, { ...r, ingresos_hogar: 2 }).ingresos_hogar, 2);
+    assert.ok(L.tieneRespuesta(p, r), 'elegirla cuenta como respondida');
+  });
+});

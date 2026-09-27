@@ -160,3 +160,41 @@ test('rechaza cuerpos que no son un objeto', () => {
     assert.equal(validarRespuesta(adolescentes, cuerpo).ok, false);
   }
 });
+
+describe('adultos: «Prefiero no responder» en preguntas sensibles', () => {
+  test('en una escala se guarda como marca aparte, sin tocar el número', () => {
+    const r = validarRespuesta(adultos, { ...adultoQueNoApuesta(), ingresos_hogar: 'prefiero_no_responder' });
+    assert.equal(r.ok, true);
+    assert.equal(r.fila.ingresos_hogar, null);
+    assert.equal(r.fila.ingresos_hogar_no_responde, 1);
+  });
+
+  test('si respondió un paso, la marca queda en 0; si no se le preguntó, las dos en NULL', () => {
+    const r = validarRespuesta(adultos, adultoQueNoApuesta());
+    assert.equal(r.fila.ingresos_hogar, 4);
+    assert.equal(r.fila.ingresos_hogar_no_responde, 0);
+    assert.equal(r.fila.monto_por_vez, null);
+    assert.equal(r.fila.monto_por_vez_no_responde, null);
+  });
+
+  test('una escala sin esa opción no acepta el texto', () => {
+    const cuerpo = { ...adultoQueApuesta(), pgsi_1: 'prefiero_no_responder' };
+    assert.match(errores(adultos, cuerpo).join(), /pgsi_1: debe ser un número entero/);
+  });
+
+  test('quien no dice si apostó no ve ninguna de las dos ramas, y no tiene PGSI', () => {
+    const cuerpo = { ...adultoQueNoApuesta(), aposto_12m: 'prefiero_no_responder' };
+    delete cuerpo.penso_apostar;
+    delete cuerpo.motivo_no_apuesta;
+    const r = validarRespuesta(adultos, cuerpo);
+    assert.equal(r.ok, true, r.errores?.join());
+    assert.equal(r.fila.pgsi_total, null);
+    assert.equal(r.fila.pgsi_categoria, null);
+    assert.match(errores(adultos, { ...cuerpo, penso_apostar: 'no' }).join(), /no corresponde/);
+  });
+
+  test('en el origen del dinero no se combina con otras opciones', () => {
+    const cuerpo = { ...adultoQueApuesta(), origen_dinero: ['sueldo', 'prefiero_no_responder'] };
+    assert.match(errores(adultos, cuerpo).join(), /exclusiva/);
+  });
+});

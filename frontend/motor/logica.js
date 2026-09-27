@@ -39,7 +39,8 @@ export function cuerpo(def, respuestas) {
   for (const p of def.preguntas) {
     if (p.tipo === 'info' || !visible(p, respuestas) || !tieneRespuesta(p, respuestas)) continue;
     const v = respuestas[p.id];
-    if (p.tipo === 'numero' || p.tipo === 'escala') c[p.id] = Number.parseInt(v, 10);
+    if (p.tipo === 'escala' && v === p.opcionNoResponde?.valor) c[p.id] = v; // «Prefiero no responder» viaja como texto
+    else if (p.tipo === 'numero' || p.tipo === 'escala') c[p.id] = Number.parseInt(v, 10);
     else if (p.tipo === 'texto') c[p.id] = String(v).trim();
     else c[p.id] = v;
   }

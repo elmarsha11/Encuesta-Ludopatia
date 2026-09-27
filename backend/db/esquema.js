@@ -2,7 +2,7 @@
 // Así, agregar o cambiar una pregunta en backend/encuestas/ actualiza la tabla
 // sin tener que mantener la misma lista de opciones en dos lugares.
 
-import { columnaDeOpcion, preguntasConRespuesta } from '../validacion.js';
+import { columnaDeOpcion, columnaNoResponde, preguntasConRespuesta } from '../validacion.js';
 
 const textoSql = (s) => `'${s.replaceAll("'", "''")}'`;
 
@@ -14,8 +14,20 @@ function columnasDePregunta(pregunta, obligatoriaSiempre) {
   const id = pregunta.id;
 
   switch (pregunta.tipo) {
-    case 'numero':
     case 'escala':
+      if (pregunta.opcionNoResponde) {
+        // El número puede faltar solo si la marca dice «prefirió no responder», y al revés:
+        // la base no acepta las dos cosas juntas ni la marca sin número.
+        const marca = columnaNoResponde(pregunta);
+        return [
+          `${id} INTEGER CHECK (${id} BETWEEN ${pregunta.min} AND ${pregunta.max})`,
+          `${marca} INTEGER${notNull} CHECK (${marca} IN (0, 1))`,
+          // IS y no =: en SQL, NULL = 0 da NULL, y un CHECK que da NULL se acepta.
+          `CHECK ((${marca} IS NULL AND ${id} IS NULL) OR (${marca} IS 1 AND ${id} IS NULL) OR (${marca} IS 0 AND ${id} IS NOT NULL))`,
+        ];
+      }
+    // falls through
+    case 'numero':
       return [
         `${id} INTEGER${notNull} CHECK (${id} BETWEEN ${pregunta.min} AND ${pregunta.max})`,
       ];
@@ -38,9 +50,11 @@ function columnasDePregunta(pregunta, obligatoriaSiempre) {
 /** Lista ordenada de nombres de columna de la tabla de una encuesta (sin `id` ni `fecha`). */
 export function nombresDeColumnas(encuesta) {
   return [
-    ...preguntasConRespuesta(encuesta).flatMap((p) =>
-      p.tipo === 'multiple' ? p.opciones.map((o) => columnaDeOpcion(p, o)) : [p.id],
-    ),
+    ...preguntasConRespuesta(encuesta).flatMap((p) => {
+      if (p.tipo === 'multiple') return p.opciones.map((o) => columnaDeOpcion(p, o));
+      if (p.tipo === 'escala' && p.opcionNoResponde) return [p.id, columnaNoResponde(p)];
+      return [p.id];
+    }),
     ...(encuesta.columnasCalculadas ?? []).map((c) => c.nombre),
   ];
 }
@@ -60,9 +74,12 @@ export function sentenciasDeEncuesta(encuesta) {
     }),
     ...(encuesta.columnasCalculadas ?? []).map((c) => `${c.nombre} ${c.sql}`),
   ];
+  // SQLite pide las restricciones que miran varias columnas DESPUÉS de todas las columnas.
+  const esRestriccion = (linea) => linea.startsWith('CHECK (');
+  const definicion = [...columnas.filter((l) => !esRestriccion(l)), ...columnas.filter(esRestriccion)];
 
   return [
-    `CREATE TABLE IF NOT EXISTS ${t} (\n  ${columnas.join(',\n  ')}\n)`,
+    `CREATE TABLE IF NOT EXISTS ${t} (\n  ${definicion.join(',\n  ')}\n)`,
     // Las respuestas son de solo agregar: ni la aplicación ni un error pueden
     // modificarlas o borrarlas. Para corregir algo hay que eliminar el trigger a mano,
     // lo que obliga a que sea una decisión consciente.

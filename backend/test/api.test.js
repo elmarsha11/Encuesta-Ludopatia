@@ -202,6 +202,19 @@ describe('protección de los datos', () => {
     await assert.rejects(db.execute('DELETE FROM respuestas_adultos'), /no se pueden borrar/);
   });
 
+  test('la base rechaza un número junto con la marca de «prefiero no responder»', async () => {
+    const { rows } = await db.execute('SELECT * FROM respuestas_adultos LIMIT 1');
+    const fila = { ...rows[0], id: undefined, ingresos_hogar: 3, ingresos_hogar_no_responde: 1 };
+    const columnas = Object.keys(fila).filter((c) => c !== 'id');
+    await assert.rejects(
+      db.execute({
+        sql: `INSERT INTO respuestas_adultos (${columnas.join(', ')}) VALUES (${columnas.map(() => '?').join(', ')})`,
+        args: columnas.map((c) => fila[c]),
+      }),
+      /CHECK constraint failed/,
+    );
+  });
+
   test('la base rechaza valores fuera de rango aunque el validador fallara', async () => {
     await assert.rejects(
       db.execute("INSERT INTO respuestas_adolescentes (edad) VALUES (40)"),

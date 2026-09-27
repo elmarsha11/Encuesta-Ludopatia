@@ -31,6 +31,7 @@ Cada pregunta tiene:
 | `opciones` | En `unica` y `multiple`: `[{ valor, texto, exclusiva?, grupo? }]` |
 | `min`, `max`, `etiquetas` | En `numero` y `escala`. `etiquetas` es `{ valor: texto }` (a veces solo para los extremos) |
 | `presentacion` | `'slider'` en algunas escalas de adultos |
+| `opcionNoResponde` | En algunas escalas: `{ valor, texto }` de «Prefiero no responder», que se ofrece además de los pasos |
 | `rangosSmvm` | En sliders de montos: `{ paso: [desde, hasta] }` en salarios mínimos (`hasta` es `null` en el último). Multiplicado por `smvmReferencia` da el equivalente en pesos |
 | `maxLargo` | En `texto` |
 | `ayuda` | Nota opcional «¿Por qué preguntamos esto?» |
@@ -45,7 +46,7 @@ Cuerpo JSON con **solo las preguntas visibles que tienen respuesta**:
 
 | Tipo | Formato del valor |
 |---|---|
-| `numero`, `escala` | Número entero (no string): `24`, no `"24"` |
+| `numero`, `escala` | Número entero (no string): `24`, no `"24"`. En una escala con `opcionNoResponde`, su `valor` (texto) si la eligió |
 | `unica` | El `valor` de la opción: `"si"` |
 | `multiple` | Lista de `valor`es: `["redes", "tv"]`. Si no marcó nada, **no enviar la clave** |
 | `texto` | String |

@@ -40,6 +40,7 @@ function describirPregunta(encuesta, p, numero) {
   lineas.push(detalles.join(' · '), '');
 
   if (p.ayuda) lineas.push(`> Nota de ayuda: ${p.ayuda}`, '');
+  if (p.opcionNoResponde) lineas.push(`Además de la escala: «${p.opcionNoResponde.texto}».`, '');
   if (p.rangosSmvm && encuesta.smvmReferencia) {
     lineas.push(`Equivalente en pesos que se muestra (SMVM de referencia: ${pesos(encuesta.smvmReferencia)}):`, '');
     for (const [paso, [desde, hasta]] of Object.entries(p.rangosSmvm)) {

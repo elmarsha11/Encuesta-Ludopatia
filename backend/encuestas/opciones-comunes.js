@@ -9,6 +9,10 @@ export const SI_NO = [
 
 export const SI_NO_NOSE = [...SI_NO, { valor: 'no_se', texto: 'No sé' }];
 
+// Para preguntas sensibles. En opción múltiple va con `exclusiva: true` (no se combina
+// con otras); en opción única es una opción más; en las escalas va en `opcionNoResponde`.
+export const PREFIERO_NO_RESPONDER = { valor: 'prefiero_no_responder', texto: 'Prefiero no responder' };
+
 // Escala de acuerdo 1 a 5 usada en la encuesta de adolescentes.
 export const ACUERDO_1_A_5 = {
   min: 1,

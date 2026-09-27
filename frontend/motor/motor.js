@@ -788,9 +788,31 @@ export class Motor {
       );
       escalones.push({ label, input, valor: v });
     }
+    // «Prefiero no responder»: un renglón aparte debajo de los escalones, con el mismo
+    // `name`, así las flechas del teclado lo recorren junto con ellos.
+    let noResponde = null;
+    if (p.opcionNoResponde) {
+      const { valor, texto } = p.opcionNoResponde;
+      const input = h('input', {
+        class: 'opcion-input',
+        type: 'radio',
+        name: p.id,
+        value: valor,
+        on: { change: () => this.responder(p.id, valor) },
+      });
+      const base = 'opcion opcion--radio';
+      const label = h(
+        'label',
+        { class: base },
+        input,
+        h('span', { class: 'opcion-marca', 'aria-hidden': 'true' }),
+        h('span', { class: 'opcion-texto' }, texto),
+      );
+      noResponde = { label, input, valor, base };
+    }
     // La lectura grande repite lo que ya dice cada radio: para lectores de pantalla, se oculta.
     const lectura = h('div', { class: 'tramos-lectura', 'aria-hidden': 'true' });
-    this.controles = { tipo: 'tramos', pregunta: p, opciones: escalones, lectura, pesos };
+    this.controles = { tipo: 'tramos', pregunta: p, opciones: escalones, lectura, pesos, noResponde };
     this.actualizarControles();
     return h(
       'fieldset',
@@ -808,6 +830,7 @@ export class Motor {
           h('span', {}, this.ui.tramosMenos),
           h('span', {}, this.ui.tramosMas),
         ),
+        noResponde && h('div', { class: 'opciones' }, noResponde.label),
       ),
     );
   }
@@ -895,17 +918,25 @@ export class Motor {
         }
       }
       if (c.tipo === 'tramos') {
-        for (const o of c.opciones) {
-          o.input.checked = valor === o.valor;
-          const debajo = valor !== undefined && o.valor < valor;
-          o.label.className = `tramo${valor === o.valor ? ' tramo--marcado' : ''}${debajo ? ' tramo--debajo' : ''}`;
+        const numero = typeof valor === 'number' ? valor : undefined; // el «no responde» no es un escalón
+        if (c.noResponde) {
+          const marcada = valor === c.noResponde.valor;
+          c.noResponde.input.checked = marcada;
+          c.noResponde.label.className = c.noResponde.base + (marcada ? ' opcion--marcada' : '');
         }
-        const pesos = valor === undefined ? '' : c.pesos(valor);
-        c.lectura.replaceChildren(
-          ...(valor === undefined
-            ? [h('p', { class: 'tramos-vacio' }, this.ui.tramosVacio)]
-            : [h('p', { class: 'tramos-valor' }, c.pregunta.etiquetas[valor]), pesos && h('p', { class: 'tramos-pesos' }, pesos)].filter(Boolean)),
-        );
+        for (const o of c.opciones) {
+          o.input.checked = numero === o.valor;
+          const debajo = numero !== undefined && o.valor < numero;
+          o.label.className = `tramo${numero === o.valor ? ' tramo--marcado' : ''}${debajo ? ' tramo--debajo' : ''}`;
+        }
+        let lectura = [];
+        if (valor === undefined) lectura = [h('p', { class: 'tramos-vacio' }, this.ui.tramosVacio)];
+        else if (numero !== undefined) {
+          const pesos = c.pesos(numero);
+          lectura = [h('p', { class: 'tramos-valor' }, c.pregunta.etiquetas[numero]), pesos && h('p', { class: 'tramos-pesos' }, pesos)];
+        }
+        // Con «Prefiero no responder» la lectura queda vacía: lo elegido ya se ve marcado abajo.
+        c.lectura.replaceChildren(...lectura.filter(Boolean));
       }
       if (c.tipo === 'texto') {
         const largo = (valor ?? '').length;

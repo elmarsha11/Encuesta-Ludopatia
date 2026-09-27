@@ -106,3 +106,21 @@ for (const encuesta of Object.values(ENCUESTAS)) {
     });
   });
 }
+
+describe('«Prefiero no responder»', () => {
+  test('en escalas usa un valor con formato válido y no choca con ningún paso', () => {
+    for (const encuesta of Object.values(ENCUESTAS)) {
+      for (const p of encuesta.preguntas.filter((q) => q.opcionNoResponde)) {
+        assert.equal(p.tipo, 'escala', `${p.id}: opcionNoResponde solo tiene sentido en escalas`);
+        assert.match(p.opcionNoResponde.valor, FORMATO_ID);
+        assert.ok(p.opcionNoResponde.texto);
+      }
+    }
+  });
+
+  test('el PGSI no la tiene: su puntaje necesita los 9 ítems respondidos', () => {
+    for (const p of ENCUESTAS.adultos.preguntas.filter((q) => q.seccion === 'pgsi')) {
+      assert.equal(p.opcionNoResponde, undefined, p.id);
+    }
+  });
+});

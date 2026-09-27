@@ -11,10 +11,12 @@ CREATE TABLE IF NOT EXISTS respuestas_adultos (
   situacion_laboral TEXT NOT NULL CHECK (situacion_laboral IN ('trabajo_propio', 'relacion_dependencia', 'no_trabajo')),
   depende_economicamente TEXT NOT NULL CHECK (depende_economicamente IN ('si', 'no')),
   alguien_depende TEXT NOT NULL CHECK (alguien_depende IN ('si', 'no')),
-  ingresos_hogar INTEGER NOT NULL CHECK (ingresos_hogar BETWEEN 1 AND 5),
-  tiene_deudas TEXT NOT NULL CHECK (tiene_deudas IN ('si', 'no')),
+  ingresos_hogar INTEGER CHECK (ingresos_hogar BETWEEN 1 AND 5),
+  ingresos_hogar_no_responde INTEGER NOT NULL CHECK (ingresos_hogar_no_responde IN (0, 1)),
+  tiene_deudas TEXT NOT NULL CHECK (tiene_deudas IN ('si', 'no', 'prefiero_no_responder')),
   deuda_relativa INTEGER CHECK (deuda_relativa BETWEEN 1 AND 5),
-  aposto_12m TEXT NOT NULL CHECK (aposto_12m IN ('si', 'no')),
+  deuda_relativa_no_responde INTEGER CHECK (deuda_relativa_no_responde IN (0, 1)),
+  aposto_12m TEXT NOT NULL CHECK (aposto_12m IN ('si', 'no', 'prefiero_no_responder')),
   frecuencia TEXT CHECK (frecuencia IN ('menos_mensual', 'algunas_mes', 'semanal', 'varias_semana', 'casi_diario')),
   motivo_diversion INTEGER CHECK (motivo_diversion IN (0, 1)),
   motivo_ganar_dinero INTEGER CHECK (motivo_ganar_dinero IN (0, 1)),
@@ -26,10 +28,12 @@ CREATE TABLE IF NOT EXISTS respuestas_adultos (
   plataforma_legal TEXT CHECK (plataforma_legal IN ('si', 'no')),
   incluyo_a_alguien TEXT CHECK (incluyo_a_alguien IN ('si', 'no', 'no_se')),
   monto_por_vez INTEGER CHECK (monto_por_vez BETWEEN 1 AND 5),
+  monto_por_vez_no_responde INTEGER CHECK (monto_por_vez_no_responde IN (0, 1)),
   origen_dinero_sueldo INTEGER CHECK (origen_dinero_sueldo IN (0, 1)),
   origen_dinero_prestamo INTEGER CHECK (origen_dinero_prestamo IN (0, 1)),
   origen_dinero_planes_sociales INTEGER CHECK (origen_dinero_planes_sociales IN (0, 1)),
   origen_dinero_otro INTEGER CHECK (origen_dinero_otro IN (0, 1)),
+  origen_dinero_prefiero_no_responder INTEGER CHECK (origen_dinero_prefiero_no_responder IN (0, 1)),
   pgsi_1 INTEGER CHECK (pgsi_1 BETWEEN 0 AND 3),
   pgsi_2 INTEGER CHECK (pgsi_2 BETWEEN 0 AND 3),
   pgsi_3 INTEGER CHECK (pgsi_3 BETWEEN 0 AND 3),
@@ -56,7 +60,10 @@ CREATE TABLE IF NOT EXISTS respuestas_adultos (
   donde_recibio_ef_internet INTEGER CHECK (donde_recibio_ef_internet IN (0, 1)),
   quiere_recibir_ef TEXT NOT NULL CHECK (quiere_recibir_ef IN ('si', 'no')),
   pgsi_total INTEGER CHECK (pgsi_total BETWEEN 0 AND 27),
-  pgsi_categoria TEXT CHECK (pgsi_categoria IN ('sin_riesgo', 'riesgo_bajo', 'riesgo_moderado', 'juego_problematico'))
+  pgsi_categoria TEXT CHECK (pgsi_categoria IN ('sin_riesgo', 'riesgo_bajo', 'riesgo_moderado', 'juego_problematico')),
+  CHECK ((ingresos_hogar_no_responde IS NULL AND ingresos_hogar IS NULL) OR (ingresos_hogar_no_responde IS 1 AND ingresos_hogar IS NULL) OR (ingresos_hogar_no_responde IS 0 AND ingresos_hogar IS NOT NULL)),
+  CHECK ((deuda_relativa_no_responde IS NULL AND deuda_relativa IS NULL) OR (deuda_relativa_no_responde IS 1 AND deuda_relativa IS NULL) OR (deuda_relativa_no_responde IS 0 AND deuda_relativa IS NOT NULL)),
+  CHECK ((monto_por_vez_no_responde IS NULL AND monto_por_vez IS NULL) OR (monto_por_vez_no_responde IS 1 AND monto_por_vez IS NULL) OR (monto_por_vez_no_responde IS 0 AND monto_por_vez IS NOT NULL))
 );
 
 CREATE TRIGGER IF NOT EXISTS respuestas_adultos_sin_modificar BEFORE UPDATE ON respuestas_adultos

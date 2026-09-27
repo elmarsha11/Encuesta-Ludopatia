@@ -4,13 +4,9 @@
 //
 // Las respuestas NO son obligatorias, salvo la edad (se necesita para validar el rango).
 
-import { ACUERDO_1_A_5 } from './opciones-comunes.js';
+import { ACUERDO_1_A_5, PREFIERO_NO_RESPONDER as NO_RESPONDER } from './opciones-comunes.js';
 
-const PREFIERO_NO_RESPONDER = {
-  valor: 'prefiero_no_responder',
-  texto: 'Prefiero no responder',
-  exclusiva: true,
-};
+const PREFIERO_NO_RESPONDER = { ...NO_RESPONDER, exclusiva: true };
 
 // La Sección 3 solo se muestra a quien dijo que alguna vez apostó.
 const aposto = { pregunta: 'aposto_alguna_vez', es: ['si_no_ultimo_anio', 'si_ultimo_anio'] };

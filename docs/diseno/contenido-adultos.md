@@ -75,6 +75,8 @@ _Datos generales para describir al grupo que responde. Nada de esto te identific
 
 > Nota de ayuda: Sumá todos los ingresos de las personas con las que vivís. Lo usamos para ver si la situación económica se relaciona con las apuestas; una aproximación alcanza.
 
+Además de la escala: «Prefiero no responder».
+
 Equivalente en pesos que se muestra (SMVM de referencia: $383.800):
 
 - Paso 1: hasta $383.800 por mes
@@ -97,10 +99,13 @@ Equivalente en pesos que se muestra (SMVM de referencia: $383.800):
 
 - Sí
 - No
+- Prefiero no responder
 
 #### 9. ¿Cuánto representa tu deuda comparada con lo que ingresa por mes en tu hogar?
 
 **Tipo:** Escala · **Presentación:** slider de 5 pasos, arranca sin valor marcado · **Obligatoria** · **Se muestra** solo si en «¿Tenés deudas actualmente?» respondió «Sí»
+
+Además de la escala: «Prefiero no responder».
 
 - 1: Menos de medio mes de ingresos
 - 2: Entre medio mes y 1 mes
@@ -118,6 +123,7 @@ _Cuando decimos "apostar" hablamos de jugar dinero en casinos, apuestas deportiv
 
 - Sí
 - No
+- Prefiero no responder
 
 ## Tus hábitos de apuesta
 
@@ -169,6 +175,8 @@ _Estas preguntas son solo para quienes apostaron en el último año._
 
 **Tipo:** Escala · **Presentación:** slider de 5 pasos, arranca sin valor marcado · **Obligatoria** · **Se muestra** solo si en «En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?» respondió «Sí»
 
+Además de la escala: «Prefiero no responder».
+
 - 1: Menos de $10.000
 - 2: Entre $10.000 y $25.000
 - 3: Entre $25.000 y $50.000
@@ -183,6 +191,7 @@ _Estas preguntas son solo para quienes apostaron en el último año._
 - Préstamo
 - Planes sociales
 - Otro
+- Prefiero no responder _(excluye a las demás)_
 
 ## Pensando en los últimos 12 meses…
 
