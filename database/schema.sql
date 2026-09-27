@@ -123,3 +123,19 @@ BEGIN SELECT RAISE(ABORT, 'Las respuestas no se pueden modificar'); END;
 
 CREATE TRIGGER IF NOT EXISTS respuestas_adolescentes_sin_borrar BEFORE DELETE ON respuestas_adolescentes
 BEGIN SELECT RAISE(ABORT, 'Las respuestas no se pueden borrar'); END;
+
+-- Eventos del recorrido (conteos anónimos)
+CREATE TABLE IF NOT EXISTS eventos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  fecha TEXT NOT NULL DEFAULT (date('now', '-3 hours')),
+  encuesta TEXT NOT NULL CHECK (encuesta IN ('adultos', 'adolescentes')),
+  evento TEXT NOT NULL CHECK (evento IN ('entro', 'acepto', 'no_participa', 'edad_fuera', 'vio')),
+  pregunta TEXT,
+  CHECK ((evento = 'vio') = (pregunta IS NOT NULL))
+);
+
+CREATE TRIGGER IF NOT EXISTS eventos_sin_modificar BEFORE UPDATE ON eventos
+BEGIN SELECT RAISE(ABORT, 'Los eventos no se pueden modificar'); END;
+
+CREATE TRIGGER IF NOT EXISTS eventos_sin_borrar BEFORE DELETE ON eventos
+BEGIN SELECT RAISE(ABORT, 'Los eventos no se pueden borrar'); END;

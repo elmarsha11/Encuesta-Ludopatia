@@ -281,7 +281,11 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
 - **Un motor, dos configuraciones**, igual que las encuestas. La base se genera sola desde la definición de cada encuesta: cada pregunta de opción o escala es un gráfico de frecuencias. Encima, cada encuesta configura lo que no se deduce solo: cruces y bloques especiales (distribución PGSI).
 - **El servidor manda solo números agregados**, nunca filas individuales: aunque alguien abra las herramientas del navegador, las respuestas de una persona no llegan a su computadora.
 - **Celdas con menos de 5 respuestas: ocultas** en los dos dashboards (sección 7).
-- **Tamaño esperado: hasta 150 respuestas por encuesta.** Con ~30% de apostadores son ~45 personas en el PGSI, así que los cruces se agrupan: PGSI en 2 grupos (sin riesgo o bajo / moderado o problemático) e ingresos en 3. Los gráficos de una sola pregunta muestran todas las categorías. Cada porcentaje lleva su base (`n = 45`), y en preguntas de rama la base es solo quien vio la pregunta.
+- **Tamaño esperado: entre 70 y 100 respuestas por encuesta** (puede variar). Con ~30% de apostadores, el PGSI tendría **20 a 30 personas**: alcanza para mostrar su distribución, pero casi cualquier cruce del PGSI con otra variable deja celdas de menos de 5. Por eso:
+  - Los cruces principales usan **toda la muestra**: «apostó en el último año sí/no» según ingresos, deudas, entorno, publicidad y educación financiera.
+  - El PGSI se muestra como distribución, y cruzado solo en 2 grupos (sin riesgo o bajo / moderado o problemático) contra variables de 2 niveles.
+  - Los gráficos de una sola pregunta muestran todas las categorías.
+  - Cada porcentaje lleva su base (`n = 25`), y en preguntas de rama la base es solo quien vio la pregunta.
 - **Lenguaje**: la encuesta se toma una sola vez, así que muestra **asociaciones, no causas**. El dashboard dice «entre quienes tienen deudas, X% está en riesgo moderado o más», nunca «las deudas causan…».
 - **Preguntas de investigación propuestas para adultos** (a confirmar con el grupo): panorama (cuántos apostaron, distribución PGSI); situación económica (riesgo según ingresos, deudas y dependientes; origen del dinero); entorno y publicidad (familiares que apuestan, creencia de plata fácil, canales); educación financiera (¿quienes la recibieron apuestan menos o tienen menos riesgo? ¿cuántos quieren recibirla?).
 - **Accesos**:
@@ -289,6 +293,16 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
   - Grupo de adultos y docentes: el dashboard de su encuesta. Lo reciben **al terminar la semana**, junto con el Excel (adultos).
   - Cada contraseña va en `.env`. **Mientras la de un grupo esté vacía, ese acceso no existe**: se carga recién al cerrar la encuesta, así nadie entra antes aunque tenga el link.
 - Gráficos servidos desde el propio servidor (la CSP no permite CDN).
+
+### 8.7 Eventos del recorrido (DECIDIDO, implementado)
+
+Para saber **cuántos no participaron** y **en qué pantalla se abandona**, en las dos encuestas. Hoy la tabla de respuestas solo tiene a quienes terminaron.
+
+- Tabla `eventos`: `fecha` (sin hora), `encuesta`, `evento` y, si corresponde, `pregunta`. **Sin identificador de sesión, sin hora y sin IP**: los eventos no se pueden unir entre sí ni con una respuesta, solo contar. De solo agregar, como las respuestas.
+- Eventos: `entro` (vio la portada), `acepto`, `no_participa`, `edad_fuera` (puso una edad que no corresponde: detecta QR equivocados) y `vio` + pregunta (llegó a esa pantalla).
+- Cada evento se manda **una vez por pestaña** (se anota en `sessionStorage`): recargar o volver atrás no cuenta doble.
+- **Son aproximados**: quien abre la encuesta en dos celulares cuenta dos veces, y el endpoint es público (se valida que el evento y la pregunta existan, con límite por minuto). Sirven para ver tendencias, no como dato exacto. Fuera de horario no se registran.
+- Cómo se lee el abandono: comparar cuántos **vieron** preguntas que ve todo el mundo (las que no tienen `visibleSi`). Entre dos de ellas, la diferencia es la gente que se fue en ese tramo. Adentro de una rama, la caída se compara con quienes vieron la primera pregunta de esa rama.
 
 ### 8.5 Servidor y despliegue — DECIDIDO: se prueba la opción B (costo $0)
 
@@ -365,6 +379,5 @@ Encuesta-Ludopatia/
 | 6 | Franjas horarias de cada institución (19 al 23/10) | Juli |
 | 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
 | 9 | Preguntas de investigación del dashboard de adultos (hay una propuesta en 8.6) | Grupo |
-| 10 | Contador anónimo de abandonos por pantalla, para saber en la prueba piloto dónde deja la gente (hoy solo se guardan las encuestas completas) | Juli |
 
-**Ya decidido:** ingresos medidos en salarios mínimos; cortes del monto apostado ($10k / 25k / 50k / 100k); hosting opción B con la A de respaldo; respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard, «Prefiero no responder» en las preguntas sensibles de adultos, hasta 150 respuestas por encuesta, regla de menos de 5 en ambos dashboards, dashboards entregados al final de la semana con control en vivo solo para Juli.
+**Ya decidido:** ingresos medidos en salarios mínimos; cortes del monto apostado ($10k / 25k / 50k / 100k); hosting opción B con la A de respaldo; respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard, «Prefiero no responder» en las preguntas sensibles de adultos, entre 70 y 100 respuestas esperadas por encuesta, contador anónimo de no participación y abandonos en ambas (8.7), regla de menos de 5 en ambos dashboards, dashboards entregados al final de la semana con control en vivo solo para Juli.

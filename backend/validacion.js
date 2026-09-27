@@ -5,6 +5,7 @@
 // la respuesta se rechaza entera y no se guarda nada.
 
 import { esVisible } from './encuestas/condiciones.js';
+import { EVENTOS } from './eventos.js';
 
 const esVacio = (valor) =>
   valor === undefined ||
@@ -133,4 +134,25 @@ export function validarRespuesta(encuesta, cuerpo) {
 
   if (encuesta.calcular) fila = { ...fila, ...encuesta.calcular(respuestas) };
   return { ok: true, fila };
+}
+
+/**
+ * Valida un evento del recorrido: { evento } o, para «vio», { evento: 'vio', pregunta }.
+ * La pregunta tiene que existir en ESA encuesta: así nadie puede llenar la tabla de texto libre.
+ * @returns {{ ok: true, fila: { evento: string, pregunta: string | null } } | { ok: false, errores: string[] }}
+ */
+export function validarEvento(encuesta, cuerpo) {
+  if (typeof cuerpo !== 'object' || cuerpo === null || Array.isArray(cuerpo)) {
+    return { ok: false, errores: ['El cuerpo debe ser un objeto JSON'] };
+  }
+  const { evento, pregunta, ...resto } = cuerpo;
+  const errores = Object.keys(resto).map((clave) => `${clave}: campo desconocido`);
+  if (!EVENTOS.includes(evento)) errores.push('evento: desconocido');
+  if (evento === 'vio') {
+    if (!encuesta.preguntas.some((p) => p.id === pregunta)) errores.push('pregunta: no existe en esta encuesta');
+  } else if (pregunta !== undefined) {
+    errores.push('pregunta: solo corresponde al evento «vio»');
+  }
+  if (errores.length > 0) return { ok: false, errores };
+  return { ok: true, fila: { evento, pregunta: evento === 'vio' ? pregunta : null } };
 }

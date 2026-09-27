@@ -11,6 +11,7 @@
 | `/adultos` | Página de la encuesta de adultos (QR 2) |
 | `GET /api/encuestas/:id` | Definición de la encuesta (`adultos` o `adolescentes`) |
 | `POST /api/respuestas/:id` | Envío de una respuesta completa |
+| `POST /api/eventos/:id` | Evento del recorrido para los conteos: `{ evento }` o `{ evento: 'vio', pregunta }`. Responde 204. Se manda una vez por pestaña y sus errores se ignoran |
 
 ## 1. Definición (`GET /api/encuestas/:id`)
 

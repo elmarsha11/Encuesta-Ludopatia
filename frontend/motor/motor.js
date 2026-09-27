@@ -107,6 +107,32 @@ function guardarBorrador(clave, datos) {
   }
 }
 
+// --- Eventos del recorrido ------------------------------------------------------
+// Cuentan cuántos no participaron y en qué pantalla se abandona. No llevan respuestas
+// ni ningún identificador. Cada evento se manda UNA vez por pestaña (se anota en
+// sessionStorage, que no sale del dispositivo), así recargar la página no cuenta doble.
+
+function registrarEvento(id, evento, pregunta) {
+  const clave = `encuesta:${id}:eventos`;
+  const marca = pregunta ? `${evento}:${pregunta}` : evento;
+  let enviados = [];
+  try {
+    enviados = JSON.parse(sessionStorage.getItem(clave) ?? '[]');
+    if (enviados.includes(marca)) return;
+    sessionStorage.setItem(clave, JSON.stringify([...enviados, marca]));
+  } catch {
+    // Sin almacenamiento se manda igual: el conteo puede duplicarse si recarga, nada más.
+  }
+  // keepalive: el aviso sale aunque la persona cierre la pestaña justo después.
+  // Si falla, no pasa nada: la encuesta nunca depende de esto.
+  fetch(`/api/eventos/${id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pregunta ? { evento, pregunta } : { evento }),
+    keepalive: true,
+  }).catch(() => {});
+}
+
 // --- Motor ----------------------------------------------------------------------
 
 export class Motor {
@@ -188,6 +214,7 @@ export class Motor {
     } else {
       this.estado.pantalla = 'inicio';
     }
+    if (this.estado.pantalla !== 'cerrada') this.registrar('entro');
 
     this.dibujar();
     // Los píxeles llegan de a uno en la primera carga.
@@ -195,6 +222,10 @@ export class Motor {
       this.estado.aparecido = true;
       this.actualizarMotivo();
     }, 80);
+  }
+
+  registrar(evento, pregunta) {
+    registrarEvento(this.id, evento, pregunta);
   }
 
   // --- Movimiento ----------------------------------------------------------------
@@ -301,6 +332,7 @@ export class Motor {
     if (texto === '') return;
     const n = Number.parseInt(texto, 10);
     if (Number.isNaN(n) || n < pregunta.min || n > pregunta.max) {
+      this.registrar('edad_fuera');
       this.estado.edadFuera = true;
       this.dibujarAvisoEdad();
       return;
@@ -365,6 +397,8 @@ export class Motor {
     this.actualizarProgreso();
     this.actualizarMotivo();
     this.guardarProgreso();
+    const paso = this.pasoActual();
+    if (paso?.clase === 'pregunta') this.registrar('vio', paso.pregunta.id);
 
     // Pantalla nueva: volver arriba y llevar el foco al título (lectores de pantalla).
     this.raiz.scrollTop = 0;
@@ -433,7 +467,20 @@ export class Motor {
             h(
               'div',
               { class: 'consentimiento-botones' },
-              h('button', { type: 'button', class: 'btn btn--primario', on: { click: () => this.irAPaso(0, 'adelante') } }, c.si),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  class: 'btn btn--primario',
+                  on: {
+                    click: () => {
+                      this.registrar('acepto');
+                      this.irAPaso(0, 'adelante');
+                    },
+                  },
+                },
+                c.si,
+              ),
               h(
                 'button',
                 {
@@ -441,6 +488,7 @@ export class Motor {
                   class: 'btn btn--secundario',
                   on: {
                     click: () => {
+                      this.registrar('no_participa');
                       guardarBorrador(this.claveBorrador, null);
                       this.navegar({ pantalla: 'no-participa', respuestas: {} }, 'adelante');
                     },

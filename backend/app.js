@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
-import { validarRespuesta } from './validacion.js';
-import { guardarRespuesta } from './db/conexion.js';
+import { validarEvento, validarRespuesta } from './validacion.js';
+import { guardarEvento, guardarRespuesta } from './db/conexion.js';
 import { definicionPublica } from './encuestas/publica.js';
 import { estadoDeApertura } from './ventanas.js';
 
@@ -32,6 +32,7 @@ export function crearApp({
   reloj = () => new Date(),
   trustProxy = false,
   limiteEnviosPorMinuto = 30,
+  limiteEventosPorMinuto = 1500,
 }) {
   const app = express();
 
@@ -70,6 +71,16 @@ export function crearApp({
     message: { ok: false, errores: ['Demasiados envíos seguidos. Esperá un minuto.'] },
   });
 
+  // Los eventos son muchos más (unos 40 por persona) y en un aula todos comparten la IP:
+  // un curso de 30 recorriendo la encuesta a la vez son ~1200 en pocos minutos.
+  const limitadorEventos = rateLimit({
+    windowMs: 60_000,
+    limit: limiteEventosPorMinuto,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { ok: false, errores: ['Demasiados eventos seguidos.'] },
+  });
+
   const apertura = (id) => estadoDeApertura(ventanas[id] ?? null, reloj());
 
   // Definición de la encuesta para el frontend: preguntas, opciones, ramas, textos
@@ -96,6 +107,23 @@ export function crearApp({
     try {
       await guardarRespuesta(db, encuesta, resultado.fila);
       res.status(201).json({ ok: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Eventos del recorrido: cuántos no participaron y dónde se abandona. Son conteos
+  // aproximados (cualquiera podría mandar eventos a mano), por eso nunca tocan las respuestas.
+  // Fuera de horario no se registran: no son parte de la encuesta.
+  app.post('/api/eventos/:encuesta', limitadorEventos, async (req, res, next) => {
+    const encuesta = encuestas[req.params.encuesta];
+    if (!encuesta) return res.status(404).json({ ok: false, errores: ['Encuesta inexistente'] });
+    const resultado = validarEvento(encuesta, req.body);
+    if (!resultado.ok) return res.status(400).json(resultado);
+    if (!apertura(encuesta.id).aceptaEnvios) return res.status(204).end();
+    try {
+      await guardarEvento(db, encuesta, resultado.fila);
+      res.status(204).end();
     } catch (error) {
       next(error);
     }

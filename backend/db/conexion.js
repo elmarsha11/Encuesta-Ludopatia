@@ -1,7 +1,7 @@
 // Conexión a la base de datos (SQLite local o Turso en la nube; el código es el mismo).
 
 import { createClient } from '@libsql/client';
-import { nombresDeColumnas, sentenciasDeEncuesta } from './esquema.js';
+import { nombresDeColumnas, sentenciasDeEncuesta, sentenciasDeEventos } from './esquema.js';
 
 export function crearCliente({ url, authToken }) {
   if (!url) throw new Error('Falta DATABASE_URL (ver .env.example)');
@@ -28,6 +28,15 @@ export async function inicializarBase(cliente, encuestas) {
       );
     }
   }
+  await cliente.batch(sentenciasDeEventos(encuestas), 'write');
+}
+
+/** Registra un evento validado (una fila suelta, sin nada que la una a otra). */
+export async function guardarEvento(cliente, encuesta, { evento, pregunta }) {
+  await cliente.execute({
+    sql: 'INSERT INTO eventos (encuesta, evento, pregunta) VALUES (?, ?, ?)',
+    args: [encuesta.id, evento, pregunta ?? null],
+  });
 }
 
 /** Inserta una fila validada. Los valores van como parámetros (?) y nunca pegados al SQL. */
