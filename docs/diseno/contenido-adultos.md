@@ -75,6 +75,14 @@ _Datos generales para describir al grupo que responde. Nada de esto te identific
 
 > Nota de ayuda: Sumá todos los ingresos de las personas con las que vivís. Lo usamos para ver si la situación económica se relaciona con las apuestas; una aproximación alcanza.
 
+Equivalente en pesos que se muestra (SMVM de referencia: $383.800):
+
+- Paso 1: hasta $383.800 por mes
+- Paso 2: $383.800 a $767.600 por mes
+- Paso 3: $767.600 a $1.151.400 por mes
+- Paso 4: $1.151.400 a $1.919.000 por mes
+- Paso 5: más de $1.919.000 por mes
+
 - 1: Sin ingresos o hasta 1 salario mínimo
 - 2: Entre 1 y 2 salarios mínimos
 - 3: Entre 2 y 3 salarios mínimos

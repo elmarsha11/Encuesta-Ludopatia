@@ -2,7 +2,7 @@
 // No tocan la pantalla: reciben datos y devuelven datos. Por eso se pueden probar
 // con node:test igual que el backend (backend/test/logica-frontend.test.js).
 //
-// Portadas del prototipo de Claude Design (design/adolescentes/prototipo/Encuesta.dc.html).
+// Portadas de los prototipos de Claude Design (design/adolescentes/ y design/adultos/).
 
 /** Una pregunta es visible si no tiene visibleSi, o si la respuesta a visibleSi.pregunta está en visibleSi.es. */
 export function visible(pregunta, respuestas) {
@@ -29,6 +29,7 @@ export function tieneRespuesta(pregunta, respuestas) {
 }
 
 export function esObligatoria(def, pregunta) {
+  if (pregunta.tipo === 'info') return false; // se lee, no se responde
   return pregunta.obligatoria ?? def.respuestasObligatorias;
 }
 
@@ -77,7 +78,8 @@ const cuenta = (p, respuestas, pasadas) =>
 /** Progreso sobre el camino actual: { hechas, total } (solo preguntas, sin títulos de sección). */
 export function progreso(def, respuestas, indice, lista) {
   const pasadas = pasadasHasta(lista, indice);
-  const hechas = pasadas.size;
+  // Las pantallas info no se responden: no suman ni en lo hecho ni en el total.
+  const hechas = def.preguntas.filter((p) => p.tipo !== 'info' && pasadas.has(p.id)).length;
   const total = def.preguntas.filter((p) => p.tipo !== 'info' && cuenta(p, respuestas, pasadas)).length;
   return { hechas, total };
 }
@@ -119,6 +121,67 @@ export function alternar(pregunta, actual, opcion) {
     nueva = [...actual.filter((v) => !exclusivas.has(v)), opcion.valor];
   }
   return pregunta.opciones.map((o) => o.valor).filter((v) => nueva.includes(v));
+}
+
+/**
+ * Qué componente dibuja una escala, según su forma (no según la encuesta):
+ * - presentacion 'slider'          → 'tramos' (escalones que crecen)
+ * - etiqueta en CADA punto (PGSI)  → 'frecuencia' (renglones anclados abajo)
+ * - etiquetas solo en los extremos → 'puntos' (la de adolescentes)
+ */
+export function componenteEscala(pregunta) {
+  if (pregunta.presentacion === 'slider') return 'tramos';
+  for (let v = pregunta.min; v <= pregunta.max; v++) if (!pregunta.etiquetas?.[v]) return 'puntos';
+  return 'frecuencia';
+}
+
+/** «Pregunta n de N» dentro del bloque de escalas de frecuencia de la misma sección, en el camino actual. */
+export function contextoFrecuencia(pregunta, lista) {
+  const bloque = lista.filter(
+    (s) =>
+      s.clase === 'pregunta' &&
+      s.pregunta.seccion === pregunta.seccion &&
+      s.pregunta.tipo === 'escala' &&
+      componenteEscala(s.pregunta) === 'frecuencia',
+  );
+  return { n: bloque.findIndex((s) => s.pregunta.id === pregunta.id) + 1, total: bloque.length };
+}
+
+/** $383.800: punto de miles, sin decimales. */
+export const formatearPesos = (n) => `$${String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`;
+
+/**
+ * Equivalente en pesos de un paso: rangosSmvm × smvmReferencia.
+ * Devuelve '' si la pregunta no trae rangos. Los textos vienen de la interfaz ({monto}, {desde}, {hasta}).
+ */
+export function textoPesos(pregunta, valor, smvm, textos) {
+  const rango = pregunta.rangosSmvm?.[valor];
+  if (!rango || !smvm) return '';
+  const [desde, hasta] = rango;
+  let texto;
+  if (!desde) texto = textos.hasta.replace('{monto}', formatearPesos(hasta * smvm));
+  else if (hasta === null) texto = textos.masDe.replace('{monto}', formatearPesos(desde * smvm));
+  else texto = textos.entre.replace('{desde}', formatearPesos(desde * smvm)).replace('{hasta}', formatearPesos(hasta * smvm));
+  return textos.porMes ? `${texto} ${textos.porMes}` : texto;
+}
+
+/**
+ * Opciones en grupos consecutivos por su `grupo`. Sin `grupo`, un solo grupo sin rótulo.
+ * Un grupo de UNA opción que se llama igual que el grupo («Educación Inicial») no muestra
+ * rótulo: sería repetir la misma palabra.
+ */
+export function gruposDeOpciones(opciones) {
+  const grupos = [];
+  for (const o of opciones) {
+    const titulo = o.grupo ?? '';
+    const ultimo = grupos.at(-1);
+    if (ultimo && ultimo.titulo === titulo) ultimo.opciones.push(o);
+    else grupos.push({ titulo, opciones: [o] });
+  }
+  return grupos.map((g) => ({
+    ...g,
+    mostrarTitulo: g.titulo !== '' && !(g.opciones.length === 1 && g.opciones[0].texto === g.titulo),
+  }));
 }
 
 // Posiciones del motivo de píxeles "en desorden" (portada). Valores del prototipo.

@@ -20,6 +20,8 @@ function describirCondicion(encuesta, condicion) {
   return `solo si en «${origen.texto}» respondió ${textos.join(' o ')}`;
 }
 
+const pesos = (n) => `$${Math.round(n).toLocaleString('es-AR')}`;
+
 function describirPregunta(encuesta, p, numero) {
   const lineas = [];
   const titulo = p.tipo === 'info' ? p.titulo : p.texto;
@@ -38,6 +40,15 @@ function describirPregunta(encuesta, p, numero) {
   lineas.push(detalles.join(' · '), '');
 
   if (p.ayuda) lineas.push(`> Nota de ayuda: ${p.ayuda}`, '');
+  if (p.rangosSmvm && encuesta.smvmReferencia) {
+    lineas.push(`Equivalente en pesos que se muestra (SMVM de referencia: ${pesos(encuesta.smvmReferencia)}):`, '');
+    for (const [paso, [desde, hasta]] of Object.entries(p.rangosSmvm)) {
+      const d = desde * encuesta.smvmReferencia;
+      const texto = hasta === null ? `más de ${pesos(d)}` : desde === 0 ? `hasta ${pesos(hasta * encuesta.smvmReferencia)}` : `${pesos(d)} a ${pesos(hasta * encuesta.smvmReferencia)}`;
+      lineas.push(`- Paso ${paso}: ${texto} por mes`);
+    }
+    lineas.push('');
+  }
 
   if (p.opciones) {
     for (const o of p.opciones) {

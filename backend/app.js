@@ -13,7 +13,7 @@ import { estadoDeApertura } from './ventanas.js';
 const CARPETA_FRONTEND = fileURLToPath(new URL('../frontend/', import.meta.url));
 
 // Encuestas que ya tienen frontend. Las demás solo existen como API.
-const CON_FRONTEND = ['adolescentes'];
+const CON_FRONTEND = ['adolescentes', 'adultos'];
 
 /**
  * @param {object} opciones

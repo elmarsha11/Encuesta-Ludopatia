@@ -170,6 +170,17 @@ describe('páginas', () => {
     assert.equal(fuente.status, 200);
   });
 
+  test('sirve la encuesta de adultos con su tema y sus tipografías', async () => {
+    const html = await fetch(`${base}/adultos/`);
+    assert.equal(html.status, 200);
+    const texto = await html.text();
+    assert.match(texto, /<main class="app">/);
+    assert.match(texto, /tema-b\.css/);
+    assert.equal((await fetch(`${base}/adultos/tema-b.css`)).status, 200);
+    assert.equal((await fetch(`${base}/adultos/fuentes/newsreader-latin-wght-normal.woff2`)).status, 200);
+    assert.equal((await fetch(`${base}/adultos/fuentes/instrument-sans-latin-wght-normal.woff2`)).status, 200);
+  });
+
   test('la política de seguridad solo permite recursos del propio servidor', async () => {
     const res = await fetch(`${base}/adolescentes/`);
     const csp = res.headers.get('content-security-policy');

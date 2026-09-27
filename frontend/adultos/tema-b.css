@@ -1,0 +1,342 @@
+/* ==========================================================================
+   Tema B · Papel y tinta
+   Encuesta de adultos (18+)
+
+   Mismo contrato que tema-a.css:
+   1. TOKENS (:root): mismos nombres de variables que el tema A. El motor lee
+      --dur-salida y --pausa-autoavance desde acá.
+   2. COMPONENTES: mismas clases que el tema A para lo que ya existía, y clases
+      propias para lo nuevo de adultos (marcadas con «NUEVO»).
+   Tipografías con licencia OFL, servidas desde nuestro propio servidor (nada de CDN).
+   Newsreader se usa en su eje de peso (wght), sin el eje óptico (opsz): pesa la
+   mitad y en pantalla de celular la diferencia no se nota.
+   ========================================================================== */
+
+@font-face{font-family:"Newsreader";src:url(fuentes/newsreader-latin-wght-normal.woff2) format("woff2");font-weight:200 800;font-style:normal;font-display:swap}
+@font-face{font-family:"Newsreader";src:url(fuentes/newsreader-latin-wght-italic.woff2) format("woff2");font-weight:200 800;font-style:italic;font-display:swap}
+@font-face{font-family:"Instrument Sans";src:url(fuentes/instrument-sans-latin-wght-normal.woff2) format("woff2");font-weight:400 700;font-style:normal;font-display:swap}
+
+/* 1. TOKENS ================================================================ */
+:root{
+  /* Color · base (papel) */
+  --color-fondo:#F4EEE2;
+  --color-superficie:#FBF8F1;
+  --color-superficie-hover:#EFE7D8;
+  --color-pista:#D3C8B5;         /* rieles, escalones vacíos: decorativo */
+  --color-borde-suave:#DDD3C1;   /* filetes entre renglones: decorativo */
+  --color-borde:#7D7668;         /* borde de controles: 3.9:1 sobre el fondo */
+  /* Color · texto (tinta) */
+  --color-texto:#1B2A44;         /* 12.4:1 */
+  --color-texto-2:#3A4659;       /*  8.3:1 */
+  --color-texto-3:#5B6270;       /*  5.3:1 */
+  /* Color · acentos */
+  --color-acento:#0D5C58;        /* verde azulado profundo: lo elegido · 6.8:1 */
+  --color-terracota:#A5462A;     /* secundario: notas, foco, avisos · 5.2:1 */
+  --color-lila:var(--color-terracota);  /* nombres heredados del tema A: se mantienen */
+  --color-agua:var(--color-acento);     /* para que ninguna regla compartida quede sin valor */
+  --color-accion:#1B2A44;        /* la acción principal va en tinta · texto encima 13.5:1 */
+  --color-accion-hover:#2A3C5C;
+  --color-sobre-accion:#FBF8F1;
+  --color-seleccion:var(--color-acento);
+  --color-seleccion-fondo:#E3ECE7;      /* NUEVO: renglón elegido */
+  --color-sobre-seleccion:#FBF8F1;
+  --color-foco:var(--color-terracota);  /* distinto de la selección, para no confundirlos */
+  --color-deshabilitado:#8A8477;        /* NUEVO: «Siguiente» sin responder */
+  --color-nota-fondo:#EDE3D2;           /* NUEVO: «¿Por qué preguntamos esto?» */
+  --color-aviso-fondo:#F4E2D6;          /* avisos calmos: nunca rojo */
+  --color-aviso-borde:var(--color-terracota);
+
+  /* Tipografía: serif para leer (preguntas, títulos), sans para operar (opciones, botones) */
+  --fuente-titulo:"Newsreader",Georgia,"Times New Roman",serif;
+  --fuente-texto:"Instrument Sans","Segoe UI",system-ui,sans-serif;
+  --fuente-codigo:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --tam-chico:14px;              /* NUEVO: solo rótulos en versalitas, nunca texto para leer */
+  --tam-cuerpo:16px;             /* mínimo: también evita el zoom de iOS */
+  --tam-opcion:17px;
+  --tam-cuerpo-l:18px;
+  --tam-lead:19px;
+  --tam-h3:22px;
+  --tam-h2:28px;
+  --tam-h1:38px;
+  --tam-pregunta:29px;
+  --tam-cierre:38px;
+  --tam-numero:44px;
+  --tam-tramo:28px;              /* NUEVO: lectura grande del tramo elegido */
+  --tam-codigo:13px;
+  --peso-titulo:500;             /* la serif pesa por sí sola: no hace falta negrita */
+  --peso-fuerte:600;
+  --interlineado-titulo:1.14;
+  --interlineado-texto:1.5;
+  --interlineado-lectura:1.55;   /* NUEVO: párrafos en serif */
+  --espaciado-versalitas:.09em;  /* NUEVO */
+
+  /* Espaciado (base 4) */
+  --esp-1:4px;--esp-2:8px;--esp-3:12px;--esp-4:16px;--esp-5:20px;--esp-6:24px;--esp-7:32px;--esp-8:48px;
+  --margen-pantalla:24px;
+
+  /* Forma: filetes finos y esquinas casi rectas, como una página impresa */
+  --borde-ancho:1.5px;
+  --filete:1px;                  /* NUEVO */
+  --radio-s:2px;
+  --radio-m:4px;
+  --radio-l:6px;
+  --radio-pill:999px;
+
+  /* Interacción */
+  --toque-min:48px;
+  --alto-boton:52px;
+  --alto-opcion:56px;
+  --alto-punto:64px;
+  --alto-frecuencia:60px;        /* NUEVO: renglón de la escala PGSI */
+  --alto-tramo-min:44px;         /* NUEVO: escalón más bajo del slider */
+  --alto-tramo-paso:16px;        /* NUEVO: cuánto crece cada escalón */
+  --foco-ancho:3px;
+  --foco-separacion:3px;
+
+  /* Movimiento. El motor LEE --dur-salida y --pausa-autoavance desde acá.
+     Adultos: un poco más ágil que adolescentes (el bloque PGSI son 9 pantallas seguidas). */
+  --curva-suave:cubic-bezier(.22,.61,.36,1);
+  --curva-salida:cubic-bezier(.55,0,1,.45);
+  --curva-galeria:cubic-bezier(.16,1,.3,1);
+  --dur-rapida:180ms;
+  --dur-salida:220ms;
+  --dur-entrada:460ms;
+  --dur-lenta:700ms;
+  --pausa-autoavance:650ms;
+  --retraso-escalonado:45ms;
+  --dur-ola:3200ms;              /* sin uso en adultos (no hay motivo de píxeles); se mantiene el nombre */
+  --ola-altura:0px;
+  --carrusel-distancia:calc(100% + var(--margen-pantalla));
+}
+
+/* Ritmos alternativos (Tweak "ritmo"): solo cambian tokens de movimiento */
+.ritmo-tranquilo{--dur-salida:260ms;--dur-entrada:520ms;--pausa-autoavance:900ms;--retraso-escalonado:70ms}
+.ritmo-agil{--dur-salida:160ms;--dur-entrada:320ms;--pausa-autoavance:450ms;--retraso-escalonado:30ms}
+
+/* 2. COMPONENTES =========================================================== */
+
+body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family:var(--fuente-texto)}
+
+.app{box-sizing:border-box;display:flex;flex-direction:column;overflow-x:hidden;overflow-y:auto;padding:var(--esp-4) var(--margen-pantalla) 0;background:var(--color-fondo);color:var(--color-texto);font-family:var(--fuente-texto);font-size:var(--tam-cuerpo);line-height:var(--interlineado-texto);-webkit-font-smoothing:antialiased}
+
+/* Barra superior: el filete de tinta es la "cabecera" de la página */
+.barra{display:flex;align-items:center;min-height:var(--toque-min);flex-shrink:0;border-bottom:var(--filete) solid var(--color-texto)}
+.anonima{margin:0 0 0 auto;display:inline-flex;align-items:center;gap:6px;color:var(--color-acento);font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;line-height:1}
+
+/* Progreso: rótulo de sección en versalitas + hilo de tinta */
+.progreso-bloque{margin-top:var(--esp-3);display:flex;flex-direction:column;gap:var(--esp-2);flex-shrink:0}
+.progreso-seccion{margin:0;min-height:1.5em;font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;color:var(--color-texto-3);line-height:1.5}
+.progreso{appearance:none;-webkit-appearance:none;display:block;width:100%;height:2px;border:0;border-radius:0;background:var(--color-pista);overflow:hidden}
+.progreso::-webkit-progress-bar{background:var(--color-pista)}
+.progreso::-webkit-progress-value{background:var(--color-texto);transition:width var(--dur-lenta) var(--curva-suave)}
+.progreso::-moz-progress-bar{background:var(--color-texto)}
+
+/* Carrusel entre pantallas (mismo comportamiento que el tema A) */
+.contenido{display:flex;flex-direction:column;flex:1 0 auto;padding-top:var(--esp-7)}
+.salir-adelante{animation:salir-adelante var(--dur-salida) var(--curva-salida) forwards;pointer-events:none}
+.salir-atras{animation:salir-atras var(--dur-salida) var(--curva-salida) forwards;pointer-events:none}
+.entrar-adelante-0{animation:entrar-adelante-0 var(--dur-entrada) var(--curva-galeria) both}
+.entrar-adelante-1{animation:entrar-adelante-1 var(--dur-entrada) var(--curva-galeria) both}
+.entrar-atras-0{animation:entrar-atras-0 var(--dur-entrada) var(--curva-galeria) both}
+.entrar-atras-1{animation:entrar-atras-1 var(--dur-entrada) var(--curva-galeria) both}
+@keyframes salir-adelante{to{transform:translateX(calc(var(--carrusel-distancia) * -1))}}
+@keyframes salir-atras{to{transform:translateX(var(--carrusel-distancia))}}
+@keyframes entrar-adelante-0{from{transform:translateX(var(--carrusel-distancia))}to{transform:none}}
+@keyframes entrar-adelante-1{from{transform:translateX(var(--carrusel-distancia))}to{transform:none}}
+@keyframes entrar-atras-0{from{transform:translateX(calc(var(--carrusel-distancia) * -1))}to{transform:none}}
+@keyframes entrar-atras-1{from{transform:translateX(calc(var(--carrusel-distancia) * -1))}to{transform:none}}
+[class*="entrar-adelante"] [class*="aparecer-"],[class*="entrar-atras"] [class*="aparecer-"]{animation:none}
+.entrar-quieto-0{animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+.entrar-quieto-1{animation:aparecer-1 var(--dur-entrada) var(--curva-suave) both}
+.aparecer-0{animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+.aparecer-1{animation:aparecer-1 var(--dur-entrada) var(--curva-suave) both}
+@keyframes aparecer-0{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes aparecer-1{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Textos */
+.portada-titulo{margin:var(--esp-2) 0 0;font-family:var(--fuente-titulo);font-size:44px;line-height:1.02;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
+.portada-texto{margin:var(--esp-5) 0 0;font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);line-height:var(--interlineado-lectura);color:var(--color-texto-2);text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
+.puntos{margin:var(--esp-6) 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:var(--esp-3)}
+.punto-lista{display:flex;gap:var(--esp-3);align-items:baseline;color:var(--color-texto-2);text-wrap:pretty}
+.punto-lista::before{content:"";flex-shrink:0;width:14px;height:var(--filete);background:var(--color-terracota);transform:translateY(-5px)}
+.punto-lista strong{color:var(--color-texto);font-weight:var(--peso-fuerte)}
+.portada-cierre{margin:var(--esp-5) 0 0;font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);color:var(--color-texto-2);text-wrap:pretty}
+.pregunta-texto{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-pregunta);line-height:var(--interlineado-titulo);font-weight:var(--peso-titulo);letter-spacing:-.01em;text-wrap:balance}
+.pregunta-texto--larga{font-size:25px;line-height:1.2}
+.pista{margin:var(--esp-3) 0 0;font-family:var(--fuente-titulo);font-style:italic;font-size:var(--tam-opcion);color:var(--color-texto-3)}
+/* Título de sección: un filete corto en terracota, como apertura de capítulo */
+.seccion{margin-top:var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
+.seccion::before{content:"";width:48px;height:2px;background:var(--color-terracota)}
+.seccion-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.06;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
+.seccion-desc{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-lead);line-height:var(--interlineado-lectura);color:var(--color-texto-2);text-wrap:pretty}
+.mensaje{margin-top:var(--esp-4);display:flex;flex-direction:column;gap:var(--esp-4)}
+.mensaje-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h2);line-height:1.15;font-weight:var(--peso-titulo);letter-spacing:-.01em;text-wrap:balance}
+.cierre-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-cierre);line-height:1.06;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
+.mensaje-texto{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-lead);line-height:var(--interlineado-lectura);color:var(--color-texto-2);text-wrap:pretty}
+
+/* Botones */
+.btn{box-sizing:border-box;min-height:var(--alto-boton);min-width:132px;padding:0 20px;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:var(--borde-ancho) solid transparent;border-radius:var(--radio-m);font-family:var(--fuente-texto);font-size:var(--tam-opcion);font-weight:var(--peso-fuerte);text-decoration:none;cursor:pointer;transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease,color var(--dur-rapida) ease,transform var(--dur-rapida) ease}
+.btn:active{transform:scale(.98)}
+.btn--primario{background:var(--color-accion);border-color:var(--color-accion);color:var(--color-sobre-accion)}
+.btn--primario:hover{background:var(--color-accion-hover);border-color:var(--color-accion-hover)}
+.btn--secundario{background:transparent;border-color:var(--color-texto);color:var(--color-texto)}
+.btn--secundario:hover{background:var(--color-superficie-hover)}
+/* Obligatoria sin responder: el botón se ve apagado (contorno), no desaparece */
+.btn:disabled,.btn:disabled:hover{background:transparent;border-color:var(--color-pista);color:var(--color-deshabilitado);cursor:not-allowed;transform:none}
+.btn-volver{min-height:var(--alto-boton);margin-left:-10px;padding:0 14px 0 8px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:0;border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-texto);font-size:var(--tam-opcion);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
+.btn-volver:hover{color:var(--color-texto);background:var(--color-superficie-hover)}
+.consentimiento{margin-top:auto;padding:var(--esp-5) 0 var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4);border-top:var(--filete) solid var(--color-borde-suave)}
+.consentimiento-pregunta{margin:var(--esp-2) 0 0;font-family:var(--fuente-titulo);font-size:var(--tam-h3);line-height:1.2;font-weight:var(--peso-titulo)}
+.consentimiento-botones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--esp-3)}
+.consentimiento-botones .btn{min-height:56px;min-width:0}
+
+/* Pie fijo: Atrás a la izquierda, la acción a la derecha, sobre un filete */
+.pie{position:sticky;bottom:0;margin-top:auto;padding:var(--esp-3) 0 var(--esp-6);display:flex;align-items:center;gap:var(--esp-3);background:var(--color-fondo);border-top:var(--filete) solid var(--color-borde-suave);flex-shrink:0}
+.pie-accion{margin-left:auto;min-width:148px}
+
+/* Contenedor de pregunta. En adultos no hay tarjeta: la página es la tarjeta. */
+.sin-tarjeta{margin-top:0}
+.tarjeta{margin-top:0;padding:var(--esp-5);border:var(--filete) solid var(--color-borde-suave);border-radius:var(--radio-l);background:var(--color-superficie)}
+.grupo{margin:0;padding:0;border:0;min-width:0}
+.grupo-leyenda{padding:0;margin:0;width:100%}
+
+/* NUEVO · ¿Por qué preguntamos esto? Botón con aria-expanded + nota que se despliega debajo.
+   Va entre la pregunta y las opciones: se lee en el orden natural y nunca tapa nada. */
+.porque{margin-top:var(--esp-3)}
+.porque-boton{min-height:var(--toque-min);margin-left:-2px;padding:0 6px 0 2px;display:inline-flex;align-items:center;gap:var(--esp-2);background:transparent;border:0;border-radius:var(--radio-m);color:var(--color-terracota);font-family:var(--fuente-texto);font-size:var(--tam-cuerpo);font-weight:var(--peso-fuerte);cursor:pointer}
+.porque-boton-texto{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.porque-icono{box-sizing:border-box;flex-shrink:0;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid currentColor;border-radius:50%;font-family:var(--fuente-titulo);font-style:italic;font-size:15px;font-weight:600;line-height:1;transition:background-color var(--dur-rapida) ease,color var(--dur-rapida) ease}
+.porque-boton[aria-expanded="true"] .porque-icono{background:var(--color-terracota);color:var(--color-sobre-accion)}
+.porque-boton:hover .porque-boton-texto{text-decoration-thickness:2px}
+.porque-texto{margin:var(--esp-1) 0 0;padding:14px 16px;border-radius:var(--radio-m);background:var(--color-nota-fondo);font-family:var(--fuente-titulo);font-size:var(--tam-opcion);line-height:1.45;color:var(--color-texto);text-wrap:pretty;animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+
+/* Opción (única = radio, múltiple = checkbox), como renglones de un índice */
+.opciones{margin-top:var(--esp-6);display:flex;flex-direction:column;border-top:var(--filete) solid var(--color-borde-suave)}
+.opcion{position:relative;box-sizing:border-box;min-height:var(--alto-opcion);padding:10px 12px;display:flex;align-items:center;gap:14px;border-bottom:var(--filete) solid var(--color-borde-suave);color:var(--color-texto);font-size:var(--tam-opcion);line-height:1.35;cursor:pointer;transition:background-color var(--dur-rapida) ease,color var(--dur-rapida) ease}
+.opcion:hover{background:var(--color-superficie-hover)}
+.opcion--marcada,.opcion--marcada:hover{background:var(--color-seleccion-fondo);color:var(--color-acento);font-weight:var(--peso-fuerte)}
+.opcion-input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}
+.opcion-marca{flex-shrink:0;box-sizing:border-box;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid var(--color-borde);background:var(--color-superficie);color:var(--color-sobre-seleccion);transition:border-width var(--dur-rapida) ease,background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease}
+.opcion--radio .opcion-marca{border-radius:50%}
+.opcion--radio .opcion-marca svg{display:none}
+.opcion--check .opcion-marca{border-radius:var(--radio-s)}
+.opcion-marca svg{opacity:0}
+.opcion--radio.opcion--marcada .opcion-marca{border:7px solid var(--color-seleccion)}
+.opcion--check.opcion--marcada .opcion-marca{background:var(--color-seleccion);border-color:var(--color-seleccion)}
+.opcion--marcada .opcion-marca svg{opacity:1;animation:marcar var(--dur-entrada) var(--curva-suave) both}
+@keyframes marcar{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+/* Antes de una opción exclusiva («Ninguno»): un respiro y un filete nuevo */
+.separador{height:14px;border-bottom:var(--filete) solid var(--color-borde-suave)}
+
+/* NUEVO · Opciones agrupadas (carrera): rótulo en versalitas sobre cada grupo.
+   Cada grupo es un role="group" con aria-labelledby apuntando a su rótulo. */
+.opciones-grupo{display:flex;flex-direction:column}
+.opciones-grupo-titulo{margin:0;padding:var(--esp-5) 12px var(--esp-2);border-bottom:var(--filete) solid var(--color-borde-suave);font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;color:var(--color-texto-3)}
+
+/* Escala de puntos (del tema A, para escalas con etiquetas solo en los extremos) */
+.escala{margin-top:var(--esp-7);display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--esp-2)}
+.punto{position:relative;box-sizing:border-box;height:var(--alto-punto);display:flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);background:var(--color-superficie);color:var(--color-texto);font-family:var(--fuente-titulo);font-size:var(--tam-h3);font-weight:var(--peso-titulo);cursor:pointer;transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease,color var(--dur-rapida) ease}
+.punto:hover{background:var(--color-superficie-hover)}
+.punto--marcado,.punto--marcado:hover{background:var(--color-seleccion);border-color:var(--color-seleccion);color:var(--color-sobre-seleccion)}
+.escala-extremos{margin-top:var(--esp-3);display:flex;justify-content:space-between;gap:var(--esp-4);color:var(--color-texto-3);line-height:1.3}
+.escala-extremos span{max-width:130px}
+.escala-extremos span:last-child{text-align:right}
+
+/* NUEVO · Tramos: slider de 5 pasos hecho con radios. Arranca sin valor.
+   Los escalones crecen de izquierda a derecha: la magnitud se ve antes de leer.
+   Arriba, la lectura grande del tramo elegido (y en ingresos, su equivalente en pesos). */
+.tramos{margin-top:var(--esp-5)}
+.tramos-lectura{box-sizing:border-box;min-height:108px;padding-bottom:var(--esp-4);display:flex;flex-direction:column;justify-content:flex-end;gap:var(--esp-1)}
+.tramos-valor{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-tramo);font-weight:var(--peso-titulo);line-height:1.12;color:var(--color-acento);text-wrap:balance}
+.tramos-pesos{margin:0;font-size:var(--tam-opcion);font-weight:var(--peso-fuerte);font-variant-numeric:tabular-nums;color:var(--color-texto)}
+.tramos-vacio{margin:0;font-family:var(--fuente-titulo);font-style:italic;font-size:var(--tam-lead);color:var(--color-texto-3)}
+.tramos-escalones{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--esp-2);align-items:end;padding-bottom:var(--esp-2);border-bottom:var(--filete) solid var(--color-texto)}
+.tramo{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:var(--toque-min);cursor:pointer}
+.tramo-barra{box-sizing:border-box;display:block;height:calc(var(--alto-tramo-min) + var(--alto-tramo-paso) * var(--i, 0));border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-s);background:var(--color-superficie);transition:background-color var(--dur-rapida) ease,border-color var(--dur-rapida) ease}
+.tramo:nth-child(1){--i:0}.tramo:nth-child(2){--i:1}.tramo:nth-child(3){--i:2}.tramo:nth-child(4){--i:3}.tramo:nth-child(5){--i:4}
+.tramo:hover .tramo-barra{background:var(--color-superficie-hover)}
+.tramo--marcado .tramo-barra,.tramo--marcado:hover .tramo-barra{background:var(--color-seleccion);border-color:var(--color-seleccion)}
+/* Los escalones a la izquierda del elegido quedan "pintados" suave: se lee como una medida */
+.tramo--debajo .tramo-barra{background:var(--color-seleccion-fondo);border-color:var(--color-acento)}
+.tramos-extremos{margin-top:var(--esp-2);display:flex;justify-content:space-between;font-size:var(--tam-chico);font-weight:500;letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;color:var(--color-texto-3)}
+
+/* NUEVO · Frecuencia (PGSI, escala 0-3 con etiqueta en cada punto).
+   Las 4 respuestas van ancladas ABAJO (margin-top:auto), no pegadas a la pregunta:
+   así quedan en el mismo lugar aunque la pregunta tenga 1 o 4 renglones. */
+.frecuencia-contexto{margin:0 0 var(--esp-3);font-family:var(--fuente-titulo);font-style:italic;font-size:var(--tam-opcion);color:var(--color-texto-3)}
+.frecuencia-contexto b{font-weight:500;font-variant-numeric:tabular-nums;color:var(--color-texto-2)}
+.frecuencia-pregunta{display:flex;flex-direction:column;flex:1 0 auto}
+.frecuencia-pregunta .grupo{display:flex;flex-direction:column;flex:1 0 auto}
+.frecuencia-zona{margin-top:auto;padding-top:var(--esp-6)}
+.frecuencia{display:flex;flex-direction:column;border-top:var(--filete) solid var(--color-borde-suave)}
+.frecuencia-opcion{position:relative;box-sizing:border-box;min-height:var(--alto-frecuencia);padding:0 12px;display:flex;align-items:center;gap:14px;border-bottom:var(--filete) solid var(--color-borde-suave);color:var(--color-texto);font-size:var(--tam-opcion);line-height:1.3;cursor:pointer;transition:background-color var(--dur-rapida) ease,color var(--dur-rapida) ease}
+.frecuencia-opcion:hover{background:var(--color-superficie-hover)}
+.frecuencia-opcion--marcada,.frecuencia-opcion--marcada:hover{background:var(--color-seleccion-fondo);color:var(--color-acento);font-weight:var(--peso-fuerte)}
+/* Tres barritas que crecen: 0 = ninguna, 3 = todas. Decorativo (aria-hidden). */
+.frecuencia-grado{flex-shrink:0;width:26px;height:18px;display:flex;gap:3px;align-items:flex-end}
+.frecuencia-grado i{width:6px;border-radius:1px;background:var(--color-pista)}
+.frecuencia-grado i:nth-child(1){height:8px}.frecuencia-grado i:nth-child(2){height:13px}.frecuencia-grado i:nth-child(3){height:18px}
+.frecuencia-grado i.on{background:var(--color-texto-3)}
+.frecuencia-opcion--marcada .frecuencia-grado i.on{background:var(--color-acento)}
+.frecuencia-opcion .opcion-marca{margin-left:auto;border-radius:50%}
+.frecuencia-opcion--marcada .opcion-marca{border:7px solid var(--color-seleccion)}
+
+/* NUEVO · Pantalla informativa (tipo info): título + texto de lectura, con capitular */
+.info{margin-top:var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-5)}
+.info::before{content:"";width:48px;height:2px;background:var(--color-terracota)}
+.info-titulo{margin:0;font-family:var(--fuente-titulo);font-size:34px;line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
+.info-texto{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-lead);line-height:var(--interlineado-lectura);color:var(--color-texto);text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
+.info-texto::first-letter{float:left;margin:6px 8px 0 0;font-size:58px;line-height:.8;font-weight:500;color:var(--color-terracota)}
+
+/* Campos */
+.campo{box-sizing:border-box;width:100%;padding:14px 16px;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);background:var(--color-superficie);color:var(--color-texto);font-family:var(--fuente-texto);font-size:var(--tam-cuerpo-l);line-height:var(--interlineado-texto);transition:border-color var(--dur-rapida) ease}
+.campo:focus{outline:var(--foco-ancho) solid var(--color-foco);outline-offset:var(--foco-separacion)}
+.campo[aria-invalid="true"]{border-color:var(--color-aviso-borde)}
+/* Edad: un renglón para escribir, como en un formulario impreso */
+.campo--numero{margin-top:var(--esp-7);width:128px;padding:4px 8px;border-width:0 0 2px;border-radius:0;border-color:var(--color-texto);background:transparent;font-family:var(--fuente-titulo);font-size:var(--tam-numero);font-weight:var(--peso-titulo);text-align:center;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.campo--numero[aria-invalid="true"]{border-color:var(--color-aviso-borde)}
+.campo--texto{margin-top:var(--esp-5);min-height:190px;resize:vertical}
+.contador{margin:var(--esp-2) 0 0;text-align:right;color:var(--color-texto-3);font-variant-numeric:tabular-nums}
+.contador--cerca{color:var(--color-terracota)}
+
+/* Aviso calmo (edad fuera de rango): cálido, sin rojo, sin alarma */
+.aviso{margin:var(--esp-5) 0 0;padding:14px 16px;display:flex;gap:var(--esp-3);align-items:flex-start;border:var(--borde-ancho) solid var(--color-aviso-borde);border-radius:var(--radio-m);background:var(--color-aviso-fondo);color:var(--color-texto);font-family:var(--fuente-titulo);font-size:var(--tam-opcion);line-height:1.45;animation:aparecer-0 var(--dur-entrada) var(--curva-suave) both}
+.aviso svg{flex-shrink:0;margin-top:3px;color:var(--color-terracota)}
+
+/* Líneas de ayuda: visibles y tocables, sin tono alarmista */
+.ayuda{margin:var(--esp-7) 0 var(--esp-6);padding-top:var(--esp-5);display:flex;flex-direction:column;border-top:var(--filete) solid var(--color-texto)}
+.ayuda-intro{margin:0 0 var(--esp-3);font-family:var(--fuente-titulo);font-size:var(--tam-opcion);line-height:1.45;color:var(--color-texto-2)}
+.linea{box-sizing:border-box;min-height:68px;padding:10px 12px;display:flex;align-items:center;gap:14px;border-bottom:var(--filete) solid var(--color-borde-suave);color:var(--color-texto);text-decoration:none;transition:background-color var(--dur-rapida) ease}
+.linea:first-of-type{border-top:var(--filete) solid var(--color-borde-suave)}
+.linea:hover{background:var(--color-superficie-hover)}
+.linea-icono{flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:var(--borde-ancho) solid var(--color-acento);border-radius:var(--radio-pill);color:var(--color-acento)}
+.linea-textos{display:flex;flex-direction:column;gap:2px}
+.linea-numero{font-family:var(--fuente-titulo);font-size:24px;font-weight:var(--peso-titulo);font-variant-numeric:tabular-nums;color:var(--color-acento);line-height:1.1}
+.linea-desc{line-height:1.35;color:var(--color-texto-2)}
+
+/* Foco visible en todo lo tocable (terracota: no se confunde con lo elegido) */
+.btn:focus-visible,.btn-volver:focus-visible,.linea:focus-visible,.porque-boton:focus-visible,
+.opcion:has(.opcion-input:focus-visible),.punto:has(.opcion-input:focus-visible),
+.frecuencia-opcion:has(.opcion-input:focus-visible),.tramo:has(.opcion-input:focus-visible) .tramo-barra,
+.es-foco{outline:var(--foco-ancho) solid var(--color-foco);outline-offset:var(--foco-separacion)}
+.opcion:has(.opcion-input:focus-visible),.frecuencia-opcion:has(.opcion-input:focus-visible){outline-offset:-3px}
+.app h1:focus{outline:none}
+
+/* Solo para lectores de pantalla */
+.solo-lector{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* Panel de desarrollo (solo prototipo): muestra el cuerpo del POST */
+.panel-dev{margin:var(--esp-4) 0 var(--esp-6);padding:10px 12px;border:1px dashed var(--color-borde);border-radius:var(--radio-m);color:var(--color-texto-3);font-size:var(--tam-cuerpo)}
+.panel-dev summary{cursor:pointer;min-height:var(--toque-min);display:flex;align-items:center}
+.panel-dev pre{margin:var(--esp-2) 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--fuente-codigo);font-size:var(--tam-codigo);line-height:1.45;color:var(--color-texto-2)}
+
+/* Menos movimiento: sin animaciones ni deslizamientos. La pausa para ver la selección se mantiene. */
+@media (prefers-reduced-motion: reduce){
+  .btn,.btn-volver,.opcion,.opcion-marca,.punto,.linea,.campo,.tramo-barra,.frecuencia-opcion,.porque-icono{transition:none}
+  .btn:active{transform:none}
+  .salir-adelante,.salir-atras,
+  .entrar-adelante-0,.entrar-adelante-1,.entrar-atras-0,.entrar-atras-1,
+  .entrar-quieto-0,.entrar-quieto-1,.aparecer-0,.aparecer-1,.aviso,.porque-texto,
+  .opcion--marcada .opcion-marca svg{animation:none}
+  .progreso::-webkit-progress-value{transition:none}
+}

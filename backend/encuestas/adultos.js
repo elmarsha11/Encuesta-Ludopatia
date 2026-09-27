@@ -199,7 +199,9 @@ export default {
         'situación económica se relaciona con las apuestas; una aproximación alcanza.',
       min: 1,
       max: 5,
-      // El frontend agrega el equivalente en pesos usando SMVM_REFERENCIA.
+      // Cuántos salarios mínimos abarca cada paso: [desde, hasta] (null = sin tope).
+      // El frontend lo multiplica por smvmReferencia para mostrar el equivalente en pesos.
+      rangosSmvm: { 1: [0, 1], 2: [1, 2], 3: [2, 3], 4: [3, 5], 5: [5, null] },
       etiquetas: {
         1: 'Sin ingresos o hasta 1 salario mínimo',
         2: 'Entre 1 y 2 salarios mínimos',

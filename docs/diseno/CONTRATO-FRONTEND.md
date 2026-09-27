@@ -31,6 +31,7 @@ Cada pregunta tiene:
 | `opciones` | En `unica` y `multiple`: `[{ valor, texto, exclusiva?, grupo? }]` |
 | `min`, `max`, `etiquetas` | En `numero` y `escala`. `etiquetas` es `{ valor: texto }` (a veces solo para los extremos) |
 | `presentacion` | `'slider'` en algunas escalas de adultos |
+| `rangosSmvm` | En sliders de montos: `{ paso: [desde, hasta] }` en salarios mínimos (`hasta` es `null` en el último). Multiplicado por `smvmReferencia` da el equivalente en pesos |
 | `maxLargo` | En `texto` |
 | `ayuda` | Nota opcional «¿Por qué preguntamos esto?» |
 | `obligatoria` | Si está presente, pisa a `respuestasObligatorias` de la encuesta |
@@ -69,3 +70,18 @@ Cuerpo JSON con **solo las preguntas visibles que tienen respuesta**:
 - Guardar el progreso en `sessionStorage` para que recargar la página no borre lo respondido. Borrarlo al recibir el 201.
 - Validar en el cliente con las mismas reglas (rango, obligatoriedad, exclusivas) para dar feedback inmediato. **El backend valida igual.**
 - Sin recursos externos: tipografías, íconos y scripts servidos desde el propio servidor.
+
+## 4. Qué componente dibuja cada pregunta
+
+El motor (`frontend/motor/`) elige el componente por la **forma** de la pregunta, nunca por el nombre de la encuesta:
+
+| Forma | Componente |
+|---|---|
+| `escala` con `presentacion: 'slider'` | Tramos: 5 escalones hechos con radios, arrancan sin valor, sin autoavance |
+| `escala` con etiqueta en **cada** punto (PGSI) | Frecuencia: renglones anclados abajo, con «Pregunta n de N» |
+| `escala` con etiquetas solo en los extremos | Escala de puntos |
+| Opciones con `grupo` | Un `role="group"` rotulado por grupo |
+| Pregunta con `ayuda` | Botón «¿Por qué preguntamos esto?» debajo del título |
+| `info` | Pantalla de lectura: no se responde ni cuenta en el progreso |
+
+Lo que cambia entre temas y no es CSS (tarjeta alrededor de la pregunta, cuándo una pregunta es «larga», flecha en «Enviar») lo pasa cada página al motor en `presentacion`.

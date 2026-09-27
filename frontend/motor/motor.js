@@ -1,9 +1,10 @@
 // Motor de la encuesta: dibuja cada pantalla a partir de la definición que entrega
 // el backend (GET /api/encuestas/:id) y envía las respuestas (POST /api/respuestas/:id).
 //
-// Traducido a JavaScript sin framework desde el prototipo de Claude Design
-// (design/adolescentes/prototipo/Encuesta.dc.html). El aspecto sale 100% del CSS del tema:
-// acá solo se arman elementos con las clases que ese CSS define.
+// Traducido a JavaScript sin framework desde los prototipos de Claude Design
+// (design/adolescentes/ y design/adultos/). El aspecto sale 100% del CSS del tema:
+// acá solo se arman elementos con las clases que ese CSS define. Qué componente se
+// dibuja depende de la forma de cada pregunta, nunca del nombre de la encuesta.
 //
 // Seguridad: todo texto se inserta con textContent (nunca innerHTML), así un texto
 // jamás puede ejecutar código. Los estilos dinámicos se ponen con element.style,
@@ -114,11 +115,16 @@ export class Motor {
    * @param {HTMLElement} opciones.raiz - el <main class="app">
    * @param {string} opciones.id - 'adolescentes' o 'adultos'
    * @param {object} opciones.ui - textos de interfaz (botones, errores, ayuda)
+   * @param {object} [opciones.presentacion] - lo que cambia entre temas y no es CSS:
+   *   tarjeta: envolver cada pregunta en .tarjeta (adolescentes) o no (adultos: la página es la tarjeta);
+   *   largoPreguntaLarga: desde cuántos caracteres una pregunta usa la letra más chica;
+   *   flechaAlEnviar: si el botón «Enviar» lleva flecha.
    */
-  constructor({ raiz, id, ui }) {
+  constructor({ raiz, id, ui, presentacion = {} }) {
     this.raiz = raiz;
     this.id = id;
     this.ui = ui;
+    this.presentacion = { tarjeta: false, largoPreguntaLarga: 60, flechaAlEnviar: true, ...presentacion };
     this.claveBorrador = `encuesta:${id}:borrador`;
     this.el = {
       progresoSeccion: raiz.querySelector('.progreso-seccion'),
@@ -138,6 +144,7 @@ export class Motor {
       vista: 0,
       direccion: 'quieto',
       aparecido: false,
+      ayudaAbierta: false, // nota «¿Por qué preguntamos esto?»
     };
     this.temporizador = null; // autoavance
     this.temporizadorTransicion = null; // fase de salida de la galería
@@ -209,7 +216,8 @@ export class Motor {
     this.limpiarTransicion();
     const aplicar = () => {
       this.temporizadorTransicion = null;
-      Object.assign(this.estado, cambios, { vista: this.estado.vista + 1, direccion });
+      // Cada pantalla nueva arranca con la nota «¿Por qué preguntamos esto?» cerrada.
+      Object.assign(this.estado, cambios, { vista: this.estado.vista + 1, direccion, ayudaAbierta: false });
       this.dibujar();
     };
     if (this.movimientoReducido()) return aplicar();
@@ -350,7 +358,9 @@ export class Motor {
     const par = this.estado.vista % 2;
     contenido.className = `contenido entrar-${this.estado.direccion}-${par}`;
     this.controles = null;
-    contenido.replaceChildren(...this.pantalla(par));
+    // Las partes opcionales de una pantalla llegan como false/undefined: replaceChildren
+    // las convertiría en texto («falseundefined»), así que se descartan acá.
+    contenido.replaceChildren(...this.pantalla(par).filter((nodo) => nodo instanceof Node));
     this.dibujarPie();
     this.actualizarProgreso();
     this.actualizarMotivo();
@@ -461,7 +471,8 @@ export class Motor {
             ),
           ];
         }
-        return [h('div', { class: 'tarjeta' }, this.pregunta(paso.pregunta, aparecer, retraso))];
+        const pregunta = this.pregunta(paso.pregunta, aparecer, retraso);
+        return [this.presentacion.tarjeta ? h('div', { class: 'tarjeta' }, pregunta) : pregunta];
       }
 
       case 'enviando':
@@ -532,16 +543,18 @@ export class Motor {
   /** Dibuja una pregunta según su tipo y guarda referencias a sus controles. */
   pregunta(p, aparecer, retraso) {
     const r = this.estado.respuestas;
-    const clasePregunta = `pregunta-texto${p.texto.length > 60 ? ' pregunta-texto--larga' : ''}`;
+    const larga = (p.texto ?? '').length > this.presentacion.largoPreguntaLarga;
+    const clasePregunta = `pregunta-texto${larga ? ' pregunta-texto--larga' : ''}`;
     const titulo = () => h('legend', { class: 'grupo-leyenda' }, h('h1', { class: clasePregunta, tabindex: '-1' }, p.texto));
+    const ayuda = () => this.notaAyuda(p);
 
     switch (p.tipo) {
       case 'unica':
       case 'multiple': {
         const multiple = p.tipo === 'multiple';
         const opciones = [];
-        const hijos = [];
-        p.opciones.forEach((o, i) => {
+        let i = 0;
+        const dibujarOpcion = (o, hijos) => {
           if (o.exclusiva) hijos.push(h('div', { class: 'separador', 'aria-hidden': 'true' }));
           const input = h('input', {
             class: 'opcion-input',
@@ -560,7 +573,7 @@ export class Motor {
             'label',
             {
               class: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${aparecer}`,
-              estilo: retraso(i, 160),
+              estilo: retraso(i++, 160),
               on: { click: (e) => !multiple && this.programarAvance(e) },
             },
             input,
@@ -569,19 +582,40 @@ export class Motor {
           );
           opciones.push({ label, input, valor: o.valor, base: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${aparecer}` });
           hijos.push(label);
-        });
+          return hijos;
+        };
+
+        // Opciones agrupadas (carrera): un role="group" por grupo, rotulado. Sin grupos
+        // (o con uno solo sin rótulo) las opciones van directo, como en adolescentes.
+        const grupos = L.gruposDeOpciones(p.opciones);
+        const contenidoOpciones =
+          grupos.length === 1 && !grupos[0].mostrarTitulo
+            ? grupos[0].opciones.reduce((hijos, o) => dibujarOpcion(o, hijos), [])
+            : grupos.map((g, n) => {
+                const idTitulo = `grupo-${p.id}-${n}`;
+                return h(
+                  'div',
+                  { class: 'opciones-grupo', role: g.mostrarTitulo ? 'group' : null, 'aria-labelledby': g.mostrarTitulo ? idTitulo : null },
+                  g.mostrarTitulo && h('p', { class: 'opciones-grupo-titulo', id: idTitulo }, g.titulo),
+                  g.opciones.reduce((hijos, o) => dibujarOpcion(o, hijos), []),
+                );
+              });
         this.controles = { tipo: p.tipo, pregunta: p, opciones };
         this.actualizarControles();
         return h(
           'fieldset',
           { class: 'grupo' },
           titulo(),
+          ayuda(),
           multiple && h('p', { class: 'pista' }, this.ui.pistaMultiple),
-          h('div', { class: 'opciones' }, hijos),
+          h('div', { class: 'opciones' }, contenidoOpciones),
         );
       }
 
       case 'escala': {
+        const componente = L.componenteEscala(p);
+        if (componente === 'tramos') return this.tramos(p, titulo, ayuda);
+        if (componente === 'frecuencia') return this.frecuencia(p, titulo, ayuda);
         const puntos = [];
         for (let v = p.min; v <= p.max; v++) {
           const etiqueta = p.etiquetas?.[v];
@@ -607,6 +641,7 @@ export class Motor {
           'fieldset',
           { class: 'grupo' },
           titulo(),
+          ayuda(),
           h('div', { class: 'escala' }, puntos.map((x) => x.label)),
           h(
             'div',
@@ -645,7 +680,13 @@ export class Motor {
           },
         });
         campo.value = this.estado.borradorEdad;
-        const contenedor = h('div', { class: 'grupo' }, h('h1', { class: clasePregunta, tabindex: '-1' }, h('label', { for: 'campo-numero' }, p.texto)), campo);
+        const contenedor = h(
+          'div',
+          { class: 'grupo' },
+          h('h1', { class: clasePregunta, tabindex: '-1' }, h('label', { for: 'campo-numero' }, p.texto)),
+          ayuda(),
+          campo,
+        );
         this.controles = { tipo: 'numero', pregunta: p, campo, contenedor };
         if (this.estado.edadFuera) contenedor.append(this.avisoEdad());
         return contenedor;
@@ -665,21 +706,155 @@ export class Motor {
         campo.value = actual;
         this.controles = { tipo: 'texto', pregunta: p, campo, contador };
         this.actualizarControles();
-        return h('div', { class: 'grupo' }, h('h1', { class: clasePregunta, tabindex: '-1' }, h('label', { for: 'campo-texto' }, p.texto)), campo, contador);
-      }
-
-      case 'info':
         return h(
           'div',
           { class: 'grupo' },
-          h('h1', { class: clasePregunta, tabindex: '-1' }, p.titulo),
-          h('p', { class: 'seccion-desc' }, p.texto),
+          h('h1', { class: clasePregunta, tabindex: '-1' }, h('label', { for: 'campo-texto' }, p.texto)),
+          ayuda(),
+          campo,
+          contador,
+        );
+      }
+
+      case 'info':
+        // Pantalla para leer: no se responde, no se envía y no cuenta en el progreso.
+        return h(
+          'div',
+          { class: 'info' },
+          h('h1', { class: `info-titulo${aparecer}`, tabindex: '-1', estilo: { animationDelay: '100ms' } }, p.titulo),
+          h('p', { class: `info-texto${aparecer}`, estilo: { animationDelay: '240ms' } }, p.texto),
         );
 
       default:
         console.error(`Tipo de pregunta sin componente: ${p.tipo}`);
         return h('div', {});
     }
+  }
+
+  /**
+   * «¿Por qué preguntamos esto?»: un botón con aria-expanded y la nota debajo, que solo
+   * existe mientras está abierta. No es un <details> porque el motor tiene que cerrarla
+   * al cambiar de pantalla. Se abre y se cierra en el lugar, sin redibujar la pantalla.
+   */
+  notaAyuda(p) {
+    if (!p.ayuda) return null;
+    const nota = () => h('p', { class: 'porque-texto', id: 'nota-porque' }, p.ayuda);
+    const boton = h(
+      'button',
+      {
+        type: 'button',
+        class: 'porque-boton',
+        'aria-expanded': String(this.estado.ayudaAbierta),
+        'aria-controls': 'nota-porque',
+        on: {
+          click: () => {
+            this.estado.ayudaAbierta = !this.estado.ayudaAbierta;
+            boton.setAttribute('aria-expanded', String(this.estado.ayudaAbierta));
+            if (this.estado.ayudaAbierta) contenedor.append(nota());
+            else contenedor.querySelector('.porque-texto')?.remove();
+          },
+        },
+      },
+      h('span', { class: 'porque-icono', 'aria-hidden': 'true' }, 'i'),
+      h('span', { class: 'porque-boton-texto' }, this.ui.porque),
+    );
+    const contenedor = h('div', { class: 'porque' }, boton, this.estado.ayudaAbierta && nota());
+    return contenedor;
+  }
+
+  /**
+   * Tramos: slider de 5 pasos hecho con radios (no un <input type="range">, que nunca puede
+   * estar vacío). Las flechas del teclado recorren los escalones sin código extra.
+   * Sin autoavance: se confirma con «Siguiente».
+   */
+  tramos(p, titulo, ayuda) {
+    const pesos = (v) => L.textoPesos(p, v, this.def.smvmReferencia, this.ui.pesos);
+    const escalones = [];
+    for (let v = p.min; v <= p.max; v++) {
+      const input = h('input', {
+        class: 'opcion-input',
+        type: 'radio',
+        name: p.id,
+        value: String(v),
+        on: { change: () => this.responder(p.id, v) },
+      });
+      const extra = pesos(v);
+      const label = h(
+        'label',
+        { class: 'tramo' },
+        input,
+        h('span', { class: 'tramo-barra', 'aria-hidden': 'true' }),
+        h('span', { class: 'solo-lector' }, p.etiquetas[v] + (extra ? ` (${extra})` : '')),
+      );
+      escalones.push({ label, input, valor: v });
+    }
+    // La lectura grande repite lo que ya dice cada radio: para lectores de pantalla, se oculta.
+    const lectura = h('div', { class: 'tramos-lectura', 'aria-hidden': 'true' });
+    this.controles = { tipo: 'tramos', pregunta: p, opciones: escalones, lectura, pesos };
+    this.actualizarControles();
+    return h(
+      'fieldset',
+      { class: 'grupo' },
+      titulo(),
+      ayuda(),
+      h(
+        'div',
+        { class: 'tramos' },
+        lectura,
+        h('div', { class: 'tramos-escalones' }, escalones.map((e) => e.label)),
+        h(
+          'div',
+          { class: 'tramos-extremos', 'aria-hidden': 'true' },
+          h('span', {}, this.ui.tramosMenos),
+          h('span', {}, this.ui.tramosMas),
+        ),
+      ),
+    );
+  }
+
+  /**
+   * Frecuencia (PGSI): etiqueta en cada punto. Las respuestas van ancladas abajo, así
+   * quedan en el mismo lugar aunque la pregunta tenga 1 o 4 renglones.
+   * Autoavance igual que la opción única.
+   */
+  frecuencia(p, titulo, ayuda) {
+    const renglones = [];
+    for (let v = p.min; v <= p.max; v++) {
+      const input = h('input', {
+        class: 'opcion-input',
+        type: 'radio',
+        name: p.id,
+        value: String(v),
+        on: { change: () => this.responder(p.id, v) },
+      });
+      // Barritas decorativas (sin números, para no sugerir un puntaje).
+      const grado = [];
+      for (let k = 1; k <= p.max - p.min; k++) grado.push(h('i', { class: k <= v - p.min ? 'on' : null }));
+      const label = h(
+        'label',
+        { class: 'frecuencia-opcion', on: { click: (e) => this.programarAvance(e) } },
+        input,
+        h('span', { class: 'frecuencia-grado', 'aria-hidden': 'true' }, grado),
+        h('span', {}, p.etiquetas[v]),
+        h('span', { class: 'opcion-marca', 'aria-hidden': 'true' }),
+      );
+      renglones.push({ label, input, valor: v });
+    }
+    this.controles = { tipo: 'frecuencia', pregunta: p, opciones: renglones };
+    this.actualizarControles();
+    const { n, total } = L.contextoFrecuencia(p, this.lista());
+    return h(
+      'div',
+      { class: 'frecuencia-pregunta' },
+      h('p', { class: 'frecuencia-contexto' }, `${this.ui.pregunta} `, h('b', {}, `${n} de ${total}`)),
+      h(
+        'fieldset',
+        { class: 'grupo' },
+        titulo(),
+        ayuda(),
+        h('div', { class: 'frecuencia-zona' }, h('div', { class: 'frecuencia' }, renglones.map((x) => x.label))),
+      ),
+    );
   }
 
   avisoEdad() {
@@ -713,6 +888,25 @@ export class Motor {
           o.label.className = o.base + (marcada ? marcadaClase : '');
         }
       }
+      if (c.tipo === 'frecuencia') {
+        for (const o of c.opciones) {
+          o.input.checked = valor === o.valor;
+          o.label.className = `frecuencia-opcion${valor === o.valor ? ' frecuencia-opcion--marcada' : ''}`;
+        }
+      }
+      if (c.tipo === 'tramos') {
+        for (const o of c.opciones) {
+          o.input.checked = valor === o.valor;
+          const debajo = valor !== undefined && o.valor < valor;
+          o.label.className = `tramo${valor === o.valor ? ' tramo--marcado' : ''}${debajo ? ' tramo--debajo' : ''}`;
+        }
+        const pesos = valor === undefined ? '' : c.pesos(valor);
+        c.lectura.replaceChildren(
+          ...(valor === undefined
+            ? [h('p', { class: 'tramos-vacio' }, this.ui.tramosVacio)]
+            : [h('p', { class: 'tramos-valor' }, c.pregunta.etiquetas[valor]), pesos && h('p', { class: 'tramos-pesos' }, pesos)].filter(Boolean)),
+        );
+      }
       if (c.tipo === 'texto') {
         const largo = (valor ?? '').length;
         c.contador.textContent = `${largo} / ${c.pregunta.maxLargo}`;
@@ -739,13 +933,13 @@ export class Motor {
 
     let etiqueta = this.ui.siguiente;
     let secundaria = false;
-    let conFlecha = true;
+    let conFlecha = !(esUltimo && !this.presentacion.flechaAlEnviar);
     let deshabilitada = false;
     let accion = () => this.irAPaso(paso + 1, 'adelante');
 
     if (p) {
       if (esUltimo) etiqueta = this.ui.enviar;
-      else if (!respondida && !obligatoria && !esNumero) {
+      else if (!respondida && !obligatoria && !esNumero && p.tipo !== 'info') {
         etiqueta = this.ui.saltar;
         secundaria = true;
       }
@@ -795,6 +989,7 @@ export class Motor {
   // --- Motivo de píxeles ------------------------------------------------------------
 
   crearPixeles() {
+    if (!this.el.motivo) return; // adultos no tiene motivo de píxeles
     this.px = Array.from({ length: L.CANTIDAD_PIXELES }, () => h('span', { class: 'px' }));
     this.el.motivo.replaceChildren(...this.px);
     this.actualizarMotivo();

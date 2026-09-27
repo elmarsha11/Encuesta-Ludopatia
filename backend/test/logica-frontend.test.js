@@ -110,3 +110,71 @@ describe('lo que envía el frontend lo acepta el backend', () => {
 test('formatearApertura escribe la fecha en hora argentina', () => {
   assert.equal(L.formatearApertura('2026-10-19T11:00:00.000Z'), 'el lunes 19 de octubre a las 08:00');
 });
+
+// --- Adultos: componentes nuevos (design/adultos/HANDOFF.md) ---------------------
+
+const defAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
+const deAdultos = (id) => defAdultos.preguntas.find((p) => p.id === id);
+
+describe('qué componente dibuja cada escala', () => {
+  test('según la forma de la escala, no según la encuesta', () => {
+    assert.equal(L.componenteEscala(deAdultos('ingresos_hogar')), 'tramos');
+    assert.equal(L.componenteEscala(deAdultos('monto_por_vez')), 'tramos');
+    assert.equal(L.componenteEscala(deAdultos('pgsi_1')), 'frecuencia');
+    const escalaAdolescentes = def.preguntas.find((p) => p.tipo === 'escala');
+    assert.equal(L.componenteEscala(escalaAdolescentes), 'puntos');
+  });
+
+  test('el contador del PGSI va de 1 a 9 sobre el camino actual', () => {
+    const lista = L.pasos(defAdultos, { aposto_12m: 'si' });
+    assert.deepEqual(L.contextoFrecuencia(deAdultos('pgsi_1'), lista), { n: 1, total: 9 });
+    assert.deepEqual(L.contextoFrecuencia(deAdultos('pgsi_9'), lista), { n: 9, total: 9 });
+  });
+});
+
+describe('equivalente en pesos de los tramos', () => {
+  const textos = { hasta: 'Hasta {monto}', masDe: 'Más de {monto}', entre: '{desde} a {hasta}', porMes: 'por mes' };
+  const p = deAdultos('ingresos_hogar');
+  const smvm = 383_800;
+
+  test('primer paso, intermedio y último', () => {
+    assert.equal(L.textoPesos(p, 1, smvm, textos), 'Hasta $383.800 por mes');
+    assert.equal(L.textoPesos(p, 2, smvm, textos), '$383.800 a $767.600 por mes');
+    assert.equal(L.textoPesos(p, 5, smvm, textos), 'Más de $1.919.000 por mes');
+  });
+
+  test('sin rangosSmvm (deuda, monto) no se muestran pesos', () => {
+    assert.equal(L.textoPesos(deAdultos('deuda_relativa'), 2, smvm, textos), '');
+  });
+});
+
+describe('opciones agrupadas', () => {
+  test('carrera: tres grupos, sin rótulo repetido en «Educación Inicial»', () => {
+    const grupos = L.gruposDeOpciones(deAdultos('carrera').opciones);
+    assert.deepEqual(
+      grupos.map((g) => [g.titulo, g.opciones.length, g.mostrarTitulo]),
+      [
+        ['Educación Inicial', 1, false],
+        ['Profesorados', 3, true],
+        ['Tecnicaturas', 5, true],
+      ],
+    );
+  });
+
+  test('sin grupo: un solo grupo sin rótulo (adolescentes no cambia)', () => {
+    const grupos = L.gruposDeOpciones(pregunta('en_que_aposto').opciones);
+    assert.equal(grupos.length, 1);
+    assert.equal(grupos[0].mostrarTitulo, false);
+  });
+});
+
+describe('pantalla informativa', () => {
+  test('no es obligatoria y no cuenta en el progreso', () => {
+    const info = defAdultos.preguntas.find((p) => p.tipo === 'info');
+    assert.equal(L.esObligatoria(defAdultos, info), false);
+    const r = { aposto_12m: 'no' };
+    const lista = L.pasos(defAdultos, r);
+    const alFinal = L.progreso(defAdultos, r, lista.length, lista);
+    assert.equal(alFinal.hechas, alFinal.total);
+  });
+});

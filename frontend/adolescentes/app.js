@@ -48,4 +48,9 @@ const UI = {
   },
 };
 
-new Motor({ raiz: document.querySelector('.app'), id: 'adolescentes', ui: UI }).iniciar();
+new Motor({
+  raiz: document.querySelector('.app'),
+  id: 'adolescentes',
+  ui: UI,
+  presentacion: { tarjeta: true, largoPreguntaLarga: 60, flechaAlEnviar: true },
+}).iniciar();

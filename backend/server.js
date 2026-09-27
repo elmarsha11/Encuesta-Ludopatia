@@ -30,4 +30,5 @@ const puerto = Number(process.env.PORT) || 3000;
 app.listen(puerto, () => {
   console.log(`Servidor escuchando en http://localhost:${puerto}`);
   console.log(`Encuesta de adolescentes: http://localhost:${puerto}/adolescentes/`);
+  console.log(`Encuesta de adultos:       http://localhost:${puerto}/adultos/`);
 });
