@@ -77,3 +77,23 @@ export function seccionActiva(secciones, { linea, alFondo }) {
   for (const s of secciones) if (s.arriba <= linea) activa = s.id;
   return activa;
 }
+
+/**
+ * Fondo de un anillo (conic-gradient) con una porción por parte, en orden y sobre la base.
+ * Los ángulos salen de las cantidades, no de los porcentajes redondeados: así las porciones
+ * suman exactamente lo que tienen que sumar. Lo que falta hasta la base queda en el color del riel.
+ * @param {{ n: number, color: string }[]} partes
+ * @param {number} base
+ * @param {string} riel - color de lo que no es ninguna parte
+ */
+export function anillo(partes, base, riel) {
+  const tramos = [];
+  let desde = 0;
+  for (const { n, color } of partes) {
+    const hasta = desde + (base > 0 ? (100 * n) / base : 0);
+    tramos.push(`${color} ${+desde.toFixed(3)}% ${+hasta.toFixed(3)}%`);
+    desde = hasta;
+  }
+  if (desde < 100) tramos.push(`${riel} ${+desde.toFixed(3)}% 100%`);
+  return `conic-gradient(${tramos.join(', ')})`;
+}

@@ -82,6 +82,7 @@ async function salir() {
 
 function mostrar(...nodos) {
   dejarDeEspiar();
+  raiz.classList.toggle('r-raiz--app', nodos[0]?.classList?.contains('r-app') ?? false);
   raiz.replaceChildren(...nodos);
   window.scrollTo(0, 0);
 }
@@ -203,15 +204,17 @@ function pantallaError(reintentar) {
   );
 }
 
-// --- Barra y encabezado ----------------------------------------------------------------
+// --- Barra lateral y encabezado --------------------------------------------------------
 
-function barra() {
+/** Barra lateral: qué encuesta, qué vista, el índice (si lo hay) y las acciones. */
+function lateral(indice) {
   const { sesion } = estado;
   const pestana = (texto, activa, accion) =>
     h('button', { type: 'button', class: 'r-pestana', 'aria-current': activa ? 'true' : 'false', on: { click: accion } }, texto);
 
   // Dos grupos separados: qué encuesta y qué vista. Mezclados en una fila no se entiende qué elige cada botón.
-  const grupo = (etiqueta, botones) => h('div', { class: 'r-grupo', role: 'group', 'aria-label': etiqueta }, botones);
+  const grupo = (etiqueta, botones) =>
+    h('div', { class: 'r-selector' }, rotulo(etiqueta), h('div', { class: 'r-grupo', role: 'group', 'aria-label': etiqueta }, botones));
   const encuestas =
     sesion.encuestas.length > 1 &&
     grupo(
@@ -232,14 +235,15 @@ function barra() {
     ]);
 
   return h(
-    'header',
-    { class: 'r-barra' },
-    h('p', { class: 'r-rotulo r-barra-titulo' }, `Resultados · ${sesion.nombre}`),
+    'aside',
+    { class: 'r-lateral' },
+    h('div', { class: 'r-marca' }, rotulo('Resultados'), h('p', { class: 'r-marca-nombre' }, sesion.nombre)),
     h('nav', { class: 'r-pestanas', 'aria-label': 'Encuesta y vista' }, encuestas, vistas),
+    indice,
     h(
       'div',
       { class: 'r-acciones' },
-      h('a', { class: 'r-accion', href: `/api/exportar/${estado.encuesta}`, download: '' }, sesion.excelCompleto ? 'Descargar Excel completo' : 'Descargar Excel'),
+      h('a', { class: 'r-accion r-accion--principal', href: `/api/exportar/${estado.encuesta}`, download: '' }, sesion.excelCompleto ? 'Descargar Excel completo' : 'Descargar Excel'),
       h('button', { type: 'button', class: 'r-accion', on: { click: () => window.print() } }, 'Imprimir'),
       h('button', { type: 'button', class: 'r-accion', on: { click: salir } }, 'Salir'),
     ),
@@ -254,7 +258,7 @@ function cambiarVista(vista) {
 function encabezado(datos) {
   const hora = estado.actualizado.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
   return h(
-    'div',
+    'header',
     { class: 'r-encabezado' },
     rotulo(`${estado.vista === 'control' ? 'Control de participación' : 'Resultados'} · ${NOMBRE_ENCUESTA[datos.encuesta]}`),
     h('h1', {}, datos.titulo),
@@ -266,6 +270,19 @@ function encabezado(datos) {
 }
 
 // --- Componentes -------------------------------------------------------------------------
+
+/** Anillo (conic-gradient). Solo se dibuja con todas las cantidades a la vista. */
+function anillo(partes, base, etiqueta, centro) {
+  return h(
+    'div',
+    { class: 'r-anillo', role: 'img', 'aria-label': etiqueta, estilo: { background: D.anillo(partes, base, 'var(--r-riel)') } },
+    centro && h('span', { class: 'r-anillo-centro', 'aria-hidden': 'true' }, centro),
+  );
+}
+
+/** Cabeza de una tarjeta de sección: número en un círculo de color y el título. */
+const cabezaPanel = (numero, tono, titulo) =>
+  h('div', { class: 'r-panel-cabeza' }, h('span', { class: `r-chip r-chip--${tono}`, 'aria-hidden': 'true' }, String(numero).padStart(2, '0')), titulo);
 
 /** Renglones de una distribución: etiqueta, barra (escala absoluta sobre 100%), %, personas. */
 function renglones(d) {
@@ -375,57 +392,66 @@ function hallazgoApuesta(datos, conf) {
     hijos.push(h('p', { class: 'r-hallazgo-oculto' }, 'Oculto por anonimato'));
     if (!no.oculto) hijos.push(h('p', { class: 'r-texto' }, `${conf.complemento.texto}: `, h('b', {}, conPct(no.n, no.base)), ` · ${no.n} de ${no.base}.`));
   } else {
-    hijos.push(h('p', { class: 'r-hallazgo-cifra' }, conPct(si.n, si.base)));
-    hijos.push(h('p', { class: 'r-texto' }, `${D.numero(si.n)} de ${D.numero(si.base)} personas`));
+    hijos.push(
+      h(
+        'div',
+        { class: 'r-kpi-fila' },
+        h('div', {}, h('p', { class: 'r-hallazgo-cifra' }, conPct(si.n, si.base)), h('p', { class: 'r-texto' }, `${D.numero(si.n)} de ${D.numero(si.base)} personas`)),
+        anillo([{ n: si.n, color: 'var(--color-acento)' }], si.base, `${conf.titulo}: ${conPct(si.n, si.base)}`),
+      ),
+    );
   }
-  return h('div', { class: 'r-hallazgo' }, hijos);
+  return h('div', { class: 'r-hallazgo r-kpi r-kpi--acento' }, hijos);
 }
 
 function hallazgoTercero(datos, conf) {
   const d = datos.distribuciones.find((x) => x.id === conf.id);
-  const cabeza = h('div', { class: 'r-hallazgo-cabeza' }, rotulo(conf.titulo), d && !d.oculto && h('p', { class: 'r-meta' }, `n = ${d.base}`));
+  const cabeza = h('div', { class: 'r-hallazgo-cabeza' }, rotulo(conf.titulo), d && !d.oculto && conf.tipo !== 'pgsi' && h('p', { class: 'r-meta' }, `n = ${d.base}`));
   if (!d || d.oculto) {
-    return h('div', { class: 'r-hallazgo' }, cabeza, h('p', { class: 'r-hallazgo-oculto' }, 'Menos de 5 respuestas: no se muestra'));
+    return h('div', { class: 'r-hallazgo r-kpi r-kpi--ancha r-kpi--terracota' }, cabeza, h('p', { class: 'r-hallazgo-oculto' }, 'Menos de 5 respuestas: no se muestra'));
   }
-  // PGSI: barra apilada solo si no hay categorías ocultas (el hueco revelaría el valor).
+  // PGSI: anillo solo si no hay categorías ocultas (la porción que falta revelaría el valor).
   if (conf.tipo === 'pgsi' && D.apilable(d)) {
     return h(
       'div',
-      { class: 'r-hallazgo' },
+      { class: 'r-hallazgo r-kpi r-kpi--ancha r-kpi--terracota' },
       cabeza,
       h(
         'div',
-        { class: 'r-apilada', role: 'img', 'aria-label': D.resumenAccesible(d) },
-        d.celdas.map((c, i) => h('span', { class: `r-pgsi-${i}`, estilo: { width: `${D.pct(c.n, d.base)}%` } })),
-      ),
-      h(
-        'div',
-        { class: 'r-leyenda' },
-        d.celdas.map((c, i) =>
-          h(
-            'div',
-            { class: 'r-leyenda-item' },
-            h('span', { class: 'r-leyenda-nombre' }, h('span', { class: `r-muestra r-pgsi-${i}`, 'aria-hidden': 'true' }), c.texto),
-            h('span', { class: 'r-leyenda-pct' }, conPct(c.n, d.base)),
-            h('span', { class: 'r-meta' }, `${c.n} ${c.n === 1 ? 'persona' : 'personas'}`),
+        { class: 'r-kpi-fila r-kpi-fila--pgsi' },
+        anillo(d.celdas.map((c, i) => ({ n: c.n, color: `var(--pgsi-${i})` })), d.base, D.resumenAccesible(d), `n = ${d.base}`),
+        h(
+          'div',
+          { class: 'r-leyenda' },
+          d.celdas.map((c, i) =>
+            h(
+              'div',
+              { class: 'r-leyenda-item' },
+              h('span', { class: 'r-leyenda-nombre' }, h('span', { class: `r-muestra r-pgsi-${i}`, 'aria-hidden': 'true' }), c.texto),
+              h('span', { class: 'r-leyenda-pct' }, conPct(c.n, d.base)),
+              h('span', { class: 'r-meta' }, `${c.n} ${c.n === 1 ? 'persona' : 'personas'}`),
+            ),
           ),
         ),
       ),
     );
   }
-  return h('div', { class: 'r-hallazgo' }, cabeza, renglones(d));
+  return h('div', { class: 'r-hallazgo r-kpi r-kpi--ancha r-kpi--terracota' }, cabeza, renglones(d));
 }
 
 // --- Vistas ------------------------------------------------------------------------------
 
 function vistaResultados(datos) {
   if (datos.respuestas === 0) {
-    return h(
-      'div',
-      { class: 'r-estado' },
-      h('h1', {}, 'Todavía no hay respuestas'),
-      h('p', {}, 'Cuando alguien complete la encuesta, sus resultados van a aparecer acá.'),
-    );
+    return {
+      indice: null,
+      contenido: h(
+        'div',
+        { class: 'r-estado' },
+        h('h2', {}, 'Todavía no hay respuestas'),
+        h('p', {}, 'Cuando alguien complete la encuesta, sus resultados van a aparecer acá.'),
+      ),
+    };
   }
   const conf = HALLAZGOS[datos.encuesta];
   const secciones = D.porSeccion(datos);
@@ -455,7 +481,7 @@ function vistaResultados(datos) {
         { class: 'r-hallazgos' },
         h(
           'div',
-          { class: 'r-hallazgo' },
+          { class: 'r-hallazgo r-kpi r-kpi--tinta' },
           rotulo('Respondieron'),
           h('p', { class: 'r-hallazgo-cifra' }, D.numero(datos.respuestas)),
           h('p', { class: 'r-texto' }, 'encuestas completas'),
@@ -468,28 +494,30 @@ function vistaResultados(datos) {
       h(
         'section',
         { class: 'r-bloque', 'aria-label': 'Cruces' },
-        h('span', { class: 'r-apertura', 'aria-hidden': 'true' }),
         h('h2', {}, 'Cruces'),
         h('p', { class: 'r-aviso-fondo' }, NOTA_CAUSA),
-        temas.map((t, i) => h('div', { class: 'r-bloque', id: `tema-${i}` }, rotulo(t.titulo), t.cruces.map(cruce))),
+        temas.map((t, i) =>
+          h('div', { class: 'r-bloque r-panel', id: `tema-${i}` }, cabezaPanel(i + 1, 'terracota', h('p', { class: 'r-panel-titulo' }, t.titulo)), t.cruces.map(cruce)),
+        ),
       ),
-    secciones.map((s) =>
+    h('p', { class: 'r-rotulo r-separador' }, 'Todas las preguntas'),
+    secciones.map((s, i) =>
       h(
         'section',
-        { class: 'r-bloque', id: `seccion-${s.id}`, 'aria-labelledby': `seccion-${s.id}-t` },
-        h('span', { class: 'r-apertura', 'aria-hidden': 'true' }),
-        h('h2', { id: `seccion-${s.id}-t` }, s.titulo),
+        { class: 'r-bloque r-panel', id: `seccion-${s.id}`, 'aria-labelledby': `seccion-${s.id}-t` },
+        cabezaPanel(i + 1, 'acento', h('h2', { id: `seccion-${s.id}-t` }, s.titulo)),
         s.preguntas.map(pregunta),
       ),
     ),
   );
 
-  return h('div', { class: 'r-cuerpo' }, indice, contenido);
+  return { indice, contenido };
 }
 
 function vistaControl(datos) {
   const e = datos.control.embudo;
-  const tarjeta = (cifra, texto) => h('div', { class: 'r-tarjeta' }, h('span', { class: 'r-tarjeta-cifra' }, cifra), h('span', { class: 'r-tarjeta-texto' }, texto));
+  const tarjeta = (cifra, texto, tono = 'tinta') =>
+    h('div', { class: `r-tarjeta r-kpi r-kpi--${tono}` }, h('span', { class: 'r-tarjeta-cifra' }, cifra), h('span', { class: 'r-tarjeta-texto' }, texto));
   const terminaron = e.aceptaron > 0 ? `${D.pct(e.completaron, e.aceptaron)}%` : '—';
 
   const tramos = e.tramos.filter((t) => t.seFueron > 0);
@@ -510,15 +538,15 @@ function vistaControl(datos) {
         tarjeta(D.numero(e.entraron), 'entraron a la portada'),
         tarjeta(D.numero(e.noParticiparon), 'dijeron que no'),
         tarjeta(D.numero(e.aceptaron), 'aceptaron participar'),
-        tarjeta(D.numero(e.completaron), 'enviaron la encuesta'),
-        tarjeta(terminaron, 'de quienes aceptaron, terminaron'),
-        tarjeta(D.numero(e.edadFueraDeRango), 'pusieron una edad fuera de rango (¿QR equivocado?)'),
+        tarjeta(D.numero(e.completaron), 'enviaron la encuesta', 'acento'),
+        tarjeta(terminaron, 'de quienes aceptaron, terminaron', 'acento'),
+        tarjeta(D.numero(e.edadFueraDeRango), 'pusieron una edad fuera de rango (¿QR equivocado?)', 'terracota'),
       ),
       h('p', { class: 'r-nota' }, 'Conteos aproximados: quien abre la encuesta en dos celulares cuenta dos veces.'),
     ),
     h(
       'section',
-      { class: 'r-bloque' },
+      { class: 'r-bloque r-panel' },
       h('h2', {}, 'Dónde se va la gente'),
       tramos.length === 0
         ? h('p', { class: 'r-sin-datos' }, 'Nadie abandonó a mitad de camino, por ahora.')
@@ -539,7 +567,7 @@ function vistaControl(datos) {
     ),
     h(
       'section',
-      { class: 'r-bloque' },
+      { class: 'r-bloque r-panel' },
       h('h2', {}, 'Por día'),
       datos.control.porDia.length === 0
         ? h('p', { class: 'r-sin-datos' }, 'Todavía no hay actividad.')
@@ -569,8 +597,9 @@ function vistaControl(datos) {
 function dibujar() {
   const { datos } = estado;
   document.title = `Resultados · ${NOMBRE_ENCUESTA[datos.encuesta]}`;
-  const vista = estado.vista === 'control' && datos.control ? vistaControl(datos) : vistaResultados(datos);
-  mostrar(barra(), h('main', {}, encabezado(datos), vista));
+  const { indice, contenido } =
+    estado.vista === 'control' && datos.control ? { indice: null, contenido: vistaControl(datos) } : vistaResultados(datos);
+  mostrar(h('div', { class: 'r-app' }, lateral(indice), h('main', { class: 'r-principal' }, encabezado(datos), contenido)));
   espiarIndice();
 }
 

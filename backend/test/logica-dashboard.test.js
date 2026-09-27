@@ -64,4 +64,13 @@ describe('reglas del dashboard', () => {
     assert.equal(D.seccionActiva(secciones, { linea: 240, alFondo: true }), 'seccion-b');
     assert.equal(D.seccionActiva([], { linea: 240, alFondo: false }), null);
   });
+
+  test('anillo: una porción por parte, desde las cantidades, y el resto en el riel', () => {
+    assert.equal(D.anillo([{ n: 32, color: 'a' }], 84, 'r'), 'conic-gradient(a 0% 38.095%, r 38.095% 100%)');
+    assert.equal(
+      D.anillo([{ n: 1, color: 'a' }, { n: 1, color: 'b' }, { n: 2, color: 'c' }], 4, 'r'),
+      'conic-gradient(a 0% 25%, b 25% 50%, c 50% 100%)',
+    );
+    assert.equal(D.anillo([{ n: 0, color: 'a' }], 0, 'r'), 'conic-gradient(a 0% 0%, r 0% 100%)');
+  });
 });

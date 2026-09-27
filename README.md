@@ -43,7 +43,7 @@ Desde el celular, conectado al mismo wifi: `http://<IP de la PC>:3000/adultos/` 
 | `backend/app.js` | Rutas de la API (Express). |
 | `backend/resultados/` | Cálculo de resultados para el dashboard: conteos, cruces, regla de anonimato, embudo y Excel. |
 | `backend/acceso.js` | Contraseñas por rol y sesiones de los resultados. |
-| `frontend/resultados/` | Página del dashboard (dirección 1a «Renglones» de `design/dashboard/`). |
+| `frontend/resultados/` | Página del dashboard (dirección 1a «Renglones» de `design/dashboard/`, con barra lateral y tarjetas). |
 | `backend/ventanas.js` | Días y horarios de apertura (`VENTANAS_*` en `.env`). |
 | `backend/test/` | Pruebas automáticas (backend y lógica del frontend). |
 | `frontend/motor/` | Motor común a las dos encuestas: `logica.js` (reglas puras, con tests), `motor.js` (pantallas) y `dom.js` (construcción de elementos, compartida con el dashboard). |

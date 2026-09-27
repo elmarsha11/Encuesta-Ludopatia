@@ -309,6 +309,12 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
   - lo oculto se escribe en vez de dibujarse, así nunca insinúa su tamaño;
   - se imprime prolijo.
   - Las pantallas que el handoff dejó sin diseñar (acceso, índice, Control, estados, impresión) siguen el mismo lenguaje.
+- **Segunda vuelta visual («más vida», pedido de Juli):** misma paleta y mismos datos, presentación de panel.
+  - Barra lateral en tinta con los selectores, el índice (la sección que se lee se enciende al hacer scroll) y las acciones.
+  - Indicadores principales en tarjetas con una franja de color; anillos para «apostó» y para el PGSI.
+  - Cada sección en su tarjeta, numerada: verde para las preguntas, terracota para los cruces.
+  - Descartado de la referencia: gráficos de área y flechas de tendencia (la encuesta es una foto de una semana, no hay serie en el tiempo) y degradés sobre los datos (distorsionan la lectura del tamaño).
+  - El anillo del PGSI sigue la misma regla que tenía la barra apilada: solo se dibuja si no hay categorías ocultas.
 
 ### 8.7 Eventos del recorrido (DECIDIDO, implementado)
 
