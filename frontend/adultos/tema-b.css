@@ -192,14 +192,22 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 /* Atrás con marco: se lee como botón, sin competir con la acción (que va rellena en tinta). */
 .btn-volver{box-sizing:border-box;min-height:var(--alto-boton);padding:0 18px 0 12px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-texto);font-size:var(--tam-opcion);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
 .btn-volver:hover{color:var(--color-texto);background:var(--color-superficie-hover)}
-.consentimiento{margin-top:auto;padding:var(--esp-5) 0 var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4);border-top:var(--filete) solid var(--color-borde-suave)}
-.consentimiento-pregunta{margin:var(--esp-2) 0 0;font-family:var(--fuente-titulo);font-size:var(--tam-h3);line-height:1.2;font-weight:var(--peso-titulo)}
+/* Portada en dos pantallas: la presentación termina en «Continuar» y el consentimiento
+   tiene su propia pantalla, con la pregunta centrada como apertura de capítulo. */
+.portada-continuar{margin-top:auto;padding:var(--esp-5) 0 var(--esp-6);display:flex;justify-content:flex-end;border-top:var(--filete) solid var(--color-borde-suave)}
+.consentimiento{margin:auto 0;padding:var(--esp-6) 0;display:flex;flex-direction:column;gap:var(--esp-6)}
+.consentimiento::before{content:"";width:48px;height:2px;background:var(--color-terracota)}
+.consentimiento-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.06;font-weight:var(--peso-titulo);letter-spacing:-.015em;text-wrap:balance}
 .consentimiento-botones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--esp-3)}
 .consentimiento-botones .btn{min-height:56px;min-width:0}
 
 /* Pie fijo: Atrás a la izquierda, la acción a la derecha, sobre un filete */
 .pie{position:sticky;bottom:0;margin-top:auto;padding:var(--esp-3) 0 var(--esp-6);display:flex;align-items:center;gap:var(--esp-3);background:var(--color-fondo);border-top:var(--filete) solid var(--color-borde-suave);flex-shrink:0}
 .pie-accion{margin-left:auto;min-width:148px}
+/* «Hay más abajo»: en celulares muy chicos, si la pantalla no entra entera, un degradé sobre
+   el pie avisa que se puede deslizar (lo prende el motor, actualizarHayMas). */
+.pie::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:32px;background:linear-gradient(to bottom,transparent,var(--color-fondo));opacity:0;pointer-events:none;transition:opacity var(--dur-rapida) ease}
+.pie--hay-mas::before{opacity:1}
 
 /* Contenedor de pregunta: una hoja de papel más clara sobre el fondo, con una sombra suave de
    tinta (las mismas tarjetas que el dashboard de resultados). */
@@ -240,6 +248,13 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
    Cada grupo es un role="group" con aria-labelledby apuntando a su rótulo. */
 .opciones-grupo{display:flex;flex-direction:column}
 .opciones-grupo-titulo{margin:0;padding:var(--esp-5) 12px var(--esp-2);border-bottom:var(--filete) solid var(--color-borde-suave);font-size:var(--tam-chico);font-weight:var(--peso-fuerte);letter-spacing:var(--espaciado-versalitas);text-transform:uppercase;color:var(--color-texto-3)}
+/* Listas largas sin orden (L.enColumnas): dos columnas de renglones, como una planilla.
+   Las exclusivas y los títulos de grupo ocupan todo el ancho. */
+.opciones--columnas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--esp-3)}
+.opciones--columnas .opcion{min-height:var(--toque-min);padding:8px 6px;gap:8px;font-size:var(--tam-cuerpo);line-height:1.25}
+.opciones--columnas .separador,.opciones--columnas .opcion--exclusiva{grid-column:1/-1}
+.opciones--columnas .opciones-grupo{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--esp-3)}
+.opciones--columnas .opciones-grupo-titulo{grid-column:1/-1;padding-top:var(--esp-4)}
 
 /* Escala de puntos (del tema A, para escalas con etiquetas solo en los extremos) */
 .escala{margin-top:var(--esp-7);display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--esp-2)}
@@ -337,6 +352,32 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .panel-dev{margin:var(--esp-4) 0 var(--esp-6);padding:10px 12px;border:1px dashed var(--color-borde);border-radius:var(--radio-m);color:var(--color-texto-3);font-size:var(--tam-cuerpo)}
 .panel-dev summary{cursor:pointer;min-height:var(--toque-min);display:flex;align-items:center}
 .panel-dev pre{margin:var(--esp-2) 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--fuente-codigo);font-size:var(--tam-codigo);line-height:1.45;color:var(--color-texto-2)}
+
+/* Pantallas bajas (celulares chicos): que cada pantalla entre sin deslizar.
+   Se redefinen los tokens, así todo se compacta en proporción y el diseño sigue igual.
+   Límites que no se cruzan: botones de 44px o más (el dedo) y texto de 16px o más (leer). */
+@media (max-height: 800px){
+  :root{
+    --esp-4:12px;--esp-5:14px;--esp-6:16px;--esp-7:20px;--esp-8:28px;
+    --tam-h1:30px;--tam-pregunta:23px;--tam-h3:19px;--tam-lead:17px;--tam-cuerpo-l:16px;--tam-opcion:16px;
+    --tam-cierre:30px;--tam-tramo:22px;
+    --alto-boton:46px;--alto-opcion:46px;--alto-punto:52px;--alto-frecuencia:48px;
+    --alto-tramo-min:36px;--alto-tramo-paso:12px;
+    --toque-min:44px;
+  }
+  .app{padding-top:var(--esp-2)}
+  .contenido{padding-top:var(--esp-4)}
+  .portada-titulo{font-size:32px}
+  .tarjeta{padding:var(--esp-5) var(--esp-5) var(--esp-6)}
+  .pie{padding:var(--esp-2) 0 var(--esp-4)}
+  .seccion-cifra{font-size:60px}
+}
+/* Muy bajas (menos de 600px visibles): un paso más. */
+@media (max-height: 600px){
+  :root{--tam-pregunta:21px;--alto-opcion:44px;--alto-frecuencia:44px;--alto-boton:44px;--interlineado-lectura:1.45}
+  .portada-titulo{font-size:28px}
+  .seccion-cifra{font-size:48px}
+}
 
 /* Menos movimiento: sin animaciones ni deslizamientos. */
 @media (prefers-reduced-motion: reduce){

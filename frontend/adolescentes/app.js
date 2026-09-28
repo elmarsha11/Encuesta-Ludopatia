@@ -8,6 +8,7 @@ import { Motor } from '/motor/motor.js';
 const UI = {
   atras: 'Atrás',
   siguiente: 'Siguiente',
+  continuar: 'Continuar',
   saltar: 'Saltar',
   enviar: 'Enviar', // PROPUESTA
   reintentar: 'Probar de nuevo', // PROPUESTA

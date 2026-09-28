@@ -8,6 +8,7 @@ import { Motor } from '/motor/motor.js';
 const UI = {
   atras: 'Atrás',
   siguiente: 'Siguiente',
+  continuar: 'Continuar',
   saltar: 'Saltar', // no aparece: en adultos todas las preguntas son obligatorias
   enviar: 'Enviar', // PROPUESTA
   reintentar: 'Probar de nuevo', // PROPUESTA

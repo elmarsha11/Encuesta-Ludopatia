@@ -182,6 +182,19 @@ export function textoPesos(pregunta, valor, smvm, textos) {
 }
 
 /**
+ * Si las opciones van en dos columnas (para que las listas largas entren en el celular).
+ * Solo cuando el orden NO significa nada: opción múltiple con 6 o más opciones («marcá las
+ * que correspondan»), o respuesta única con opciones agrupadas (la carrera). Una respuesta
+ * única sin grupos puede ser una escala ordenada (Nunca → Casi todos los días): en dos
+ * columnas se rompería la lectura de menos a más, así que queda en una.
+ */
+export function enColumnas(pregunta) {
+  if (pregunta.tipo === 'multiple') return pregunta.opciones.length >= 6;
+  if (pregunta.tipo === 'unica') return pregunta.opciones.some((o) => o.grupo);
+  return false;
+}
+
+/**
  * Opciones en grupos consecutivos por su `grupo`. Sin `grupo`, un solo grupo sin rótulo.
  * Un grupo de UNA opción que se llama igual que el grupo («Educación Inicial») no muestra
  * rótulo: sería repetir la misma palabra.
@@ -213,15 +226,19 @@ export const CANTIDAD_PIXELES = PX_X.length;
  * @param {number} valorCalma - 0 a 1
  * @param {boolean} aparecido - false en la primera carga: arrancan invisibles y un poco más abajo
  * @param {number} ancho - ancho real del motivo en px (la fila final va de margen a margen)
+ * @param {number} alto - alto real del motivo en px (en pantallas bajas la franja se achica)
  */
-export function pixeles(valorCalma, aparecido, ancho = 342) {
+export function pixeles(valorCalma, aparecido, ancho = 342, alto = 56) {
+  // Las alturas del prototipo van de 0 a 48 en una franja de 56px: se estiran al alto real.
+  const escalaY = Math.max(0, alto - 8) / 48;
   const c = Math.max(0, Math.min(1, valorCalma));
   return PX_X.map((x, i) => {
     // Las posiciones del prototipo son para 342px: se estiran al ancho real, así el
     // desorden del principio también va de margen a margen.
     const sx = Math.round((x * ancho) / 342 / 6) * 6;
-    const sy = Math.round(PX_Y[i] / 6) * 6;
-    const y = Math.round(sy + (24 - sy) * c);
+    const sy = Math.round((PX_Y[i] * escalaY) / 6) * 6;
+    const fila = Math.round(24 * escalaY); // la fila ordenada del final, a media altura
+    const y = Math.round(sy + (fila - sy) * c);
     const tx = Math.round((i * (ancho - 6)) / (PX_X.length - 1));
     return {
       x: Math.round(sx + (tx - sx) * c),

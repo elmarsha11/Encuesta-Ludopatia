@@ -88,4 +88,8 @@ El motor (`frontend/motor/`) elige el componente por la **forma** de la pregunta
 
 Ningún componente pasa de pantalla al elegir: siempre se confirma con «Siguiente».
 
+Opciones en dos columnas (`L.enColumnas`), solo donde el orden no significa nada: opción múltiple con 6 o más opciones, o respuesta única con opciones agrupadas (carrera). Una respuesta única sin grupos puede ser una escala ordenada (frecuencia) y queda en una columna. Las opciones exclusivas ocupan todo el ancho.
+
+La portada son dos pantallas: presentación («Continuar») y consentimiento («¿Querés participar?»). Los eventos `acepto` y `no_participa` salen de la segunda.
+
 Lo que cambia entre temas y no es CSS (tarjeta alrededor de la pregunta, cuándo una pregunta es «larga», flecha en «Enviar») lo pasa cada página al motor en `presentacion`.

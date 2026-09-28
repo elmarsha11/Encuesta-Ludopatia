@@ -198,14 +198,21 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
    relleno: la acción principal sigue siendo la naranja. */
 .btn-volver{box-sizing:border-box;min-height:var(--alto-boton);padding:0 18px 0 12px;display:inline-flex;align-items:center;gap:4px;background:transparent;border:var(--borde-ancho) solid var(--color-borde);border-radius:var(--radio-m);color:var(--color-texto-2);font-family:var(--fuente-titulo);font-size:var(--tam-cuerpo-l);font-weight:500;cursor:pointer;transition:color var(--dur-rapida) ease,background-color var(--dur-rapida) ease}
 .btn-volver:hover{color:var(--color-texto);border-color:var(--color-texto-3);background:var(--color-superficie)}
-.consentimiento{margin-top:auto;padding:var(--esp-7) 0 var(--esp-6);display:flex;flex-direction:column;gap:var(--esp-4)}
-.consentimiento-pregunta{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h3);line-height:1.2;font-weight:var(--peso-titulo)}
+/* Portada en dos pantallas: la presentación termina en «Continuar» (abajo, al alcance del
+   pulgar) y el consentimiento tiene su propia pantalla, con la pregunta centrada. */
+.portada-continuar{margin-top:auto;padding:var(--esp-6) 0;display:flex;justify-content:flex-end}
+.consentimiento{margin:auto 0;padding:var(--esp-6) 0;display:flex;flex-direction:column;gap:var(--esp-6)}
+.consentimiento-titulo{margin:0;font-family:var(--fuente-titulo);font-size:var(--tam-h1);line-height:1.08;font-weight:var(--peso-titulo);letter-spacing:-.02em;text-wrap:balance}
 .consentimiento-botones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--esp-3)}
 .consentimiento-botones .btn{min-height:56px}
 
 /* Pie fijo: Atrás a la izquierda, la acción a la derecha. No se mueve con el carrusel. */
 .pie{position:sticky;bottom:0;margin-top:auto;padding:var(--esp-4) 0 var(--esp-6);display:flex;align-items:center;gap:var(--esp-3);background:var(--color-fondo);flex-shrink:0}
 .pie-accion{margin-left:auto}
+/* «Hay más abajo»: en celulares muy chicos, si la pantalla no entra entera, un degradé sobre
+   el pie avisa que se puede deslizar (lo prende el motor, actualizarHayMas). */
+.pie::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:32px;background:linear-gradient(to bottom,transparent,var(--color-fondo));opacity:0;pointer-events:none;transition:opacity var(--dur-rapida) ease}
+.pie--hay-mas::before{opacity:1}
 
 /* Contenedor de la pregunta (variante con tarjeta) */
 .sin-tarjeta{margin-top:var(--esp-2)}
@@ -228,6 +235,14 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 @keyframes ola{0%,100%{transform:translateY(0)}50%{transform:translateY(calc(var(--ola-altura) * -1))}}
 @keyframes marcar{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
 .separador{height:0;margin:6px 0 2px;border-top:1px dashed var(--color-borde-suave)}
+/* Listas largas sin orden (L.enColumnas): dos columnas para que entren en el celular.
+   Las exclusivas («Prefiero no responder», «No sé») y el separador ocupan todo el ancho. */
+.opciones--columnas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opciones--columnas .opcion{min-height:var(--toque-min);padding:8px 8px;gap:8px;font-size:var(--tam-cuerpo);line-height:1.25}
+.opciones--columnas .opcion-marca{width:20px;height:20px}
+.opciones--columnas .separador,.opciones--columnas .opcion--exclusiva{grid-column:1/-1}
+.opciones--columnas .opciones-grupo{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opciones--columnas .opciones-grupo-titulo{grid-column:1/-1}
 
 /* Escala: los puntos se reparten solos (sirve para 1-5 y para 0-3 de adultos) */
 .escala{margin-top:var(--esp-7);display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--esp-2)}
@@ -278,6 +293,39 @@ body{margin:0;background:var(--color-fondo);color:var(--color-texto);font-family
 .panel-dev{margin:0 0 var(--esp-6);padding:10px 12px;border:1px dashed var(--color-borde-suave);border-radius:var(--radio-m);color:var(--color-texto-3);font-size:var(--tam-cuerpo)}
 .panel-dev summary{cursor:pointer;min-height:var(--toque-min);display:flex;align-items:center}
 .panel-dev pre{margin:var(--esp-2) 0 0;white-space:pre-wrap;word-break:break-word;font-family:var(--fuente-codigo);font-size:var(--tam-codigo);line-height:1.45;color:var(--color-texto-2)}
+
+/* Pantallas bajas (celulares chicos): que cada pantalla entre sin deslizar.
+   Se redefinen los tokens, así todo se compacta en proporción y el diseño sigue igual.
+   Límites que no se cruzan: botones de 44px o más (el dedo) y texto de 16px o más (leer). */
+@media (max-height: 800px){
+  :root{
+    --esp-4:12px;--esp-5:14px;--esp-6:16px;--esp-7:20px;--esp-8:28px;
+    --tam-h1:28px;--tam-pregunta:23px;--tam-h3:19px;--tam-lead:17px;--tam-cuerpo-l:16px;--tam-opcion:16px;
+    --alto-boton:46px;--alto-opcion:48px;--alto-punto:52px;
+    --toque-min:44px;
+  }
+  .app{padding-top:var(--esp-2)}
+  .progreso-bloque{margin-top:var(--esp-1);gap:6px}
+  .motivo{height:36px;margin-top:var(--esp-2)}
+  .tarjeta{padding:var(--esp-4)}
+  .opciones{margin-top:var(--esp-4);gap:6px}
+  .opcion{padding:8px 12px}
+  .pie{padding:var(--esp-3) 0 var(--esp-4)}
+  .seccion-cifra{font-size:52px}
+  .puntos{gap:10px}
+}
+/* Menos de 700px visibles (la mayoría de los celulares con la barra del navegador). */
+@media (max-height: 700px){
+  :root{--alto-opcion:46px;--tam-pregunta:21px}
+  .opciones{gap:5px}
+  .separador{margin:3px 0 1px}
+}
+/* Muy bajas (menos de 600px visibles): un paso más. */
+@media (max-height: 600px){
+  :root{--tam-h1:26px;--tam-pregunta:21px;--alto-opcion:44px;--alto-punto:48px;--alto-boton:44px}
+  .motivo{height:28px}
+  .seccion-cifra{font-size:44px}
+}
 
 /* Quien pidió menos movimiento (sistema operativo): sin animaciones ni deslizamientos.
    El motor también se saltea la fase de salida. */

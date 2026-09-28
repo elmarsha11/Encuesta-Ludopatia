@@ -159,7 +159,12 @@ export class Motor {
 
   async iniciar() {
     this.crearPixeles();
-    window.addEventListener('resize', () => this.actualizarMotivo());
+    window.addEventListener('resize', () => {
+      this.actualizarMotivo();
+      this.actualizarHayMas();
+    });
+    // Si el contenido cambia de alto (un aviso, la nota de ayuda), se recalcula el indicador.
+    if (typeof ResizeObserver === 'function') new ResizeObserver(() => this.actualizarHayMas()).observe(this.el.contenido);
     // Si alguien toca un campo mientras la pantalla todavía entra deslizándose, el navegador
     // corre la columna de costado para mostrarlo y queda desplazada. La columna nunca
     // debe tener desplazamiento horizontal: si lo tiene, se vuelve a cero.
@@ -167,6 +172,7 @@ export class Motor {
       'scroll',
       () => {
         if (this.raiz.scrollLeft !== 0) this.raiz.scrollLeft = 0;
+        this.actualizarHayMas();
       },
       { passive: true },
     );
@@ -206,6 +212,15 @@ export class Motor {
 
   registrar(evento, pregunta) {
     registrarEvento(this.id, evento, pregunta);
+  }
+
+  /**
+   * En celulares muy chicos algunas pantallas no entran enteras. Cuando queda contenido
+   * debajo, el pie muestra un degradé («hay más»), que se va al llegar al final.
+   */
+  actualizarHayMas() {
+    const falta = this.raiz.scrollHeight - this.raiz.clientHeight - this.raiz.scrollTop;
+    this.el.pie.classList.toggle('pie--hay-mas', falta > 8);
   }
 
   // --- Movimiento ----------------------------------------------------------------
@@ -268,7 +283,7 @@ export class Motor {
   irAPaso(i, direccion) {
     const dir = direccion ?? (i >= this.estado.paso ? 'adelante' : 'atras');
     const lista = this.lista();
-    if (i < 0) return this.navegar({ pantalla: 'inicio', paso: 0 }, 'atras');
+    if (i < 0) return this.navegar({ pantalla: 'consentimiento', paso: 0 }, 'atras');
     if (i >= lista.length) return this.enviar();
     this.navegar({ pantalla: 'recorrido', paso: i, ...this.extraParaPaso(lista[i], this.estado.respuestas) }, dir);
   }
@@ -307,7 +322,8 @@ export class Motor {
 
   volver() {
     const { pantalla, paso } = this.estado;
-    if (pantalla === 'no-participa') return this.navegar({ pantalla: 'inicio' }, 'atras');
+    if (pantalla === 'consentimiento') return this.navegar({ pantalla: 'inicio' }, 'atras');
+    if (pantalla === 'no-participa') return this.navegar({ pantalla: 'consentimiento' }, 'atras');
     if (pantalla === 'error') return this.irAPaso(this.lista().length - 1, 'atras');
     this.irAPaso(paso - 1, 'atras');
   }
@@ -364,6 +380,9 @@ export class Motor {
     // Pantalla nueva: volver arriba y llevar el foco al título (lectores de pantalla).
     this.raiz.scrollTop = 0;
     contenido.querySelector('h1')?.focus({ preventScroll: true });
+    this.actualizarHayMas();
+    // Y otra vez cuando termina de entrar (la animación de entrada cambia la medida).
+    setTimeout(() => this.actualizarHayMas(), this.leerMs('--dur-entrada', 520) + 50);
   }
 
   pantalla(par) {
@@ -396,7 +415,6 @@ export class Motor {
         const intro = d.pantallas.intro;
         const puntos = intro.puntos ?? [];
         const dCierre = 320 + puntos.length * (escalon + 40) + 80;
-        const c = d.pantallas.consentimiento;
         return [
           h('h1', { class: `portada-titulo${aparecer}`, tabindex: '-1', estilo: { animationDelay: '60ms' } }, intro.titulo),
           h('p', { class: `portada-texto${aparecer}`, estilo: { animationDelay: '180ms' } }, intro.texto),
@@ -417,14 +435,28 @@ export class Motor {
             ),
           intro.cierre &&
             h('p', { class: `portada-cierre${aparecer}`, estilo: { animationDelay: `${dCierre}ms` } }, intro.cierre),
+          // El consentimiento va en su propia pantalla: así cada una entra entera en el celular
+          // y la pregunta «¿Querés participar?» no queda escondida debajo del texto.
+          h(
+            'div',
+            { class: `portada-continuar${aparecer}`, estilo: { animationDelay: `${dCierre + 140}ms` } },
+            h(
+              'button',
+              { type: 'button', class: 'btn btn--primario', on: { click: () => this.navegar({ pantalla: 'consentimiento' }, 'adelante') } },
+              h('span', {}, this.ui.continuar),
+              icono('siguiente'),
+            ),
+          ),
+        ];
+      }
+
+      case 'consentimiento': {
+        const c = d.pantallas.consentimiento;
+        return [
           h(
             'section',
-            {
-              class: `consentimiento${aparecer}`,
-              'aria-labelledby': 'consentimiento-t',
-              estilo: { animationDelay: `${dCierre + 140}ms` },
-            },
-            h('h2', { id: 'consentimiento-t', class: 'consentimiento-pregunta' }, c.pregunta),
+            { class: 'consentimiento', 'aria-labelledby': 'consentimiento-t' },
+            h('h1', { id: 'consentimiento-t', class: 'consentimiento-titulo', tabindex: '-1' }, c.pregunta),
             h(
               'div',
               { class: 'consentimiento-botones' },
@@ -596,14 +628,19 @@ export class Motor {
           const label = h(
             'label',
             {
-              class: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${aparecer}`,
+              class: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${o.exclusiva ? ' opcion--exclusiva' : ''}${aparecer}`,
               estilo: retraso(i++, 160),
             },
             input,
             h('span', { class: 'opcion-marca', 'aria-hidden': 'true' }, icono('check')),
             h('span', { class: 'opcion-texto' }, o.texto),
           );
-          opciones.push({ label, input, valor: o.valor, base: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${aparecer}` });
+          opciones.push({
+            label,
+            input,
+            valor: o.valor,
+            base: `opcion ${multiple ? 'opcion--check' : 'opcion--radio'}${o.exclusiva ? ' opcion--exclusiva' : ''}${aparecer}`,
+          });
           hijos.push(label);
           return hijos;
         };
@@ -631,7 +668,8 @@ export class Motor {
           titulo(),
           ayuda(),
           multiple && h('p', { class: 'pista' }, this.ui.pistaMultiple),
-          h('div', { class: 'opciones' }, contenidoOpciones),
+          // Listas largas sin orden en dos columnas, así entran en el celular (L.enColumnas).
+          h('div', { class: `opciones${L.enColumnas(p) ? ' opciones--columnas' : ''}` }, contenidoOpciones),
         );
       }
 
@@ -974,7 +1012,7 @@ export class Motor {
     const { pantalla, paso, respuestas, borradorEdad } = this.estado;
     const enRecorrido = pantalla === 'recorrido' && this.pasoActual();
     const esError = pantalla === 'error';
-    const mostrar = enRecorrido || esError || pantalla === 'no-participa';
+    const mostrar = enRecorrido || esError || pantalla === 'no-participa' || pantalla === 'consentimiento';
     this.el.pie.style.display = mostrar ? '' : 'none';
     if (!mostrar) return this.el.pie.replaceChildren();
 
@@ -1010,7 +1048,9 @@ export class Motor {
     }
 
     const hayAccion = enRecorrido || esError;
-    this.el.pie.replaceChildren(
+    // Sin acción (consentimiento, «no participo») queda solo «Atrás». Un false suelto en
+    // replaceChildren se convertiría en el texto «false»: se descarta, como en pantalla().
+    const hijos = [
       h('button', { type: 'button', class: 'btn-volver', on: { click: () => this.volver() } }, icono('atras'), h('span', {}, this.ui.atras)),
       hayAccion &&
         h(
@@ -1024,7 +1064,8 @@ export class Motor {
           h('span', {}, etiqueta),
           conFlecha && icono('siguiente'),
         ),
-    );
+    ];
+    this.el.pie.replaceChildren(...hijos.filter((nodo) => nodo instanceof Node));
   }
 
   actualizarProgreso() {
@@ -1057,7 +1098,7 @@ export class Motor {
     if (pantalla === 'no-participa') avance = 0.6;
     if (pantalla === 'cerrada') avance = 0.4;
 
-    const datos = L.pixeles(L.calma(avance), aparecido, this.el.motivo.clientWidth || 342);
+    const datos = L.pixeles(L.calma(avance), aparecido, this.el.motivo.clientWidth || 342, this.el.motivo.clientHeight || 56);
     datos.forEach((d, i) =>
       Object.assign(this.px[i].style, {
         left: `${d.x}px`,

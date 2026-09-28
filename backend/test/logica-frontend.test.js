@@ -73,11 +73,30 @@ describe('progreso', () => {
     assert.equal(fila.at(-1).x, 336);
   });
 
+  test('píxeles: en una franja baja (celular chico) ninguno queda afuera', () => {
+    for (const alto of [28, 36, 56]) {
+      for (const c of [0, 0.5, 1]) {
+        const ys = L.pixeles(c, true, 342, alto).map((px) => px.y);
+        assert.ok(Math.max(...ys) <= alto - 6, `con alto ${alto} un píxel quedó en y=${Math.max(...ys)}`);
+        assert.ok(Math.min(...ys) >= 0);
+      }
+    }
+  });
+
   test('píxeles: el desorden del principio también ocupa todo el ancho', () => {
     const angosto = Math.max(...L.pixeles(0, true, 342).map((px) => px.x));
     const ancho = Math.max(...L.pixeles(0, true, 600).map((px) => px.x));
     assert.ok(angosto <= 342 - 6);
     assert.ok(ancho > 500 && ancho <= 600 - 6, `el píxel más a la derecha quedó en ${ancho}`);
+  });
+
+  test('dos columnas solo en listas largas donde el orden no significa nada', () => {
+    const publicaAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
+    const todas = [...publicaAdultos.preguntas, ...def.preguntas];
+    const enColumnas = todas.filter(L.enColumnas).map((p) => p.id).sort();
+    assert.deepEqual(enColumnas, ['canales_publicidad', 'carrera', 'donde_publicidad', 'en_que_aposto', 'motivo', 'percepcion_por_que']);
+    // La frecuencia es una escala ordenada: aunque sea larga, queda en una columna.
+    assert.equal(L.enColumnas(def.preguntas.find((p) => p.id === 'frecuencia_ultimo_anio')), false);
   });
 
   test('«Parte X de N»: el total no crece cuando se decide una rama', () => {
