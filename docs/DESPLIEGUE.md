@@ -107,8 +107,13 @@ En Render → tu servicio → **Environment**:
 |---|---|
 | `DATABASE_URL` | la URL de `encuestas-real` |
 | `DATABASE_AUTH_TOKEN` | el token de `encuestas-real` |
-| `VENTANAS_ADOLESCENTES` | las franjas de la escuela, por ejemplo `2026-10-19 08:00-12:00; 2026-10-20 08:00-12:00` |
-| `VENTANAS_ADULTOS` | las franjas del instituto |
+| `VENTANAS_ADOLESCENTES` | `2026-10-19 08:00-22:00; 2026-10-20 08:00-22:00; 2026-10-21 08:00-22:00; 2026-10-22 08:00-22:00; 2026-10-23 08:00-22:00` |
+| `VENTANAS_ADULTOS` | `2026-10-19 08:00-22:00; 2026-10-20 08:00-22:00; 2026-10-21 08:00-22:00; 2026-10-22 08:00-22:00; 2026-10-23 08:00-22:00` |
+
+Las dos encuestas abren de **8:00 a 22:00, hora argentina**, del lunes 19 al viernes 23.
+Se copia tal cual, sin comillas. A las 22:00 ya no se puede **empezar**, pero quien estaba
+respondiendo puede **enviar** hasta las 22:15 (tolerancia de 15 minutos, `TOLERANCIA_MINUTOS`
+en `backend/ventanas.js`). Si en el piloto alguien tarda más de 15 minutos, conviene subirla.
 
 Guardá: Render reinicia el servicio con los valores nuevos.
 
@@ -116,20 +121,32 @@ Guardá: Render reinicia el servicio con los valores nuevos.
 - En los Logs **ya no** aparecen los avisos de «SIEMPRE abierta».
 - En `/resultados/` dice **«Todavía no hay respuestas»**. Eso prueba que estás en la base
   limpia.
-- Fuera de una franja, las encuestas muestran «La encuesta está cerrada» y cuándo abre.
+- Fuera del horario, las encuestas muestran «La encuesta está cerrada» y cuándo abre.
 
 ## 6. Semana de encuesta (19 al 23/10)
 
-**Despertador.** Creá una cuenta gratis en cron-job.org y una tarea que visite
-`https://<tu-servicio>.onrender.com/api/salud` cada 10 minutos. Activala desde el domingo
-18 a la noche hasta el viernes 23 al terminar la última franja. Fuera de esos días
-desactivala: Render da 750 horas gratis por mes, y encendido todo el mes serían 744 (sin
-margen). Si las horas se agotan, el servicio se suspende hasta noviembre.
+**Despertador.** Creá una cuenta gratis en cron-job.org y, en su configuración, poné la zona
+horaria **America/Argentina/Buenos_Aires**. Después creá una tarea que visite
+`https://<tu-servicio>.onrender.com/api/salud`:
 
-**Durante las franjas:**
-- Seguí la participación en **Resultados → Control**. Más respuestas que gente en el aula
-  es señal de respuestas falsas: anotalo para el informe.
-- **No mergees cambios a `main` durante una franja.** Render publica solo cada vez que
+- cada **10 minutos**;
+- solo de **7:00 a 22:10** (arranca una hora antes de abrir, así a las 8 ya está despierto,
+  y sigue durante la tolerancia de envío);
+- solo del **lunes 19 al viernes 23**. Después desactivala.
+
+De noche nadie lo visita: Render lo duerme solo a los 15 minutos y no gasta horas. **No lo
+suspendas a mano**: si un día te olvidás de reactivarlo, a las 8 no hay encuesta. Si alguien
+entra de noche, espera un minuto a que despierte y ve que la encuesta está cerrada y a qué
+hora abre.
+
+Cuentas: unas 15 horas × 5 días ≈ 78 horas, de las 750 gratis por mes. El resto sobra para
+el piloto y para consultar resultados.
+
+**Durante el horario de encuesta:**
+- Seguí la participación en **Resultados → Control**. Compará cada día con cuánta gente
+  recibió el QR: más respuestas que personas posibles (o un salto raro en un solo día) es
+  señal de respuestas falsas. Anotalo para el informe.
+- **No mergees cambios a `main` entre las 8 y las 22.** Render publica solo cada vez que
   cambia `main`, y al reiniciar se cierran las sesiones de resultados.
 
 **Cada noche, backup.** En la notebook, en un archivo `.env` (nunca va a GitHub) poné:
@@ -156,7 +173,7 @@ reales: no lo subas a ninguna nube compartida ni lo mandes por chat.
    distintas entre sí y de la tuya).
 3. Mandá **la dirección y la contraseña por canales distintos**: por ejemplo, el link por
    mail y la contraseña en persona.
-4. Desactivá el despertador. Si alguien entra y el servidor está dormido, tarda un minuto
+4. Confirmá que el despertador quedó desactivado. Si alguien entra y el servidor está dormido, tarda un minuto
    en abrir: es normal.
 5. Cuando todos tengan su Excel: borrá las contraseñas del grupo y de docentes en Render,
    y decidí con el grupo cuándo se borran las bases de Turso (el plan dice: backup y apagado).
@@ -183,6 +200,6 @@ Cubierto por el código:
 - En los resultados, las cantidades menores a 5 no se muestran.
 
 Limitación conocida (para el informe): **cualquiera que tenga la dirección puede responder,
-y más de una vez.** Pedir identificación rompería el anonimato. Lo acotan las franjas
-horarias, el reparto del QR solo en el aula, el límite de envíos por minuto y el
-seguimiento en Control.
+y más de una vez.** Pedir identificación rompería el anonimato. Lo acotan el horario
+(8 a 22, solo esa semana), el reparto del QR solo a quienes tienen que responder, el límite
+de envíos por minuto y el seguimiento en Control.

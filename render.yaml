@@ -30,7 +30,8 @@ services:
         sync: false
       - key: DATABASE_AUTH_TOKEN
         sync: false
-      # Días y franjas en hora argentina: "2026-10-19 08:00-12:00; 2026-10-20 08:00-12:00"
+      # Días y horario en hora argentina (8 a 22, del 19 al 23/10; valor completo en la guía):
+      # 2026-10-19 08:00-22:00; 2026-10-20 08:00-22:00; ...
       - key: VENTANAS_ADOLESCENTES
         sync: false
       - key: VENTANAS_ADULTOS

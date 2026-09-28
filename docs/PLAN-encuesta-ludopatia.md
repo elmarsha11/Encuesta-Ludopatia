@@ -22,7 +22,7 @@ Dos encuestas sobre ludopatía, para dos públicos y **dos instituciones distint
 **Restricciones comunes:**
 - No usar Google Forms / Sheets / Looker Studio.
 - Página web propia, alojada de forma provisoria.
-- Disponible del **lunes 19 al viernes 23 de octubre de 2026** (ambas encuestas), en **franjas horarias específicas** (PENDIENTE: definir las franjas de cada institución).
+- Disponible del **lunes 19 al viernes 23 de octubre de 2026** (ambas encuestas), **de 8:00 a 22:00, hora argentina** (DECIDIDO por Juli). A las 22:00 ya no se puede empezar; los envíos se aceptan 15 minutos más.
 - Acceso a resultados (Excel + dashboard) restringido a quien corresponda en cada caso.
 - Duración máxima de respuesta: **menos de 5 minutos**.
 - Experiencia dinámica y cuidada: ni monótona ni básica, pero tampoco extravagante, y **sin ninguna estética que remita a apuestas o casinos** (nada de fichas, ruletas, dorados tipo casino, confeti de "ganaste").
@@ -333,7 +333,7 @@ Para saber **cuántos no participaron** y **en qué pantalla se abandona**, en l
 **Requisitos de Juli:** que sea rápido y fluido, sin problemas de acceso, y que ningún dato se borre, se altere ni se pierda. La luz y el internet de la casa de Juli son estables, así que la opción A queda como respaldo real: el código es el mismo en ambas.
 
 **Cómo se cubre cada requisito en la opción B:**
-- *Lentitud por el "sueño" de Render*: un servicio gratuito de monitoreo (por ejemplo, UptimeRobot o cron-job.org) consulta un endpoint liviano `/api/salud` (implementado, no toca la base) cada 10 minutos durante los días de encuesta, y el servidor no llega a dormirse. Verificado en la documentación de Render: 750 horas gratis por mes y por cuenta; encendido todo el mes serían 744 (sin margen), así que el despertador se prende **solo del 18 al 23/10**. Si se agotan, el servicio se suspende hasta el mes siguiente.
+- *Lentitud por el "sueño" de Render*: un servicio gratuito de monitoreo (por ejemplo, UptimeRobot o cron-job.org) consulta un endpoint liviano `/api/salud` (implementado, no toca la base) cada 10 minutos durante los días de encuesta, y el servidor no llega a dormirse. Verificado en la documentación de Render: 750 horas gratis por mes y por cuenta; encendido todo el mes serían 744 (sin margen). Con el horario de 8 a 22, el despertador avisa **solo de 7:00 a 22:10, del 19 al 23/10** (≈78 horas); de noche el servidor se duerme solo. Si se agotan, el servicio se suspende hasta el mes siguiente.
 - *Que nada se altere o borre*: la base es de solo agregar (triggers que bloquean UPDATE y DELETE, ya implementados y probados), con reglas CHECK por columna y ningún endpoint que modifique o borre.
 - *Que nada se pierda*: Turso guarda los datos fuera del servidor. `npm run backup` copia la base entera a un archivo SQLite y verifica las filas de cada tabla; se corre cada noche de la semana de encuesta. El servidor se niega a arrancar en Render con una base en archivo local (el disco de Render se borra al dormirse).
 - *Que un cambio de pregunta no pierda respuestas*: al arrancar, el servidor compara la definición completa de cada tabla (columnas **y** valores permitidos) con la de las encuestas. Si no coinciden, no arranca. Antes solo comparaba los nombres de columnas, y un cambio de opciones pasaba sin aviso y rechazaba a quien eligiera la opción nueva.
@@ -403,7 +403,6 @@ Encuesta-Ludopatia/
 | 3 | Texto de la explicación de educación financiera (Claude redacta un borrador, el grupo aprueba) | Grupo |
 | 4 | Ítems textuales del PGSI en español (artículo de 2018) | Juli |
 | 5 | Verificar las líneas de ayuda 0800-444-4000 y 141 | Juli |
-| 6 | Franjas horarias de cada institución (19 al 23/10) | Juli |
 | 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
 | 9 | Preguntas de investigación del dashboard de adultos (hay una propuesta en 8.6) | Grupo |
 | 10 | Elegir las tres contraseñas de resultados (12+ caracteres, distintas) y cargar la del grupo y la de docentes recién al cerrar la encuesta | Juli |
