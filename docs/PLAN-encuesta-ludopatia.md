@@ -333,9 +333,12 @@ Para saber **cuántos no participaron** y **en qué pantalla se abandona**, en l
 **Requisitos de Juli:** que sea rápido y fluido, sin problemas de acceso, y que ningún dato se borre, se altere ni se pierda. La luz y el internet de la casa de Juli son estables, así que la opción A queda como respaldo real: el código es el mismo en ambas.
 
 **Cómo se cubre cada requisito en la opción B:**
-- *Lentitud por el "sueño" de Render*: un servicio gratuito de monitoreo (por ejemplo, UptimeRobot o cron-job.org) consulta un endpoint liviano `/api/salud` cada 10 minutos durante los días de encuesta, y el servidor no llega a dormirse. Encendido las 24 h, un servicio consume unas 744 h por mes, dentro de las 750 h gratuitas. PENDIENTE verificar en la fase de despliegue que las condiciones de Render lo permitan. Si no, se pasa a la opción A.
+- *Lentitud por el "sueño" de Render*: un servicio gratuito de monitoreo (por ejemplo, UptimeRobot o cron-job.org) consulta un endpoint liviano `/api/salud` (implementado, no toca la base) cada 10 minutos durante los días de encuesta, y el servidor no llega a dormirse. Verificado en la documentación de Render: 750 horas gratis por mes y por cuenta; encendido todo el mes serían 744 (sin margen), así que el despertador se prende **solo del 18 al 23/10**. Si se agotan, el servicio se suspende hasta el mes siguiente.
 - *Que nada se altere o borre*: la base es de solo agregar (triggers que bloquean UPDATE y DELETE, ya implementados y probados), con reglas CHECK por columna y ningún endpoint que modifique o borre.
-- *Que nada se pierda*: Turso guarda los datos fuera del servidor. Además, un script de backup descarga una copia completa cada noche durante la semana de encuesta (fase de despliegue).
+- *Que nada se pierda*: Turso guarda los datos fuera del servidor. `npm run backup` copia la base entera a un archivo SQLite y verifica las filas de cada tabla; se corre cada noche de la semana de encuesta. El servidor se niega a arrancar en Render con una base en archivo local (el disco de Render se borra al dormirse).
+- *Que un cambio de pregunta no pierda respuestas*: al arrancar, el servidor compara la definición completa de cada tabla (columnas **y** valores permitidos) con la de las encuestas. Si no coinciden, no arranca. Antes solo comparaba los nombres de columnas, y un cambio de opciones pasaba sin aviso y rechazaba a quien eligiera la opción nueva.
+- *Piloto sin ensuciar los datos reales*: dos bases en Turso, `encuestas-piloto` y `encuestas-real`; se cambia de una a otra en las variables de Render antes del 19/10.
+- **Guía paso a paso: `docs/DESPLIEGUE.md`**, con la receta de Render en `render.yaml` y los QR estáticos con `npm run qr`.
 
 ---
 
@@ -389,7 +392,7 @@ Encuesta-Ludopatia/
 5. ✅ **Integración** frontend ↔ backend (ambas encuestas), con ventanas de apertura (`VENTANAS_*`) y pantalla de encuesta cerrada.
 6. ✅ **Dashboards** + **exportación Excel** + **autenticación**: cálculo con regla de anonimato, página `/resultados/` con acceso por rol, Control de participación y Excel en dos versiones. Probado de punta a punta en Chromium (escritorio, celular e impresión).
 7. **Prueba piloto** con 3-5 personas por encuesta: medir tiempos, detectar preguntas confusas.
-8. **Despliegue** + generación de los dos QR.
+8. 🔧 **Despliegue** + generación de los dos QR: preparado (receta de Render, `/api/salud`, backup verificado, QR estáticos, chequeo de esquema completo y guía en `docs/DESPLIEGUE.md`). Falta crear las cuentas y seguir la guía.
 9. **Cierre**: backup y apagado.
 
 ## 11. Resumen de PENDIENTES

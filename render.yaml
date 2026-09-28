@@ -1,0 +1,44 @@
+# Receta de despliegue en Render (Blueprint). Guía paso a paso: docs/DESPLIEGUE.md
+#
+# Los valores secretos (token de la base, contraseñas) NO están acá: con «sync: false»
+# Render los pide en su panel al crear el servicio. Este archivo se puede leer en GitHub
+# sin exponer nada.
+
+services:
+  - type: web
+    name: encuesta-ludopatia
+    runtime: node
+    plan: free
+    # Virginia (EE. UU. este): la región de Render más cercana a Argentina. La base de
+    # Turso tiene que estar en la misma zona (ver la guía): cada respuesta viaja
+    # servidor ↔ base, y esa distancia pesa más que la del celular al servidor.
+    region: virginia
+    # --omit=dev: en el servidor no hacen falta las herramientas de desarrollo (QR, etc.).
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    # Render considera el servicio sano si esta ruta responde 200 (no toca la base).
+    healthCheckPath: /api/salud
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Obligatorio detrás del proxy de Render: sin esto la cookie de sesión no se marca
+      # como segura y todas las personas «comparten» la IP del proxy en el límite de envíos.
+      - key: TRUST_PROXY
+        value: "1"
+      # libsql://<base>.turso.io — primero la base PILOTO, el 18/10 la REAL (ver la guía).
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_AUTH_TOKEN
+        sync: false
+      # Días y franjas en hora argentina: "2026-10-19 08:00-12:00; 2026-10-20 08:00-12:00"
+      - key: VENTANAS_ADOLESCENTES
+        sync: false
+      - key: VENTANAS_ADULTOS
+        sync: false
+      # Contraseñas de resultados. La del grupo y la de docentes se cargan al CERRAR la encuesta.
+      - key: CLAVE_JULI
+        sync: false
+      - key: CLAVE_ADULTOS
+        sync: false
+      - key: CLAVE_DOCENTES
+        sync: false

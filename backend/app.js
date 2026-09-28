@@ -87,6 +87,13 @@ export function crearApp({
 
   const apertura = (id) => estadoDeApertura(ventanas[id] ?? null, reloj());
 
+  // Salud: lo consulta un monitor externo cada ~10 minutos para que el servidor gratuito no
+  // se duerma durante la semana de encuesta. No toca la base (sería una consulta inútil cada
+  // vez) y no devuelve nada sobre las encuestas.
+  app.get('/api/salud', (req, res) => {
+    res.set('Cache-Control', 'no-store').json({ ok: true });
+  });
+
   // Definición de la encuesta para el frontend: preguntas, opciones, ramas, textos
   // y si está abierta en este momento.
   app.get('/api/encuestas/:encuesta', (req, res) => {

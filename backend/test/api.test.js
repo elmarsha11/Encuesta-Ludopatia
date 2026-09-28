@@ -5,7 +5,7 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { crearApp } from '../app.js';
-import { crearCliente, inicializarBase } from '../db/conexion.js';
+import { crearCliente, inicializarBase, revisarUbicacionDeLaBase } from '../db/conexion.js';
 import { scriptCompleto } from '../db/esquema.js';
 import { leerVentanas } from '../ventanas.js';
 import { ENCUESTAS } from '../encuestas/index.js';
@@ -291,6 +291,26 @@ describe('límite de envíos', () => {
   });
 });
 
+test('en Render no se acepta una base en archivo local (el disco se borra al dormirse)', () => {
+  assert.throws(() => revisarUbicacionDeLaBase('file:encuestas.db', { RENDER: 'true' }), /Turso/);
+  assert.doesNotThrow(() => revisarUbicacionDeLaBase('libsql://encuestas-juli.turso.io', { RENDER: 'true' }));
+  // En la PC (sin la variable RENDER) el archivo local es lo normal.
+  assert.doesNotThrow(() => revisarUbicacionDeLaBase('file:encuestas.db', {}));
+});
+
+test('salud: responde sin tocar la base de datos', async () => {
+  // Una base que falla en cualquier consulta: si /api/salud la tocara, respondería 500.
+  const rota = { execute: () => Promise.reject(new Error('no debería consultarse')), batch: () => Promise.reject(new Error('no')) };
+  const app = crearApp({ db: rota, encuestas: ENCUESTAS });
+  const servidor = app.listen(0);
+  const { port } = servidor.address();
+  const res = await fetch(`http://localhost:${port}/api/salud`);
+  assert.equal(res.status, 200);
+  assert.deepEqual(await res.json(), { ok: true });
+  assert.equal(res.headers.get('cache-control'), 'no-store');
+  servidor.close();
+});
+
 test('database/schema.sql está actualizado con las definiciones (correr `npm run schema`)', () => {
   const enDisco = readFileSync(new URL('../../database/schema.sql', import.meta.url), 'utf8');
   assert.equal(enDisco, scriptCompleto(ENCUESTAS));
@@ -301,4 +321,21 @@ test('el servidor no arranca si una tabla existente no coincide con la definici�
   await dbVieja.execute('CREATE TABLE respuestas_adultos (id INTEGER PRIMARY KEY, fecha TEXT, edad INTEGER)');
   await assert.rejects(inicializarBase(dbVieja, ENCUESTAS), /no coincide/);
   dbVieja.close();
+});
+
+test('el servidor no arranca si cambiaron las opciones de una pregunta (misma columna, otros valores)', async () => {
+  // El caso silencioso: agregar una opción no cambia los nombres de las columnas, pero la
+  // base guardó qué valores acepta. Si arrancara, rechazaría a quien elija la opción nueva.
+  const db = crearCliente({ url: ':memory:' });
+  await inicializarBase(db, ENCUESTAS);
+  const e = ENCUESTAS.adolescentes;
+  const unica = e.preguntas.find((p) => p.tipo === 'unica');
+  const cambiada = {
+    ...e,
+    preguntas: e.preguntas.map((p) => (p === unica ? { ...p, opciones: [...p.opciones, { valor: 'nueva', texto: 'Nueva' }] } : p)),
+  };
+  await assert.rejects(inicializarBase(db, { ...ENCUESTAS, adolescentes: cambiada }), /opciones/);
+  // Con las definiciones de siempre sigue arrancando (reiniciar no es un cambio).
+  await inicializarBase(db, ENCUESTAS);
+  db.close();
 });

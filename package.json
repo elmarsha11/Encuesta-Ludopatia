@@ -15,7 +15,9 @@
     "contenido": "node scripts/generar-contenido.js",
     "resultados": "node --env-file-if-exists=.env scripts/resultados.js",
     "ejemplos-dashboard": "node scripts/generar-ejemplos-dashboard.js",
-    "prueba": "node scripts/servidor-de-prueba.js"
+    "prueba": "node scripts/servidor-de-prueba.js",
+    "qr": "node scripts/generar-qr.js",
+    "backup": "node --env-file-if-exists=.env scripts/backup.js"
   },
   "dependencies": {
     "@libsql/client": "0.18.0",
@@ -23,5 +25,8 @@
     "express": "5.2.1",
     "express-rate-limit": "8.7.0",
     "helmet": "8.3.0"
+  },
+  "devDependencies": {
+    "qrcode": "^1.5.4"
   }
 }

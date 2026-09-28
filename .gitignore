@@ -9,3 +9,6 @@ node_modules/
 *.db-wal
 *.db-shm
 backups/
+
+# QR generados (se regeneran con npm run qr).
+qr/

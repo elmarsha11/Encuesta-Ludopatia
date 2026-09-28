@@ -33,6 +33,15 @@ Arranca un servidor de prueba con su propia base (`datos-prueba.db`, que nunca s
 
 Desde el celular, conectado al mismo wifi: `http://<IP de la PC>:3000/adultos/` (la IP sale con `ipconfig` en Windows o `ipconfig getifaddr en0` en Mac).
 
+## Ponerlo en internet
+
+Paso a paso en **[docs/DESPLIEGUE.md](docs/DESPLIEGUE.md)**: Render (servidor, receta en `render.yaml`) + Turso (base), con una base para el piloto y otra para la semana real.
+
+```bash
+npm run qr -- https://<servicio>.onrender.com   # QR estáticos de las dos encuestas en qr/
+npm run backup                                  # copia verificada de la base de .env en backups/
+```
+
 ## Cómo está organizado
 
 | Carpeta | Qué hay |

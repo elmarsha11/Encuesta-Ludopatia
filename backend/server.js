@@ -1,11 +1,12 @@
 // Punto de entrada: lee la configuración, prepara la base y abre el puerto.
 
 import { crearApp } from './app.js';
-import { crearCliente, inicializarBase } from './db/conexion.js';
+import { crearCliente, inicializarBase, revisarUbicacionDeLaBase } from './db/conexion.js';
 import { ENCUESTAS } from './encuestas/index.js';
 import { leerVentanas } from './ventanas.js';
 import { crearAcceso, revisarClaves } from './acceso.js';
 
+revisarUbicacionDeLaBase(process.env.DATABASE_URL);
 const db = crearCliente({
   url: process.env.DATABASE_URL,
   authToken: process.env.DATABASE_AUTH_TOKEN,
