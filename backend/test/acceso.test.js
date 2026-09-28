@@ -140,3 +140,26 @@ describe('API de resultados', () => {
     assert.ok(respuestas.includes(429));
   });
 });
+
+test('detrás del proxy de Render (TRUST_PROXY=1), la cookie de sesión sale marcada Secure', async () => {
+  // Render recibe HTTPS y le pasa al servidor HTTP común, avisando en X-Forwarded-Proto.
+  // Con trustProxy el servidor lo cree y marca la cookie para que solo viaje cifrada.
+  const db = crearCliente({ url: ':memory:' });
+  await inicializarBase(db, ENCUESTAS);
+  const cookieCon = async (trustProxy) => {
+    const app = crearApp({ db, encuestas: ENCUESTAS, trustProxy, acceso: crearAcceso({ claves: CLAVES }) });
+    const servidor = app.listen(0);
+    await new Promise((r) => servidor.once('listening', r));
+    const res = await fetch(`http://127.0.0.1:${servidor.address().port}/api/acceso`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Forwarded-Proto': 'https' },
+      body: JSON.stringify({ clave: CLAVES.juli }),
+    });
+    servidor.close();
+    return res.headers.get('set-cookie');
+  };
+  assert.match(await cookieCon(1), /;\s*Secure/i);
+  // Sin confiar en el proxy, el encabezado se ignora (cualquiera podría inventarlo).
+  assert.doesNotMatch(await cookieCon(false), /;\s*Secure/i);
+  db.close();
+});
