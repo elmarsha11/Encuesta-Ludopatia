@@ -60,99 +60,46 @@ Dos encuestas sobre ludopatía, para dos públicos y **dos instituciones distint
 4. **Sin columna de consentimiento**: si alguien responde "No" a "¿Aceptás participar?", el frontend corta ahí y nunca llama al endpoint de guardado.
 5. **Fecha de respuesta sin hora en el Excel exportado**: edad exacta + carrera + género + hora exacta puede identificar a alguien en grupos chicos.
 
-## 4. Encuesta de ADULTOS (18+)
+## 4. Encuesta de ADULTOS (18+) — versión del 29/9 (DECIDIDO)
 
-Preguntas **obligatorias según el grupo** (no se tocan): **edad, género, carrera y el bloque de educación financiera**. El resto viene de las imágenes y se puede ajustar (**PROPUESTA** de ajustes marcada abajo).
+**Qué pasó.** El grupo de Administración Financiera no aprobó la primera versión (ni las preguntas ni el formato) y pidió volver a su lista original (`docs/fuentes/adultos-preguntas-1.jpeg` y `adultos-preguntas-2-no-apuesta.jpg`). No respondió las consultas que se le hicieron. Su objetivo declarado: **«la cantidad de gente que apuesta, ni nada más»**.
+
+**Regla para decidir.** El grupo decide *qué se pregunta*; el equipo de datos decide *cómo se guarda y cómo se ve*; por encima de los dos está **la consigna del instituto**, que es lo que se evalúa. Con esa regla:
+
+| Pedido del grupo | Qué se hizo | Por qué |
+|---|---|---|
+| Lista original de preguntas | Se respeta | Es su contenido |
+| Sin PGSI, ingresos ni deudas | Se sacaron | No están en su lista y su objetivo es contar |
+| Sin secciones ni portadas, de a una | Una pregunta por pantalla, sin «Parte X de N» | Pedido explícito |
+| «La portada no va» | Presentación corta y consentimiento en **una** pantalla | La consigna exige una «placa inicial» |
+| Educación financiera al final | Al final, para todos | Pedido explícito |
+| Frecuencia «múltiple» | Respuesta **única** (+ «Menos de una vez al mes») | Dato: nadie apuesta diaria y mensualmente a la vez |
+| Monto como «número libre» | **Rangos** | Consigna del instituto (y un número libre no se puede agrupar) |
+| (no estaba) | Se agregó **medio de pago** | Consigna del instituto |
+| Preguntas para quienes no apuestan | Las 5, solo para quienes no apuestan | Consigna: «al menos tres o cuatro» |
+| «¿Realizás apuestas online?» | «¿Realizás apuestas, ya sea online o presenciales?» | Después se pregunta por casino presencial: con «online» quien solo va al casino quedaría contado como «no», y es el dato principal |
+| «¿Recibiste…?» antes de «¿Sabés qué es…?» | Primero «¿Sabés qué es?» | Quien no sabe qué es no puede saber si la recibió |
+| Estética «demasiado formal» | Tema nuevo «Pulso» (sección 8.1) | Pedido explícito |
+
+Respuestas obligatorias. Sin «Prefiero no responder» (no está en su lista y ya no hay preguntas de ingresos ni deudas).
 
 ```
-PANTALLA 0 — Intro + consentimiento (PROPUESTA)
-  Texto: anónima, sin respuestas correctas, sin juzgar, < 5 min.
-  "¿Aceptás participar?" Sí / No  → No: fin sin guardar nada.
-  DECIDIDO: participar es voluntario; lo obligatorio es responder cada pregunta una vez que se aceptó
-  (no hay "Prefiero no responder" y no se avanza sin contestar).
-
-BLOQUE 1 — Sobre vos (obligatorio)
-  → ¿Qué edad tenés? (número, 18–99)
-  → ¿Qué carrera estás cursando? (única)
-      DECIDIDO (lista corregida por Juli; la de la imagen estaba mal cargada):
-      Educación Inicial
-      Profesorado de Inglés / Profesorado de Matemáticas / Profesorado de Literatura
-      Tecnicatura en Ciencia de Datos e IA / Tecnicatura en Seguridad e Higiene /
-      Tecnicatura en Administración Financiera / Tecnicatura en Acompañante Terapéutico /
-      Tecnicatura en Trabajo Social
-      UI: agrupadas en tres bloques visuales (Educación Inicial / Profesorados / Tecnicaturas).
-  → ¿Con qué género te identificás? (Masculino / Femenino / Otro / Prefiero no decir)
-  → ¿En qué condición laboral te encontrás? (Trabajo propio / No trabajo / Trabajo en relación de dependencia)
-  → ¿Dependés económicamente de alguien? (Sí / No)
-  → ¿Alguien depende económicamente de vos? (Sí / No)
-  → Ingresos del HOGAR (DECIDIDO: slider de 5 pasos, pregunta propia)
-      "¿Cuánto dinero ingresa por mes en tu hogar, aproximadamente?"
-      Paso 1: "Sin ingresos o hasta $A" … Paso 5: "$D o más". Pasos 2-4 = rangos intermedios.
-      DECIDIDO: en salarios mínimos (SMVM): hasta 1 / 1-2 / 2-3 / 3-5 / más de 5, mostrando el
-      monto en pesos equivalente. (Los cortes en pesos, de $10.000 a $100.000, quedaban por debajo
-      del salario mínimo, $383.800 en septiembre de 2026, y casi todos habrían caído en el paso 5.)
-  → Deudas (DECIDIDO: separada de ingresos pero complementaria)
-      "¿Tenés deudas actualmente?" (Sí / No)
-        → si Sí: slider de 5 pasos, en relación al ingreso (DECIDIDO):
-          "Menos de medio mes de ingresos" / "Medio mes a 1 mes" / "1 a 3 meses" /
-          "3 a 6 meses" / "Más de 6 meses de ingresos".
-          Así se compara a una persona que gana poco con una que gana mucho, sin depender de la inflación.
-  Reglas de UI para los sliders (PROPUESTA):
-    - Arrancan SIN valor seleccionado (sin un punto de partida marcado). Si arrancaran en el medio,
-      quien no lo toque quedaría guardado con una respuesta que nunca dio.
-    - Muestran el rango en texto mientras se desliza ("Entre $X y $Y").
-    - En el backend se guarda el número de paso (1-5), no el texto: es ordinal y fácil de graficar.
-
-BLOQUE 2 — Pregunta gatillo
-  Original: "¿Realizás apuestas online?" (Sí / No)
-  DECIDIDO: "En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?"
-    Motivos: (a) después se pregunta por "Casino" presencial, que no es online;
-             (b) el PGSI mide los últimos 12 meses, así que el gatillo tiene que usar el mismo período.
-
-  SI SÍ → "Tus hábitos de apuesta"
-    → ¿Con qué frecuencia apostás? (ÚNICA — en la imagen dice "múltiple", pero una frecuencia es una sola)
-        DECIDIDO (mismas opciones que adolescentes, para poder comparar):
-        Menos de una vez al mes / Algunas veces al mes / Una vez por semana /
-        Varias veces por semana / Casi todos los días
-    → ¿Por qué apostás? (múltiple: Diversión / Ganar dinero / Influencia social / Otra)
-    → ¿Qué tipo de apuestas hacés? (múltiple: Casino presencial / Casino online / Apuestas deportivas)
-    → ¿Reconocés si apostás en una plataforma legal? (Sí / No)
-    → ¿Incluiste a alguien para que se involucre en el mundo de las apuestas? (Sí / No / No sé)
-    → ¿Cuánto dinero solés apostar cada vez? (DECIDIDO: rangos, slider de 5 pasos)
-        Menos de $10.000 / $10.000–$25.000 / $25.000–$50.000 / $50.000–$100.000 / Más de $100.000
-
-    → ¿De dónde proviene el dinero? (múltiple: Sueldo / Préstamo / Planes sociales / Otro)
-        DECIDIDO. "Otro" se agrega porque, como en adultos todo es obligatorio, sin esa opción
-        quien no encaje queda forzado a marcar una opción falsa.
-    → PGSI — 9 preguntas (ver sección 6)
-
-  SI NO → "Tu mirada sobre las apuestas" (de preguntas 2.jpg)
-    → ¿Pensaste alguna vez en hacerlo? (Sí / No)
-    → ¿Cuál es el motivo principal por el que no apostás? (única: No me interesa /
-        Miedo a perder plata / Miedo a volverme adicto / No sé cómo se hace / Otro)
-
-BLOQUE 3 — Entorno y publicidad (TODOS) — DECIDIDO
-  Estas preguntas estaban solo en la rama "no apuesta". Se pasan al bloque común porque,
-  para estudiar el rol de la publicidad y del entorno, hay que comparar a los que apuestan
-  con los que no. Si solo responde un grupo, esa comparación es imposible.
-    → ¿Tenés familiares o amigos cercanos que apuesten regularmente? (Sí / No / No sé)
-    → ¿Creés que se puede generar plata fácil apostando? (Sí / No / A veces)
-    → ¿Por qué canales ves más publicidad de apuestas? (múltiple: Redes sociales /
-        Videojuegos / Streamers y/o influencers / TV / La calle / Ninguno)
-        "TV" y "La calle" se suman para poder comparar con adolescentes.
-
-BLOQUE 4 — Educación financiera (obligatorio, exclusivo de adultos)
-  DECIDIDO el orden: primero "¿sabés qué es?" y después "¿la recibiste?".
-    → ¿Sabés qué es la educación financiera? (Sí / No)
-    → ¿Recibiste educación financiera? (Sí / No / No sé)
-        → si Sí: ¿Dónde? (múltiple: Casa / Escuela / Internet)
-    → ¿Te gustaría recibirla? (Sí / No)
-    → Breve explicación de qué es la educación financiera (informativo). PENDIENTE: Claude redacta un borrador y el grupo lo aprueba.
-
-PANTALLA FINAL — Agradecimiento + recursos de ayuda (ver sección 7)
+PLACA INICIAL — presentación corta + «¿Aceptás participar?» (Sí / No) en la misma pantalla
+  → edad (18–99) · carrera (12, en Profesorados / Tecnicaturas / Otras) · género (Masc / Fem / Otro)
+  → condición laboral · ¿dependés económicamente de alguien? · ¿alguien depende de vos?
+  → ¿Realizás apuestas, ya sea online o presenciales? (Sí / No)
+     SÍ → frecuencia · tipo de apuesta (múltiple) · por qué (múltiple) · monto por vez (rangos:
+          <$10.000 / $10.000–50.000 / $50.000–100.000 / >$100.000) · medio de pago (múltiple:
+          efectivo, débito, crédito, billetera virtual, transferencia, otro) · origen del dinero
+          (múltiple) · ¿reconocés si la plataforma es legal? · ¿incluiste a alguien?
+     NO → ¿pensaste en hacerlo? · motivo principal · familiares o amigos que apuesten ·
+          ¿se puede generar plata fácil? · canales de publicidad (redes, videojuegos,
+          streamers, ninguno)
+  → Educación financiera (todos): ¿sabés qué es? · ¿la recibiste? (→ ¿dónde?) · ¿te gustaría recibirla?
+PLACA FINAL — agradecimiento + líneas de ayuda (al grupo le pareció «un gran acierto»)
 ```
 
-**Estimación de tiempo** (rama "sí", la más larga): 9 + 1 + 8 + 9 (PGSI) + 3 + 4 ≈ 34 preguntas, casi todas de un toque. Entra en 5 minutos si cada pantalla es ágil, pero está justo. **Hay que medirlo en una prueba piloto** (sección 11).
+**PENDIENTE (carreras):** el grupo lista «Tecnicatura Enfermería» y «Enfermería» por separado (se cargaron como «Enfermería» en Tecnicaturas y «Enfermería (otra)» en Otras) y escribe «ATM», que se asumió como Acompañante Terapéutico. Los textos se pueden corregir en cualquier momento; lo que no se cambia después del piloto son los valores.
 
 ## 5. Encuesta de ADOLESCENTES (12-17)
 
@@ -202,27 +149,9 @@ SECCIÓN 5 — Un breve espacio para leerte (opcional)
 PANTALLA FINAL — Agradecimiento + recursos de ayuda (ver sección 7)
 ```
 
-## 6. Instrumento de riesgo: PGSI (DECIDIDO, solo adultos, rama "sí")
+## 6. Instrumento de riesgo: PGSI (DESCARTADO el 29/9)
 
-El **Problem Gambling Severity Index** (índice de severidad del juego problemático) es un cuestionario de 9 preguntas validado internacionalmente. Reemplaza a las "escalas de impacto" propias del plan anterior. Con él se puede decir "el X% presenta riesgo moderado" con respaldo metodológico.
-
-Período: **últimos 12 meses**. Cada pregunta: Nunca (0) / A veces (1) / La mayoría de las veces (2) / Casi siempre (3).
-
-1. ¿Apostaste más de lo que realmente podías permitirte perder?
-2. ¿Necesitaste apostar cantidades cada vez mayores para sentir la misma emoción?
-3. ¿Volviste otro día para intentar recuperar el dinero que habías perdido?
-4. ¿Pediste dinero prestado o vendiste algo para conseguir dinero para apostar?
-5. ¿Sentiste que podrías tener un problema con el juego?
-6. ¿El juego te causó problemas de salud, incluido estrés o ansiedad?
-7. ¿Otras personas criticaron tus apuestas o te dijeron que tenías un problema con el juego, más allá de que vos creyeras que era cierto o no?
-8. ¿El juego te causó problemas económicos a vos o a tu hogar?
-9. ¿Te sentiste culpable por la forma en que apostás o por lo que pasa cuando apostás?
-
-Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin riesgo · 1–2 = riesgo bajo · 3–7 = riesgo moderado · 8+ = juego problemático.
-
-**Versión en español (DECIDIDO buscar primero en español):** existe una validación publicada: López-González, Estévez y Griffiths (2018), *Spanish validation of the Problem Gambling Severity Index: A confirmatory factor analysis with sports bettors*, Journal of Behavioral Addictions 7(3). Muestra de 659 apostadores deportivos adultos de España, consistencia interna muy alta (α ordinal = .97). También hay una versión en español que distribuye el Departamento de Salud Mental y Adicciones de Connecticut (DMHAS).
-
-**PENDIENTE**: la redacción de arriba es una traducción de trabajo. Hay que reemplazarla por los ítems textuales del artículo (Juli lo descarga: desde el entorno de desarrollo el sitio de la revista está bloqueado). Como esa validación es de España, se permite adaptar al voseo rioplatense ("apostaste" en vez de "has apostado") sin cambiar el sentido de cada ítem, y dejar documentado el cambio. No hay validación específica para Argentina: es una limitación a mencionar en el informe del grupo.
+Se usaba en la primera versión de adultos (9 ítems, validación española de López-González, Estévez y Griffiths, 2018). El grupo lo sacó: su objetivo es contar cuántos apuestan, no medir el riesgo. El motor conserva el componente de escala de frecuencia que lo dibujaba, probado con una encuesta de prueba (`backend/test/encuesta-de-prueba.js`), por si se vuelve a necesitar.
 
 ## 7. Consideraciones éticas
 
@@ -236,7 +165,7 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
 - **Consentimiento para la encuesta de adolescentes**: hoy la autorización institucional es solo de palabra. PROPUESTA fuerte: conseguir **por escrito** (un email alcanza) la autorización de la dirección de la escuela, y enviar una **nota informativa a las familias**. Es una encuesta a menores sobre un tema sensible: tenerlo por escrito protege a los chicos, a la escuela y a Juli. Es una cuestión institucional, no técnica, y no reemplaza el asesoramiento de la institución.
 - **Docentes con acceso al dashboard de adolescentes**: los docentes conocen a sus alumnos, así que en un curso chico edad + género alcanzan para adivinar quién respondió qué, y el comentario libre puede delatar a su autor aunque no tenga el nombre. Por eso (DECIDIDO): el dashboard de docentes muestra **solo datos agregados** y oculta cualquier celda con menos de 5 respuestas; el Excel crudo y los comentarios libres los ve **solo Juli**, que decide qué compartir.
 - **La misma regla de menos de 5 vale para el dashboard de adultos** (DECIDIDO): en un cruce como carrera × riesgo PGSI, una carrera chica puede dejar a una sola persona en una celda, y sus compañeros de cursada la reconocerían.
-- **«Prefiero no responder» en las preguntas sensibles de adultos** (DECIDIDO): si apostó en los últimos 12 meses, ingresos, deudas, deuda relativa, monto por apuesta y origen del dinero. Siguen siendo obligatorias (hay que elegir algo), pero obligar sin esa salida empuja a mentir o a abandonar. En las escalas se guarda en una columna aparte (`*_no_responde`), nunca como un número especial dentro de la escala. **El PGSI no la tiene**: es un instrumento validado y su puntaje necesita los 9 ítems. Quien no dice si apostó no ve ninguna de las dos ramas.
+- **«Prefiero no responder» en las preguntas sensibles de adultos** (primera versión; desde el 29/9 esas preguntas ya no están): si apostó en los últimos 12 meses, ingresos, deudas, deuda relativa, monto por apuesta y origen del dinero. Siguen siendo obligatorias (hay que elegir algo), pero obligar sin esa salida empuja a mentir o a abandonar. En las escalas se guarda en una columna aparte (`*_no_responde`), nunca como un número especial dentro de la escala. **El PGSI no la tiene**: es un instrumento validado y su puntaje necesita los 9 ítems. Quien no dice si apostó no ve ninguna de las dos ramas.
 - No se guardan direcciones IP en la base ni en logs propios.
 
 ## 8. Arquitectura técnica
@@ -248,7 +177,8 @@ Puntaje total (0–27), que **calcula el backend**, nunca el frontend: 0 = sin r
 - Mobile-first: se entra por QR desde el celular.
 - **Una pregunta (o un grupo chico) por pantalla**, con transiciones suaves y barra de progreso. Con bifurcaciones, el total de pasos cambia según la rama: la barra se calcula sobre la rama actual.
 - **Sin pase automático (decisión de Juli):** elegir una opción nunca pasa de pantalla; siempre se confirma con «Siguiente». La persona ve lo que eligió y puede corregirlo. «Atrás» lleva marco, para que se lea como botón.
-- **Portada de cada parte:** número grande, «Parte X de N» y una marca por parte, centrado en el alto de la pantalla. N usa la misma regla que la barra de progreso (una rama sin decidir ya cuenta), así el total nunca crece a mitad de camino.
+- **Portada de cada parte (solo adolescentes):** número grande, «Parte X de N» y una marca por parte, centrado en el alto de la pantalla. N usa la misma regla que la barra de progreso (una rama sin decidir ya cuenta), así el total nunca crece a mitad de camino. Adultos no la usa (`portadasDeSeccion: false` en su definición) y muestra presentación y consentimiento en una sola pantalla (`inicioConConsentimiento`).
+- **Tema de adultos «Pulso» (29/9, `frontend/adultos/tema-c.css`):** reemplaza a «Papel y tinta», que el grupo encontró demasiado formal. Violeta y rosa sobre lavanda clara (sin los colores que el grupo prohibió: rojo con amarillo, verde casino, dorado con negro), tipografías Bricolage Grotesque y Plus Jakarta Sans (OFL, servidas desde el propio servidor), opciones como píldoras que se pintan con un rebote chico al elegirlas, manchas de color que flotan despacio en el fondo y una medalla con tilde al final (sin confeti: no es un premio). Contrastes verificados (texto ≥ 4.5:1). Con «menos movimiento» activado en el celular, todo queda quieto. «Papel y tinta» (`tema-b.css`) sigue existiendo porque lo usa el dashboard.
 - **Cada pantalla entra sin deslizar (pedido de Juli):** medido en las 65 pantallas con el alto visible de 4 celulares. En un iPhone 13/14 o más grande entran todas. Para eso: la portada se dividió en presentación y consentimiento; las listas largas sin orden van en dos columnas; en pantallas bajas los tokens se compactan (media queries por alto), sin bajar de 44px los botones ni de 16px el texto. En celulares muy chicos (iPhone SE, Android chico) algunas listas y la pantalla final se pasan un poco: el scroll no se bloquea (lo cortado quedaría inalcanzable) y un degradé sobre el pie avisa que hay más.
 - La lógica de bifurcación vive en el frontend para que la experiencia sea fluida. **El backend vuelve a validar todo** antes de guardar.
 - Guardado: **un solo envío al final** (`fetch` POST en JSON). PROPUESTA: guardar el progreso en `sessionStorage` para que un refresh accidental no borre lo respondido.
@@ -287,7 +217,9 @@ Se reemplaza MySQL/XAMPP por **SQLite**: la base es un solo archivo, no hay serv
    - `exceljs` 4.4.0 trae una alerta moderada de `npm audit` en su dependencia `uuid` (GHSA-w5hq-g745-h8pq): afecta a los UUID v3/v5/v6 generados con un buffer propio, algo que este uso no hace. El «arreglo» que propone npm es bajar a exceljs 3.4.0, que es peor.
 2. **Dashboard web**: ver 8.6.
 
-### 8.6 Dashboards (DECIDIDO, en construcción)
+### 8.6 Dashboards (DECIDIDO)
+
+> **Adultos desde el 29/9:** sin PGSI. «Hallazgos principales» muestra cuántos apuestan y con qué frecuencia; los cruces comparan «apuesta / no apuesta» según edad, género, carrera, condición laboral, dependencia económica y educación financiera (`backend/resultados/configuracion.js`). Lo que sigue sobre el PGSI describe la primera versión.
 
 - **Un motor, dos configuraciones**, igual que las encuestas. La base se genera sola desde la definición de cada encuesta: cada pregunta de opción o escala es un gráfico de frecuencias. Encima, cada encuesta configura lo que no se deduce solo: cruces y bloques especiales (distribución PGSI).
 - **El servidor manda solo números agregados**, nunca filas individuales: aunque alguien abra las herramientas del navegador, las respuestas de una persona no llegan a su computadora.
@@ -389,7 +321,7 @@ Encuesta-Ludopatia/
 1. ✅ **Base de datos**: `database/schema.sql` generado desde las definiciones, con CHECKs y triggers de solo agregar.
 2. ✅ **Backend núcleo**: Express, `@libsql/client`, definición de ambas encuestas, `POST /api/respuestas/:encuesta` con validación, límite de envíos, helmet y 32 tests automáticos.
 3. ✅ **Diseño** (en conjunto, Claude Design): material listo en `docs/diseno/` (brief, guía con prompts, contrato, contenido generado). DECIDIDO: dos identidades distintas (adolescentes: curiosa y confiable, no divertida; adultos: editorial y detallada) sobre un mismo motor de componentes con dos temas. Sin restricciones de color.
-4. ✅ **Frontend**: adolescentes (tema "Noche tranquila") y adultos (tema "Papel y tinta") sobre el mismo motor sin framework, traducido de los prototipos de Claude Design. El motor elige cada componente por la forma de la pregunta (tramos, frecuencia PGSI, opciones agrupadas, nota de ayuda, pantalla info). Ambos probados de punta a punta en Chromium. Quedan textos marcados PROPUESTA para revisar con cada grupo.
+4. ✅ **Frontend**: adolescentes (tema "Noche tranquila") y adultos (tema "Papel y tinta"; desde el 29/9, "Pulso") sobre el mismo motor sin framework, traducido de los prototipos de Claude Design. El motor elige cada componente por la forma de la pregunta (tramos, frecuencia PGSI, opciones agrupadas, nota de ayuda, pantalla info). Ambos probados de punta a punta en Chromium. Quedan textos marcados PROPUESTA para revisar con cada grupo.
 5. ✅ **Integración** frontend ↔ backend (ambas encuestas), con ventanas de apertura (`VENTANAS_*`) y pantalla de encuesta cerrada.
 6. ✅ **Dashboards** + **exportación Excel** + **autenticación**: cálculo con regla de anonimato, página `/resultados/` con acceso por rol, Control de participación y Excel en dos versiones. Probado de punta a punta en Chromium (escritorio, celular e impresión).
 7. **Prueba piloto** con 3-5 personas por encuesta: medir tiempos, detectar preguntas confusas.
@@ -400,13 +332,11 @@ Encuesta-Ludopatia/
 
 | # | Tema | Quién decide |
 |---|------|--------------|
-| 1 | Valor del salario mínimo de octubre de 2026 (constante `SMVM_REFERENCIA` en `backend/encuestas/adultos.js`) | Juli |
-| 3 | Texto de la explicación de educación financiera (Claude redacta un borrador, el grupo aprueba) | Grupo |
-| 4 | Ítems textuales del PGSI en español (artículo de 2018) | Juli |
+| 1 | Carreras de adultos: ¿«Tecnicatura Enfermería» y «Enfermería» son dos carreras distintas? ¿«ATM» es Acompañante Terapéutico? (sección 4) | Juli / grupo |
+| 2 | Crear una base piloto nueva en Turso antes de publicar este cambio (la actual tiene la tabla de adultos vieja: el servidor no arrancaría) — `docs/DESPLIEGUE.md`, paso 1b | Juli |
 | 5 | Verificar las líneas de ayuda 0800-444-4000 y 141 | Juli |
 | 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
-| 9 | Preguntas de investigación del dashboard de adultos (hay una propuesta en 8.6) | Grupo |
 | 10 | Elegir las tres contraseñas de resultados (12+ caracteres, distintas) y cargar la del grupo y la de docentes recién al cerrar la encuesta | Juli |
 | 11 | Confirmar que el grupo recibe el Excel de resultados (sin filas por persona) y no el crudo (8.4) | Juli |
 
-**Ya decidido:** ingresos medidos en salarios mínimos; cortes del monto apostado ($10k / 25k / 50k / 100k); hosting opción B con la A de respaldo; respuestas obligatorias en adultos, ingreso del hogar, deuda relativa al ingreso, nuevo gatillo de 12 meses, frecuencia como respuesta única, entorno y publicidad en el bloque común (con TV y calle), "Otro" en origen del dinero, "Prefiero no decir" en género, lista corregida de carreras, PGSI en español, fechas, destinatarios de cada dashboard, «Prefiero no responder» en las preguntas sensibles de adultos, entre 70 y 100 respuestas esperadas por encuesta, contador anónimo de no participación y abandonos en ambas (8.7), regla de menos de 5 en ambos dashboards, dashboards entregados al final de la semana con control en vivo solo para Juli.
+**Ya decidido:** preguntas de adultos según la lista del grupo más lo que exige la consigna (sección 4, 29/9); tema «Pulso» para adultos; hosting opción B con la A de respaldo; fechas y horario; destinatarios de cada dashboard; entre 70 y 100 respuestas esperadas por encuesta; contador anónimo de no participación y abandonos en ambas (8.7); regla de menos de 5 en ambos dashboards; dashboards entregados al final de la semana con control en vivo solo para Juli. **Descartado el 29/9:** PGSI, ingresos, deudas, salario mínimo de referencia y el texto explicativo de educación financiera.

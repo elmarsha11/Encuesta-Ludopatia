@@ -75,7 +75,7 @@ export default {
         { valor: 'tec_adm_financiera', texto: 'Administración Financiera', grupo: 'Tecnicaturas' },
         // PENDIENTE: el grupo escribió «ATM»; se asume Acompañante Terapéutico.
         { valor: 'tec_acompanante_terapeutico', texto: 'Acompañante Terapéutico', grupo: 'Tecnicaturas' },
-        { valor: 'cufa', texto: 'CUFA (Curso de Formación Básica)', grupo: 'Otras' },
+        { valor: 'cufa', texto: 'CUFA (Formación Básica)', grupo: 'Otras' },
         // PENDIENTE: el grupo lista «Enfermería» y «Tecnicatura Enfermería» por separado.
         { valor: 'enfermeria', texto: 'Enfermería (otra)', grupo: 'Otras' },
       ],

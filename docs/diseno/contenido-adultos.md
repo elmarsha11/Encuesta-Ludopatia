@@ -38,7 +38,7 @@ _undefined_
 - Ciencia de Datos e IA _(grupo: Tecnicaturas)_
 - Administración Financiera _(grupo: Tecnicaturas)_
 - Acompañante Terapéutico _(grupo: Tecnicaturas)_
-- CUFA (Curso de Formación Básica) _(grupo: Otras)_
+- CUFA (Formación Básica) _(grupo: Otras)_
 - Enfermería (otra) _(grupo: Otras)_
 
 #### 3. ¿Con qué género te identificás?

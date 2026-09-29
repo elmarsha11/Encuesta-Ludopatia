@@ -223,7 +223,13 @@ describe('páginas', () => {
     assert.equal(html.status, 200);
     const texto = await html.text();
     assert.match(texto, /<main class="app">/);
-    assert.match(texto, /tema-b\.css/);
+    assert.match(texto, /tema-c\.css/);
+    assert.equal((await fetch(`${base}/adultos/tema-c.css`)).status, 200);
+    assert.equal((await fetch(`${base}/adultos/fuentes/bricolage-grotesque-latin-wght-normal.woff2`)).status, 200);
+    assert.equal((await fetch(`${base}/adultos/fuentes/plus-jakarta-sans-latin-wght-normal.woff2`)).status, 200);
+  });
+
+  test('el dashboard sigue teniendo su tema («Papel y tinta») y sus tipografías', async () => {
     assert.equal((await fetch(`${base}/adultos/tema-b.css`)).status, 200);
     assert.equal((await fetch(`${base}/adultos/fuentes/newsreader-latin-wght-normal.woff2`)).status, 200);
     assert.equal((await fetch(`${base}/adultos/fuentes/instrument-sans-latin-wght-normal.woff2`)).status, 200);
