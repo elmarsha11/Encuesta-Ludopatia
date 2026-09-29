@@ -9,6 +9,7 @@ import { definicionPublica } from '../encuestas/publica.js';
 import { validarRespuesta } from '../validacion.js';
 import adolescentes from '../encuestas/adolescentes.js';
 import adultos from '../encuestas/adultos.js';
+import deprueba from './encuesta-de-prueba.js';
 
 // El frontend recibe la definición por JSON: se simula ese viaje.
 const def = JSON.parse(JSON.stringify(definicionPublica(adolescentes)));
@@ -94,7 +95,7 @@ describe('progreso', () => {
     const publicaAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
     const todas = [...publicaAdultos.preguntas, ...def.preguntas];
     const enColumnas = todas.filter(L.enColumnas).map((p) => p.id).sort();
-    assert.deepEqual(enColumnas, ['canales_publicidad', 'carrera', 'donde_publicidad', 'en_que_aposto', 'motivo', 'percepcion_por_que']);
+    assert.deepEqual(enColumnas, ['carrera', 'donde_publicidad', 'en_que_aposto', 'medio_pago', 'motivo', 'percepcion_por_que']);
     // La frecuencia es una escala ordenada: aunque sea larga, queda en una columna.
     assert.equal(L.enColumnas(def.preguntas.find((p) => p.id === 'frecuencia_ultimo_anio')), false);
   });
@@ -139,10 +140,36 @@ describe('lo que envía el frontend lo acepta el backend', () => {
     assert.equal(validarRespuesta(adolescentes, c).ok, true);
   });
 
-  test('las pantallas informativas de adultos no se envían', () => {
-    const defAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
-    const c = L.cuerpo(defAdultos, { info_ef: 'x', edad: 30 });
+  test('las pantallas informativas no se envían', () => {
+    const c = L.cuerpo(defPrueba, { info: 'x', edad: 30 });
     assert.deepEqual(c, { edad: 30 });
+  });
+
+  test('adultos: camino "apuesta" completo', () => {
+    const defAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
+    const r = L.limpiar(defAdultos, {
+      edad: '24',
+      carrera: 'cufa',
+      genero: 'otro',
+      situacion_laboral: 'no_trabajo',
+      depende_economicamente: 'si',
+      alguien_depende: 'no',
+      apuesta: 'si',
+      frecuencia: 'mensualmente',
+      tipo_apuesta: ['deportivas'],
+      motivo: ['otra'],
+      monto_por_vez: 'menos_10k',
+      medio_pago: ['efectivo', 'transferencia'],
+      origen_dinero: ['planes_sociales'],
+      plataforma_legal: 'si',
+      incluyo_a_alguien: 'no',
+      penso_apostar: 'si', // de la otra rama: limpiar() lo descarta
+      sabe_que_es_ef: 'no',
+      recibio_ef: 'no_se',
+      quiere_recibir_ef: 'no',
+    });
+    assert.equal(r.penso_apostar, undefined);
+    assert.deepEqual(validarRespuesta(adultos, L.cuerpo(defAdultos, r)).errores, undefined);
   });
 });
 
@@ -150,30 +177,55 @@ test('formatearApertura escribe la fecha en hora argentina', () => {
   assert.equal(L.formatearApertura('2026-10-19T11:00:00.000Z'), 'el lunes 19 de octubre a las 08:00');
 });
 
-// --- Adultos: componentes nuevos (design/adultos/HANDOFF.md) ---------------------
+// --- Adultos: de pregunta en pregunta ------------------------------------------
 
-const defAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
-const deAdultos = (id) => defAdultos.preguntas.find((p) => p.id === id);
+describe('adultos sin portadas de sección', () => {
+  const defAdultos = JSON.parse(JSON.stringify(definicionPublica(adultos)));
+
+  test('ningún paso es una portada, en ninguna de las dos ramas', () => {
+    for (const apuesta of ['si', 'no']) {
+      const lista = L.pasos(defAdultos, { apuesta });
+      assert.ok(lista.length > 0);
+      assert.ok(lista.every((paso) => paso.clase === 'pregunta'));
+    }
+  });
+
+  test('educación financiera va al final, en las dos ramas', () => {
+    for (const apuesta of ['si', 'no']) {
+      const ids = L.pasos(defAdultos, { apuesta }).map((paso) => paso.pregunta.id);
+      assert.equal(ids.at(-1), 'quiere_recibir_ef');
+    }
+  });
+
+  test('las encuestas que no lo piden siguen con portadas', () => {
+    assert.ok(L.pasos(def, {}).some((paso) => paso.clase === 'seccion'));
+  });
+});
+
+// --- Formas de pregunta que hoy no usa ninguna encuesta real (encuesta-de-prueba.js) -
+
+const defPrueba = JSON.parse(JSON.stringify(definicionPublica(deprueba)));
+const dePrueba = (id) => defPrueba.preguntas.find((p) => p.id === id);
 
 describe('qué componente dibuja cada escala', () => {
   test('según la forma de la escala, no según la encuesta', () => {
-    assert.equal(L.componenteEscala(deAdultos('ingresos_hogar')), 'tramos');
-    assert.equal(L.componenteEscala(deAdultos('monto_por_vez')), 'tramos');
-    assert.equal(L.componenteEscala(deAdultos('pgsi_1')), 'frecuencia');
+    assert.equal(L.componenteEscala(dePrueba('ingresos')), 'tramos');
+    assert.equal(L.componenteEscala(dePrueba('deuda')), 'tramos');
+    assert.equal(L.componenteEscala(dePrueba('frec_1')), 'frecuencia');
     const escalaAdolescentes = def.preguntas.find((p) => p.tipo === 'escala');
     assert.equal(L.componenteEscala(escalaAdolescentes), 'puntos');
   });
 
-  test('el contador del PGSI va de 1 a 9 sobre el camino actual', () => {
-    const lista = L.pasos(defAdultos, { aposto_12m: 'si' });
-    assert.deepEqual(L.contextoFrecuencia(deAdultos('pgsi_1'), lista), { n: 1, total: 9 });
-    assert.deepEqual(L.contextoFrecuencia(deAdultos('pgsi_9'), lista), { n: 9, total: 9 });
+  test('el contador del bloque de frecuencia va de 1 a N sobre el camino actual', () => {
+    const lista = L.pasos(defPrueba, { usa: 'si' });
+    assert.deepEqual(L.contextoFrecuencia(dePrueba('frec_1'), lista), { n: 1, total: 3 });
+    assert.deepEqual(L.contextoFrecuencia(dePrueba('frec_3'), lista), { n: 3, total: 3 });
   });
 });
 
 describe('equivalente en pesos de los tramos', () => {
   const textos = { hasta: 'Hasta {monto}', masDe: 'Más de {monto}', entre: '{desde} a {hasta}', porMes: 'por mes' };
-  const p = deAdultos('ingresos_hogar');
+  const p = dePrueba('ingresos');
   const smvm = 383_800;
 
   test('primer paso, intermedio y último', () => {
@@ -182,22 +234,29 @@ describe('equivalente en pesos de los tramos', () => {
     assert.equal(L.textoPesos(p, 5, smvm, textos), 'Más de $1.919.000 por mes');
   });
 
-  test('sin rangosSmvm (deuda, monto) no se muestran pesos', () => {
-    assert.equal(L.textoPesos(deAdultos('deuda_relativa'), 2, smvm, textos), '');
+  test('sin rangosSmvm no se muestran pesos', () => {
+    assert.equal(L.textoPesos(dePrueba('deuda'), 2, smvm, textos), '');
   });
 });
 
 describe('opciones agrupadas', () => {
-  test('carrera: tres grupos, sin rótulo repetido en «Educación Inicial»', () => {
-    const grupos = L.gruposDeOpciones(deAdultos('carrera').opciones);
+  test('tres grupos, sin rótulo repetido en «Educación Inicial»', () => {
+    const grupos = L.gruposDeOpciones(dePrueba('carrera').opciones);
     assert.deepEqual(
       grupos.map((g) => [g.titulo, g.opciones.length, g.mostrarTitulo]),
       [
         ['Educación Inicial', 1, false],
-        ['Profesorados', 3, true],
-        ['Tecnicaturas', 5, true],
+        ['Profesorados', 2, true],
+        ['Tecnicaturas', 1, true],
       ],
     );
+  });
+
+  test('carrera de adultos: las 12 opciones en tres grupos con rótulo', () => {
+    const carrera = definicionPublica(adultos).preguntas.find((p) => p.id === 'carrera');
+    const grupos = L.gruposDeOpciones(carrera.opciones);
+    assert.equal(carrera.opciones.length, 12);
+    assert.deepEqual(grupos.map((g) => [g.titulo, g.mostrarTitulo]), [['Profesorados', true], ['Tecnicaturas', true], ['Otras', true]]);
   });
 
   test('sin grupo: un solo grupo sin rótulo (adolescentes no cambia)', () => {
@@ -209,21 +268,21 @@ describe('opciones agrupadas', () => {
 
 describe('pantalla informativa', () => {
   test('no es obligatoria y no cuenta en el progreso', () => {
-    const info = defAdultos.preguntas.find((p) => p.tipo === 'info');
-    assert.equal(L.esObligatoria(defAdultos, info), false);
-    const r = { aposto_12m: 'no' };
-    const lista = L.pasos(defAdultos, r);
-    const alFinal = L.progreso(defAdultos, r, lista.length, lista);
+    const info = defPrueba.preguntas.find((p) => p.tipo === 'info');
+    assert.equal(L.esObligatoria(defPrueba, info), false);
+    const r = { usa: 'no' };
+    const lista = L.pasos(defPrueba, r);
+    const alFinal = L.progreso(defPrueba, r, lista.length, lista);
     assert.equal(alFinal.hechas, alFinal.total);
   });
 });
 
 describe('«Prefiero no responder» en escalas', () => {
   test('viaja como texto; los pasos, como número', () => {
-    const p = deAdultos('ingresos_hogar');
-    const r = { edad: 30, ingresos_hogar: 'prefiero_no_responder' };
-    assert.equal(L.cuerpo(defAdultos, r).ingresos_hogar, 'prefiero_no_responder');
-    assert.equal(L.cuerpo(defAdultos, { ...r, ingresos_hogar: 2 }).ingresos_hogar, 2);
+    const p = dePrueba('ingresos');
+    const r = { edad: 30, ingresos: 'prefiero_no_responder' };
+    assert.equal(L.cuerpo(defPrueba, r).ingresos, 'prefiero_no_responder');
+    assert.equal(L.cuerpo(defPrueba, { ...r, ingresos: 2 }).ingresos, 2);
     assert.ok(L.tieneRespuesta(p, r), 'elegirla cuenta como respondida');
   });
 });

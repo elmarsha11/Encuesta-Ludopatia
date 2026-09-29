@@ -5,11 +5,13 @@ import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { crearApp } from '../app.js';
-import { crearCliente, inicializarBase, revisarUbicacionDeLaBase } from '../db/conexion.js';
+import { crearCliente, inicializarBase, revisarUbicacionDeLaBase, guardarRespuesta } from '../db/conexion.js';
 import { scriptCompleto } from '../db/esquema.js';
 import { leerVentanas } from '../ventanas.js';
 import { ENCUESTAS } from '../encuestas/index.js';
 import { adultoQueApuesta, adolescenteQueNunca } from './datos-ejemplo.js';
+import deprueba from './encuesta-de-prueba.js';
+import { validarRespuesta } from '../validacion.js';
 
 let db;
 let servidor;
@@ -44,7 +46,9 @@ describe('POST /api/respuestas/:encuesta', () => {
     const { rows } = await db.execute('SELECT * FROM respuestas_adultos');
     assert.equal(rows.length, 1);
     assert.equal(rows[0].carrera, 'tec_adm_financiera');
-    assert.equal(rows[0].pgsi_total, 5);
+    assert.equal(rows[0].medio_pago_billetera_virtual, 1);
+    assert.equal(rows[0].medio_pago_efectivo, 0);
+    assert.equal(rows[0].penso_apostar, null, 'la pregunta de la otra rama queda vacía, no en 0');
     assert.match(rows[0].fecha, /^\d{4}-\d{2}-\d{2}$/, 'la fecha no debe incluir la hora');
   });
 
@@ -96,8 +100,9 @@ describe('GET /api/encuestas/:encuesta', () => {
     assert.equal(def.id, 'adultos');
     assert.ok(def.preguntas.length > 0);
     assert.equal(def.tabla, undefined, 'no debe exponer el nombre de la tabla');
-    const deuda = def.preguntas.find((p) => p.id === 'deuda_relativa');
-    assert.deepEqual(deuda.visibleSi, { pregunta: 'tiene_deudas', es: ['si'] });
+    assert.equal(def.portadasDeSeccion, false);
+    const donde = def.preguntas.find((p) => p.id === 'donde_recibio_ef');
+    assert.deepEqual(donde.visibleSi, { pregunta: 'recibio_ef', es: ['si'] });
   });
 
   test('encuesta inexistente → 404', async () => {
@@ -111,10 +116,10 @@ describe('POST /api/eventos/:encuesta', () => {
 
   test('guarda cada evento como una fila suelta, sin respuestas ni identificadores', async () => {
     assert.equal((await evento('adolescentes', { evento: 'no_participa' })).status, 204);
-    assert.equal((await evento('adultos', { evento: 'vio', pregunta: 'ingresos_hogar' })).status, 204);
+    assert.equal((await evento('adultos', { evento: 'vio', pregunta: 'medio_pago' })).status, 204);
     const { rows } = await db.execute("SELECT * FROM eventos WHERE encuesta = 'adultos' AND evento = 'vio'");
     assert.deepEqual(Object.keys(rows[0]).sort(), ['encuesta', 'evento', 'fecha', 'id', 'pregunta']);
-    assert.equal(rows[0].pregunta, 'ingresos_hogar');
+    assert.equal(rows[0].pregunta, 'medio_pago');
     assert.match(rows[0].fecha, /^\d{4}-\d{2}-\d{2}$/, 'solo la fecha, sin hora');
   });
 
@@ -246,16 +251,22 @@ describe('protección de los datos', () => {
   });
 
   test('la base rechaza un número junto con la marca de «prefiero no responder»', async () => {
-    const { rows } = await db.execute('SELECT * FROM respuestas_adultos LIMIT 1');
-    const fila = { ...rows[0], id: undefined, ingresos_hogar: 3, ingresos_hogar_no_responde: 1 };
+    const dbPrueba = crearCliente({ url: ':memory:' });
+    await inicializarBase(dbPrueba, { prueba: deprueba });
+    const valida = validarRespuesta(deprueba, { edad: 30, carrera: 'datos', ingresos: 'prefiero_no_responder', deuda: 1, usa: 'no' });
+    assert.equal(valida.ok, true);
+    await guardarRespuesta(dbPrueba, deprueba, valida.fila);
+    const { rows } = await dbPrueba.execute('SELECT * FROM respuestas_prueba');
+    const fila = { ...rows[0], ingresos: 3, ingresos_no_responde: 1 };
     const columnas = Object.keys(fila).filter((c) => c !== 'id');
     await assert.rejects(
-      db.execute({
-        sql: `INSERT INTO respuestas_adultos (${columnas.join(', ')}) VALUES (${columnas.map(() => '?').join(', ')})`,
+      dbPrueba.execute({
+        sql: `INSERT INTO respuestas_prueba (${columnas.join(', ')}) VALUES (${columnas.map(() => '?').join(', ')})`,
         args: columnas.map((c) => fila[c]),
       }),
       /CHECK constraint failed/,
     );
+    dbPrueba.close();
   });
 
   test('la base rechaza valores fuera de rango aunque el validador fallara', async () => {

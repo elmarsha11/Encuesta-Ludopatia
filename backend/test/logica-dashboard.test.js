@@ -19,9 +19,12 @@ describe('reglas del dashboard', () => {
     assert.equal(D.filaOculta(fila), true);
   });
 
-  test('«riesgo según deudas» llega entero oculto en el ejemplo', () => {
-    assert.equal(D.cruceCompletoOculto(grupo.cruces.find((c) => c.id === 'riesgo_deudas')), true);
-    assert.equal(D.cruceCompletoOculto(grupo.cruces.find((c) => c.id === 'aposto_deudas')), false);
+  test('un cruce con todas las filas ocultas se trata entero como oculto', () => {
+    const oculta = { base: null, oculto: true, celdas: [{ n: null, oculto: true }, { n: null, oculto: true }] };
+    const visible = { base: 20, oculto: false, celdas: [{ n: 8, oculto: false }, { n: 12, oculto: false }] };
+    assert.equal(D.cruceCompletoOculto({ filas: [oculta, oculta] }), true);
+    assert.equal(D.cruceCompletoOculto({ filas: [oculta, visible] }), false);
+    assert.equal(D.cruceCompletoOculto(grupo.cruces.find((c) => c.id === 'aposto_genero')), false);
   });
 
   test('la barra apilada solo va si no hay categorías ocultas', () => {
@@ -40,7 +43,7 @@ describe('reglas del dashboard', () => {
     assert.equal(secciones.reduce((s, x) => s + x.preguntas.length, 0), grupo.distribuciones.length);
     const temas = D.crucesPorTema(grupo);
     assert.equal(temas.reduce((s, t) => s + t.cruces.length, 0), grupo.cruces.length);
-    assert.equal(temas[0].titulo, 'Situación económica');
+    assert.equal(temas[0].titulo, 'Quiénes apuestan');
   });
 
   test('el tramo donde más gente se fue', () => {

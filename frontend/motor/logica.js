@@ -47,13 +47,16 @@ export function cuerpo(def, respuestas) {
   return c;
 }
 
-/** Pasos del camino actual: un título de sección antes de la primera pregunta visible de cada sección. */
+/**
+ * Pasos del camino actual: un título de sección antes de la primera pregunta visible de cada
+ * sección, salvo que la encuesta pida ir de pregunta en pregunta (portadasDeSeccion: false).
+ */
 export function pasos(def, respuestas) {
   const lista = [];
   let anterior = null;
   for (const p of def.preguntas) {
     if (!visible(p, respuestas)) continue;
-    if (p.seccion !== anterior) {
+    if (def.portadasDeSeccion !== false && p.seccion !== anterior) {
       lista.push({ clase: 'seccion', seccion: def.secciones.find((s) => s.id === p.seccion) });
       anterior = p.seccion;
     }
@@ -110,7 +113,7 @@ export function avanceMotivo(def, respuestas, indice, lista) {
   let anterior = null;
   for (const p of def.preguntas) {
     if (!cuenta(p, respuestas, pasadas)) continue;
-    if (p.seccion !== anterior) {
+    if (def.portadasDeSeccion !== false && p.seccion !== anterior) {
       pantallas++;
       anterior = p.seccion;
     }

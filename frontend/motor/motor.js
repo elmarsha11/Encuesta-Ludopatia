@@ -1071,7 +1071,8 @@ export class Motor {
   actualizarProgreso() {
     const { pantalla, paso, respuestas } = this.estado;
     const p = this.preguntaActual();
-    this.el.progresoSeccion.textContent = p ? (this.def.secciones.find((s) => s.id === p.seccion)?.titulo ?? NBSP) : NBSP;
+    const conSeccion = p && this.def.portadasDeSeccion !== false;
+    this.el.progresoSeccion.textContent = conSeccion ? (this.def.secciones.find((s) => s.id === p.seccion)?.titulo ?? NBSP) : NBSP;
     if (!this.def) return;
     const lista = this.lista();
     const { hechas, total } = L.progreso(this.def, respuestas, paso, lista);

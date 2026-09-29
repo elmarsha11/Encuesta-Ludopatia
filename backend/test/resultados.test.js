@@ -12,6 +12,7 @@ import { crearCliente, inicializarBase, guardarRespuesta, guardarEvento } from '
 import { ENCUESTAS } from '../encuestas/index.js';
 import adultos from '../encuestas/adultos.js';
 import adolescentes from '../encuestas/adolescentes.js';
+import deprueba from './encuesta-de-prueba.js';
 import { adultoQueApuesta, adultoQueNoApuesta, adolescenteQueAposto, adolescenteQueNunca } from './datos-ejemplo.js';
 
 const celdas = (...ns) => ns.map((n, i) => ({ valor: `v${i}`, n }));
@@ -84,8 +85,7 @@ const repetir = (n, crear) => Array.from({ length: n }, (_, i) => crear(i));
 
 const filasAdultos = [
   ...repetir(8, () => fila(adultos, adultoQueApuesta())),
-  ...repetir(12, () => fila(adultos, adultoQueNoApuesta())),
-  ...repetir(2, () => fila(adultos, { ...adultoQueNoApuesta(), ingresos_hogar: 'prefiero_no_responder' })),
+  ...repetir(14, () => fila(adultos, adultoQueNoApuesta())),
 ];
 const distribucion = (lista, id) => lista.find((d) => d.id === id);
 
@@ -93,20 +93,20 @@ describe('distribuciones', () => {
   const sinOcultar = distribuciones(adultos, filasAdultos, CONFIGURACION.adultos, { umbral: 1 });
 
   test('la base de una pregunta de rama es solo quien la vio', () => {
-    assert.equal(distribucion(sinOcultar, 'aposto_12m').base, 22);
+    assert.equal(distribucion(sinOcultar, 'apuesta').base, 22);
     assert.equal(distribucion(sinOcultar, 'frecuencia').base, 8);
     assert.equal(distribucion(sinOcultar, 'motivo_no_apuesta').base, 14);
   });
 
-  test('«Prefiero no responder» de una escala es una categoría más', () => {
-    const ingresos = distribucion(sinOcultar, 'ingresos_hogar');
-    assert.equal(ingresos.base, 22);
-    assert.equal(ingresos.celdas.find((c) => c.valor === 'prefiero_no_responder').n, 2);
+  test('el monto se cuenta por rango y el medio de pago por opción', () => {
+    const monto = distribucion(sinOcultar, 'monto_por_vez');
+    assert.equal(monto.base, 8);
+    assert.equal(monto.celdas.find((c) => c.valor === 'entre_10k_50k').n, 8);
+    assert.equal(distribucion(sinOcultar, 'medio_pago').base, 8);
   });
 
-  test('la edad de adultos se muestra agrupada, y el PGSI por categoría', () => {
+  test('la edad de adultos se muestra agrupada', () => {
     assert.deepEqual(distribucion(sinOcultar, 'edad').celdas.map((c) => c.valor), ['18_24', '25_34', '35_mas']);
-    assert.equal(distribucion(sinOcultar, 'pgsi_categoria').base, 8);
   });
 
   test('el comentario libre nunca va al dashboard', () => {
@@ -116,15 +116,15 @@ describe('distribuciones', () => {
 });
 
 describe('cruces', () => {
-  const definicion = CONFIGURACION.adultos.cruces.find((c) => c.id === 'aposto_deudas');
+  const definicion = CONFIGURACION.adultos.cruces.find((c) => c.id === 'aposto_trabajo');
 
   test('cuenta cada fila del factor por separado', () => {
     const r = cruce(definicion, filasAdultos, CONFIGURACION.adultos.variables, { umbral: 1 });
-    const conDeudas = r.filas.find((f) => f.valor === 'si');
-    const sinDeudas = r.filas.find((f) => f.valor === 'no');
-    // adultoQueApuesta tiene deudas; adultoQueNoApuesta no
-    assert.deepEqual([conDeudas.base, ...conDeudas.celdas.map((c) => c.n)], [8, 8, 0]);
-    assert.deepEqual([sinDeudas.base, ...sinDeudas.celdas.map((c) => c.n)], [14, 0, 14]);
+    const trabaja = r.filas.find((f) => f.valor === 'trabaja');
+    const noTrabaja = r.filas.find((f) => f.valor === 'no_trabaja');
+    // Los dos ejemplos trabajan (uno en relación de dependencia, otro por cuenta propia).
+    assert.deepEqual([trabaja.base, ...trabaja.celdas.map((c) => c.n)], [22, 8, 14]);
+    assert.equal(noTrabaja.base, 0);
   });
 });
 
@@ -192,20 +192,17 @@ describe('configuración de los dashboards', () => {
 
 describe('cantidades que ya son públicas', () => {
   test('la opción que abre una rama no se oculta de más: su cantidad es la base de la rama', () => {
-    // 1 «prefiero no responder»: se oculta. Antes también se ocultaba «Sí», que es la base de hábitos.
+    // 1 «prefiero no responder»: se oculta, y arrastra a «No» (no abre nada). «Sí» abre la rama
+    // de frecuencia: su cantidad ya se ve como base de esa rama, así que no hace falta ocultarla.
+    const base = { edad: 30, carrera: 'datos', ingresos: 2, deuda: 1 };
+    const frec = { frec_1: 0, frec_2: 1, frec_3: 2 };
     const filas = [
-      ...repetir(8, () => fila(adultos, adultoQueApuesta())),
-      ...repetir(12, () => fila(adultos, adultoQueNoApuesta())),
-      fila(adultos, (() => {
-        const c = { ...adultoQueNoApuesta(), aposto_12m: 'prefiero_no_responder' };
-        delete c.penso_apostar;
-        delete c.motivo_no_apuesta;
-        return c;
-      })()),
+      ...repetir(8, () => fila(deprueba, { ...base, usa: 'si', ...frec })),
+      ...repetir(12, () => fila(deprueba, { ...base, usa: 'no' })),
+      fila(deprueba, { ...base, usa: 'prefiero_no_responder' }),
     ];
-    const lista = distribuciones(adultos, filas, CONFIGURACION.adultos, { umbral: 5 });
-    const aposto = distribucion(lista, 'aposto_12m');
-    assert.deepEqual(aposto.celdas.map((c) => c.n), [8, 12, null]);
-    assert.equal(distribucion(lista, 'frecuencia').base, 8, 'la base de la rama es la misma cifra');
+    const lista = distribuciones(deprueba, filas, {}, { umbral: 5 });
+    assert.deepEqual(distribucion(lista, 'usa').celdas.map((c) => c.n), [8, null, null]);
+    assert.equal(distribucion(lista, 'frec_1').base, 8, 'la base de la rama es la misma cifra');
   });
 });

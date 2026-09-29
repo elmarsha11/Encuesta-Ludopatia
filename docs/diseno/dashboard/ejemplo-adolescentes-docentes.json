@@ -33,37 +33,37 @@
         {
           "valor": "12",
           "texto": "12",
-          "n": 19,
+          "n": 23,
           "oculto": false
         },
         {
           "valor": "13",
           "texto": "13",
-          "n": 14,
+          "n": 18,
           "oculto": false
         },
         {
           "valor": "14",
           "texto": "14",
-          "n": 14,
+          "n": 12,
           "oculto": false
         },
         {
           "valor": "15",
           "texto": "15",
-          "n": 10,
+          "n": 13,
           "oculto": false
         },
         {
           "valor": "16",
           "texto": "16",
-          "n": 14,
+          "n": 11,
           "oculto": false
         },
         {
           "valor": "17",
           "texto": "17",
-          "n": 20,
+          "n": 14,
           "oculto": false
         }
       ]
@@ -73,31 +73,31 @@
       "seccion": "sobre_vos",
       "tipo": "unica",
       "texto": "¿Cómo te percibís?",
-      "base": 87,
+      "base": 83,
       "oculto": false,
       "celdas": [
         {
           "valor": "varon",
           "texto": "Varón",
-          "n": 25,
+          "n": 24,
           "oculto": false
         },
         {
           "valor": "mujer",
           "texto": "Mujer",
-          "n": 27,
+          "n": 24,
           "oculto": false
         },
         {
           "valor": "otro",
           "texto": "Otro",
-          "n": 20,
+          "n": 19,
           "oculto": false
         },
         {
           "valor": "prefiero_no_decir",
           "texto": "Prefiero no decir",
-          "n": 15,
+          "n": 16,
           "oculto": false
         }
       ]
@@ -107,32 +107,32 @@
       "seccion": "sobre_vos",
       "tipo": "unica",
       "texto": "¿Alguna vez apostaste plata o algo que vale plata (por ejemplo, skins)?",
-      "base": 79,
+      "base": 75,
       "oculto": false,
       "celdas": [
         {
           "valor": "si_no_ultimo_anio",
           "texto": "Sí, pero no en el último año",
-          "n": 16,
-          "oculto": false
+          "n": null,
+          "oculto": true
         },
         {
           "valor": "si_ultimo_anio",
           "texto": "Sí, en el último año",
-          "n": 16,
+          "n": 17,
           "oculto": false
         },
         {
           "valor": "nunca",
           "texto": "Nunca",
-          "n": 47,
+          "n": 42,
           "oculto": false
         },
         {
           "valor": "prefiero_no_responder",
           "texto": "Prefiero no responder",
-          "n": 0,
-          "oculto": false
+          "n": null,
+          "oculto": true
         }
       ]
     },
@@ -141,7 +141,7 @@
       "seccion": "experiencia",
       "tipo": "multiple",
       "texto": "¿En qué apostaste?",
-      "base": 27,
+      "base": 28,
       "oculto": false,
       "celdas": [
         {
@@ -153,19 +153,19 @@
         {
           "valor": "casino_online",
           "texto": "Casino online",
-          "n": 7,
-          "oculto": false
-        },
-        {
-          "valor": "cartas",
-          "texto": "Juego de cartas (póker, truco, etc.) por plata",
           "n": null,
           "oculto": true
         },
         {
+          "valor": "cartas",
+          "texto": "Juego de cartas (póker, truco, etc.) por plata",
+          "n": 5,
+          "oculto": false
+        },
+        {
           "valor": "quiniela_loteria",
           "texto": "Quiniela, Lotería",
-          "n": 5,
+          "n": 7,
           "oculto": false
         },
         {
@@ -177,8 +177,8 @@
         {
           "valor": "otro",
           "texto": "Otro",
-          "n": null,
-          "oculto": true
+          "n": 7,
+          "oculto": false
         },
         {
           "valor": "prefiero_no_responder",
@@ -193,20 +193,20 @@
       "seccion": "experiencia",
       "tipo": "unica",
       "texto": "En el último año, ¿con qué frecuencia apostaste?",
-      "base": 29,
+      "base": 28,
       "oculto": false,
       "celdas": [
         {
           "valor": "ninguna",
           "texto": "Ninguna vez en el último año",
-          "n": 8,
+          "n": 7,
           "oculto": false
         },
         {
           "valor": "menos_mensual",
           "texto": "Menos de una vez al mes",
-          "n": 0,
-          "oculto": false
+          "n": null,
+          "oculto": true
         },
         {
           "valor": "algunas_mes",
@@ -217,7 +217,7 @@
         {
           "valor": "semanal",
           "texto": "Una vez por semana",
-          "n": 8,
+          "n": 7,
           "oculto": false
         },
         {
@@ -245,26 +245,26 @@
       "seccion": "experiencia",
       "tipo": "multiple",
       "texto": "¿Qué te llevó a apostar?",
-      "base": 26,
+      "base": 27,
       "oculto": false,
       "celdas": [
         {
           "valor": "diversion",
           "texto": "Diversión",
-          "n": 9,
+          "n": 7,
           "oculto": false
         },
         {
           "valor": "publicidad_influencers",
           "texto": "Publicidad o influencers",
-          "n": null,
-          "oculto": true
+          "n": 5,
+          "oculto": false
         },
         {
           "valor": "curiosidad",
           "texto": "Curiosidad",
-          "n": null,
-          "oculto": true
+          "n": 6,
+          "oculto": false
         },
         {
           "valor": "ganar_plata",
@@ -275,13 +275,13 @@
         {
           "valor": "aburrimiento",
           "texto": "Aburrimiento",
-          "n": null,
-          "oculto": true
+          "n": 6,
+          "oculto": false
         },
         {
           "valor": "amigos_familia",
           "texto": "Amigos o familia que también apuestan",
-          "n": 8,
+          "n": 11,
           "oculto": false
         },
         {
@@ -303,31 +303,31 @@
       "seccion": "experiencia",
       "tipo": "unica",
       "texto": "¿Cómo accediste?",
-      "base": 31,
+      "base": 28,
       "oculto": false,
       "celdas": [
         {
           "valor": "cuenta_propia",
           "texto": "Con mi propia cuenta",
-          "n": null,
-          "oculto": true
+          "n": 5,
+          "oculto": false
         },
         {
           "valor": "cuenta_ajena",
           "texto": "Con la cuenta o los datos de otra persona",
-          "n": null,
-          "oculto": true
+          "n": 7,
+          "oculto": false
         },
         {
           "valor": "en_persona",
           "texto": "En persona",
-          "n": 17,
+          "n": 9,
           "oculto": false
         },
         {
           "valor": "prefiero_no_responder",
           "texto": "Prefiero no responder",
-          "n": 6,
+          "n": 7,
           "oculto": false
         }
       ]
@@ -343,19 +343,19 @@
         {
           "valor": "no",
           "texto": "No",
-          "n": 27,
+          "n": 24,
           "oculto": false
         },
         {
           "valor": "si_una",
           "texto": "Sí, conozco a una persona",
-          "n": 22,
+          "n": 16,
           "oculto": false
         },
         {
           "valor": "si_varias",
           "texto": "Sí, conozco a varias personas",
-          "n": 21,
+          "n": 30,
           "oculto": false
         },
         {
@@ -371,37 +371,37 @@
       "seccion": "entorno",
       "tipo": "unica",
       "texto": "¿Con qué frecuencia ves publicidad de apuestas?",
-      "base": 85,
+      "base": 83,
       "oculto": false,
       "celdas": [
         {
           "valor": "nunca_casi_nunca",
           "texto": "Nunca o casi nunca",
-          "n": 17,
+          "n": 15,
           "oculto": false
         },
         {
           "valor": "algunas_mes",
           "texto": "Algunas veces al mes",
-          "n": 19,
+          "n": 13,
           "oculto": false
         },
         {
           "valor": "algunas_semana",
           "texto": "Algunas veces por semana",
-          "n": 13,
+          "n": 14,
           "oculto": false
         },
         {
           "valor": "todos_los_dias",
           "texto": "Todos los días",
-          "n": 17,
+          "n": 21,
           "oculto": false
         },
         {
           "valor": "no_se",
           "texto": "No sé",
-          "n": 19,
+          "n": 20,
           "oculto": false
         }
       ]
@@ -411,13 +411,13 @@
       "seccion": "entorno",
       "tipo": "multiple",
       "texto": "¿Dónde ves más publicidad?",
-      "base": 81,
+      "base": 84,
       "oculto": false,
       "celdas": [
         {
           "valor": "redes",
           "texto": "Redes sociales (Instagram, TikTok, Facebook, X, etc.)",
-          "n": 21,
+          "n": 25,
           "oculto": false
         },
         {
@@ -429,26 +429,26 @@
         {
           "valor": "tv",
           "texto": "TV",
-          "n": 23,
+          "n": 20,
           "oculto": false
         },
         {
           "valor": "videojuegos",
           "texto": "Videojuegos",
-          "n": 21,
+          "n": 28,
           "oculto": false
         },
         {
           "valor": "calle",
           "texto": "La calle",
-          "n": 22,
+          "n": 21,
           "oculto": false
         },
         {
           "valor": "no_veo",
           "texto": "No veo publicidad de apuestas",
-          "n": 5,
-          "oculto": false
+          "n": null,
+          "oculto": true
         }
       ]
     },
@@ -457,19 +457,19 @@
       "seccion": "entorno",
       "tipo": "escala",
       "texto": "Es fácil perder el control con las apuestas online.",
-      "base": 81,
+      "base": 82,
       "oculto": false,
       "celdas": [
         {
           "valor": "1",
           "texto": "Nada de acuerdo",
-          "n": 21,
+          "n": 16,
           "oculto": false
         },
         {
           "valor": "2",
           "texto": "2",
-          "n": 13,
+          "n": 16,
           "oculto": false
         },
         {
@@ -481,13 +481,13 @@
         {
           "valor": "4",
           "texto": "4",
-          "n": 19,
+          "n": 17,
           "oculto": false
         },
         {
           "valor": "5",
           "texto": "Totalmente de acuerdo",
-          "n": 14,
+          "n": 19,
           "oculto": false
         }
       ]
@@ -497,37 +497,37 @@
       "seccion": "entorno",
       "tipo": "escala",
       "texto": "Apostar online es un pasatiempo inofensivo.",
-      "base": 84,
+      "base": 83,
       "oculto": false,
       "celdas": [
         {
           "valor": "1",
           "texto": "Nada de acuerdo",
-          "n": 11,
+          "n": 13,
           "oculto": false
         },
         {
           "valor": "2",
           "texto": "2",
-          "n": 18,
+          "n": 14,
           "oculto": false
         },
         {
           "valor": "3",
           "texto": "3",
-          "n": 19,
+          "n": 16,
           "oculto": false
         },
         {
           "valor": "4",
           "texto": "4",
-          "n": 21,
+          "n": 24,
           "oculto": false
         },
         {
           "valor": "5",
           "texto": "Totalmente de acuerdo",
-          "n": 15,
+          "n": 16,
           "oculto": false
         }
       ]
@@ -537,31 +537,31 @@
       "seccion": "entorno",
       "tipo": "multiple",
       "texto": "¿Por qué creés que apuestan las personas de tu edad?",
-      "base": 85,
+      "base": 79,
       "oculto": false,
       "celdas": [
         {
           "valor": "diversion",
           "texto": "Diversión",
-          "n": 9,
+          "n": 13,
           "oculto": false
         },
         {
           "valor": "publicidad_influencers",
           "texto": "Publicidad o influencers",
-          "n": 16,
+          "n": 20,
           "oculto": false
         },
         {
           "valor": "curiosidad",
           "texto": "Curiosidad",
-          "n": 14,
+          "n": 11,
           "oculto": false
         },
         {
           "valor": "ganar_plata",
           "texto": "Ganar plata",
-          "n": 20,
+          "n": 17,
           "oculto": false
         },
         {
@@ -573,19 +573,19 @@
         {
           "valor": "amigos_familia",
           "texto": "Amigos o familia que también apuestan",
-          "n": 17,
+          "n": 14,
           "oculto": false
         },
         {
           "valor": "otro",
           "texto": "Otro",
-          "n": 10,
+          "n": 7,
           "oculto": false
         },
         {
           "valor": "no_se",
           "texto": "No sé",
-          "n": 14,
+          "n": 8,
           "oculto": false
         }
       ]
@@ -595,37 +595,37 @@
       "seccion": "entorno",
       "tipo": "escala",
       "texto": "Alguien de mi edad puede ganar plata apostando.",
-      "base": 81,
+      "base": 85,
       "oculto": false,
       "celdas": [
         {
           "valor": "1",
           "texto": "Nada de acuerdo",
-          "n": 19,
+          "n": 18,
           "oculto": false
         },
         {
           "valor": "2",
           "texto": "2",
-          "n": 12,
+          "n": 11,
           "oculto": false
         },
         {
           "valor": "3",
           "texto": "3",
-          "n": 23,
+          "n": 19,
           "oculto": false
         },
         {
           "valor": "4",
           "texto": "4",
-          "n": 9,
+          "n": 20,
           "oculto": false
         },
         {
           "valor": "5",
           "texto": "Totalmente de acuerdo",
-          "n": 18,
+          "n": 17,
           "oculto": false
         }
       ]
@@ -656,13 +656,13 @@
             {
               "valor": "si",
               "texto": "Apostó alguna vez",
-              "n": 17,
+              "n": 15,
               "oculto": false
             },
             {
               "valor": "no",
               "texto": "Nunca apostó",
-              "n": 23,
+              "n": 25,
               "oculto": false
             }
           ],
@@ -671,7 +671,7 @@
         {
           "valor": "15_17",
           "texto": "15 a 17",
-          "base": 39,
+          "base": 32,
           "celdas": [
             {
               "valor": "si",
@@ -682,7 +682,7 @@
             {
               "valor": "no",
               "texto": "Nunca apostó",
-              "n": 24,
+              "n": 17,
               "oculto": false
             }
           ],
@@ -709,27 +709,7 @@
         {
           "valor": "varon",
           "texto": "Varón",
-          "base": 22,
-          "celdas": [
-            {
-              "valor": "si",
-              "texto": "Apostó alguna vez",
-              "n": 7,
-              "oculto": false
-            },
-            {
-              "valor": "no",
-              "texto": "Nunca apostó",
-              "n": 15,
-              "oculto": false
-            }
-          ],
-          "oculto": false
-        },
-        {
-          "valor": "mujer",
-          "texto": "Mujer",
-          "base": 25,
+          "base": 20,
           "celdas": [
             {
               "valor": "si",
@@ -740,7 +720,27 @@
             {
               "valor": "no",
               "texto": "Nunca apostó",
-              "n": 15,
+              "n": 10,
+              "oculto": false
+            }
+          ],
+          "oculto": false
+        },
+        {
+          "valor": "mujer",
+          "texto": "Mujer",
+          "base": 18,
+          "celdas": [
+            {
+              "valor": "si",
+              "texto": "Apostó alguna vez",
+              "n": 8,
+              "oculto": false
+            },
+            {
+              "valor": "no",
+              "texto": "Nunca apostó",
+              "n": 10,
               "oculto": false
             }
           ],
@@ -767,12 +767,12 @@
         {
           "valor": "si",
           "texto": "Conoce a alguien que apuesta",
-          "base": 36,
+          "base": 39,
           "celdas": [
             {
               "valor": "si",
               "texto": "Apostó alguna vez",
-              "n": 11,
+              "n": 14,
               "oculto": false
             },
             {
@@ -787,18 +787,18 @@
         {
           "valor": "no",
           "texto": "No conoce a nadie",
-          "base": 25,
+          "base": 16,
           "celdas": [
             {
               "valor": "si",
               "texto": "Apostó alguna vez",
-              "n": 13,
+              "n": 9,
               "oculto": false
             },
             {
               "valor": "no",
               "texto": "Nunca apostó",
-              "n": 12,
+              "n": 7,
               "oculto": false
             }
           ],
@@ -825,18 +825,18 @@
         {
           "valor": "frecuente",
           "texto": "Ve publicidad todas las semanas o más",
-          "base": 26,
+          "base": 28,
           "celdas": [
             {
               "valor": "si",
               "texto": "Apostó alguna vez",
-              "n": 13,
+              "n": 14,
               "oculto": false
             },
             {
               "valor": "no",
               "texto": "Nunca apostó",
-              "n": 13,
+              "n": 14,
               "oculto": false
             }
           ],
@@ -845,18 +845,18 @@
         {
           "valor": "poca",
           "texto": "Ve publicidad menos seguido",
-          "base": 33,
+          "base": 23,
           "celdas": [
             {
               "valor": "si",
               "texto": "Apostó alguna vez",
-              "n": 12,
+              "n": 6,
               "oculto": false
             },
             {
               "valor": "no",
               "texto": "Nunca apostó",
-              "n": 21,
+              "n": 17,
               "oculto": false
             }
           ],

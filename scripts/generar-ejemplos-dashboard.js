@@ -22,9 +22,8 @@ const elegir = (lista) => lista[Math.floor(azar() * lista.length)];
 
 // Algunas respuestas con probabilidades parecidas a la realidad esperada.
 const PESOS = {
-  aposto_12m: { si: 0.3, no: 0.66, prefiero_no_responder: 0.04 },
+  apuesta: { si: 0.3, no: 0.7 },
   aposto_alguna_vez: { nunca: 0.62, si_no_ultimo_anio: 0.14, si_ultimo_anio: 0.2, prefiero_no_responder: 0.04 },
-  tiene_deudas: { si: 0.45, no: 0.5, prefiero_no_responder: 0.05 },
 };
 const ponderado = (pesos) => {
   let r = azar();
