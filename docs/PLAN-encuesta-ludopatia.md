@@ -99,7 +99,7 @@ PLACA INICIAL — presentación corta + «¿Aceptás participar?» (Sí / No) en
 PLACA FINAL — agradecimiento + líneas de ayuda (al grupo le pareció «un gran acierto»)
 ```
 
-**PENDIENTE (carreras):** el grupo lista «Tecnicatura Enfermería» y «Enfermería» por separado (se cargaron como «Enfermería» en Tecnicaturas y «Enfermería (otra)» en Otras) y escribe «ATM», que se asumió como Acompañante Terapéutico. Los textos se pueden corregir en cualquier momento; lo que no se cambia después del piloto son los valores.
+**PENDIENTE (carreras):** «Tecnicatura Enfermería» y «Enfermería» son dos carreras distintas (confirmado por Juli). Hoy están cargadas como «Enfermería» en Tecnicaturas y «Enfermería (otra)» en Otras; falta definir el texto definitivo y el grupo de la segunda, y lo resuelve la responsable de la encuesta de adultos. «ATM» es Acompañante Terapéutico (confirmado). Los textos se pueden corregir en cualquier momento; lo que no se cambia después del piloto son los valores.
 
 ## 5. Encuesta de ADOLESCENTES (12-17)
 
@@ -332,8 +332,8 @@ Encuesta-Ludopatia/
 
 | # | Tema | Quién decide |
 |---|------|--------------|
-| 1 | Carreras de adultos: ¿«Tecnicatura Enfermería» y «Enfermería» son dos carreras distintas? ¿«ATM» es Acompañante Terapéutico? (sección 4) | Juli / grupo |
-| 2 | Crear una base piloto nueva en Turso antes de publicar este cambio (la actual tiene la tabla de adultos vieja: el servidor no arrancaría) — `docs/DESPLIEGUE.md`, paso 1b | Juli |
+| 1 | Carreras de adultos: texto y grupo de «Enfermería», que es distinta de «Tecnicatura Enfermería» (sección 4) | Responsable de adultos |
+| 2 | Crear una base piloto nueva en Turso antes de publicar este cambio (la actual tiene la tabla de adultos vieja: el servidor no arrancaría) — `docs/DESPLIEGUE.md`, paso 4b | Juli |
 | 5 | Verificar las líneas de ayuda 0800-444-4000 y 141 | Juli |
 | 8 | Autorización escrita de la escuela + nota a familias (adolescentes) | Juli / institución |
 | 10 | Elegir las tres contraseñas de resultados (12+ caracteres, distintas) y cargar la del grupo y la de docentes recién al cerrar la encuesta | Juli |

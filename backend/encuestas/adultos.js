@@ -73,10 +73,11 @@ export default {
         { valor: 'tec_seguridad_higiene', texto: 'Seguridad e Higiene', grupo: 'Tecnicaturas' },
         { valor: 'tec_ciencia_datos_ia', texto: 'Ciencia de Datos e IA', grupo: 'Tecnicaturas' },
         { valor: 'tec_adm_financiera', texto: 'Administración Financiera', grupo: 'Tecnicaturas' },
-        // PENDIENTE: el grupo escribió «ATM»; se asume Acompañante Terapéutico.
+        // «ATM» en la lista del grupo: confirmado que es Acompañante Terapéutico.
         { valor: 'tec_acompanante_terapeutico', texto: 'Acompañante Terapéutico', grupo: 'Tecnicaturas' },
         { valor: 'cufa', texto: 'CUFA (Formación Básica)', grupo: 'Otras' },
-        // PENDIENTE: el grupo lista «Enfermería» y «Tecnicatura Enfermería» por separado.
+        // PENDIENTE: «Enfermería» y «Tecnicatura Enfermería» son dos carreras distintas (confirmado).
+        // Falta definir el texto y el grupo de esta opción; lo resuelve la responsable de adultos.
         { valor: 'enfermeria', texto: 'Enfermería (otra)', grupo: 'Otras' },
       ],
     },
