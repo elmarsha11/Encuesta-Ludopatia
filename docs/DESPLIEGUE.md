@@ -88,7 +88,7 @@ uno abre su encuesta.
 
 ## 4. Piloto (3 a 5 personas por encuesta)
 
-Con los textos definitivos (PGSI, salario mínimo, líneas de ayuda). Pedí a cada persona
+Con los textos definitivos (carreras, líneas de ayuda). Pedí a cada persona
 que responda desde su celular y anotá cuánto tardó y dónde dudó. En **Resultados → Control**
 ves dónde se fue la gente.
 
@@ -98,6 +98,32 @@ Después del piloto **las preguntas se congelan**:
 - Los **valores** de las opciones y las preguntas no se tocan más. La base real, al
   crearse, anota qué valores acepta cada columna. Si cambiaran después, el servidor se
   niega a arrancar (es a propósito: frena antes de perder respuestas).
+
+### 4b. Si cambian las preguntas antes del 17/10: base piloto nueva
+
+La base piloto guarda la forma de las tablas de cuando se creó. Si se cambian preguntas u
+opciones, el servidor nuevo **no arranca** con esa base (en Render se ve *Failed* y en los
+Logs `La tabla … no coincide con la definición…`). Es la protección funcionando. Como la
+piloto solo tiene respuestas de prueba, se reemplaza por una nueva. **El orden importa:**
+
+1. En Turso, creá una base nueva (por ejemplo `encuestas-piloto-2`), en la misma ubicación, y
+   anotá su URL y un token, como en el paso 1.
+2. **Primero** mergeá a `main` el cambio de preguntas. Render intenta publicarlo; con la
+   piloto vieja puede fallar: no importa, es la piloto.
+3. **Después**, en Render → **Environment**, reemplazá `DATABASE_URL` y `DATABASE_AUTH_TOKEN`
+   por los de la base nueva y guardá con **Save, rebuild and deploy**. Así la base nueva la crea
+   el código nuevo.
+
+   Al revés no: si cambiás la base antes de mergear, el código viejo alcanza a crear en
+   la base nueva las tablas viejas, y el problema vuelve.
+4. Borrá la piloto vieja en Turso cuando quieras (no tiene nada real).
+
+La base **real** no se toca: si Render nunca se conectó a ella, sigue vacía y sin tablas, y
+se crea con las preguntas vigentes el día que te conectes (paso 5). Si alguna vez la
+conectaste, hacé con ella lo mismo que con la piloto: una base real nueva.
+
+✔ **Comprobá:** estado **Live**, `/api/salud` responde `{"ok":true}` y en `/resultados/` dice
+«Todavía no hay respuestas». Los QR no cambian.
 
 ## 5. Pasar a la base real (sábado 17 o domingo 18/10)
 

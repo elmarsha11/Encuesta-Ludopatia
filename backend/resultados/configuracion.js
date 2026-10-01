@@ -6,7 +6,7 @@
 // encaja en ningún nivel («No sé», «Prefiero no responder») queda fuera de ESE cruce.
 //
 // CRUCES: «factor» son las filas y «resultado» las columnas. Se leen por fila:
-// «entre quienes tienen deudas, X% apostó en el último año». Muestran asociaciones,
+// «entre quienes trabajan, X% apuesta». Muestran asociaciones,
 // no causas (docs/PLAN-encuesta-ludopatia.md, 8.6).
 
 // Un nivel: los valores de la columna que incluye, o un rango numérico [desde, hasta].
@@ -21,82 +21,57 @@ export const CONFIGURACION = {
   adultos: {
     // Edad agrupada también en la distribución simple: una edad exacta identifica.
     gruposEdad: [rango('18_24', '18 a 24', 18, 24), rango('25_34', '25 a 34', 25, 34), rango('35_mas', '35 o más', 35, 99)],
-    // Columnas calculadas que se muestran como distribución.
-    calculadas: [
-      {
-        id: 'pgsi_categoria',
-        seccion: 'pgsi',
-        texto: 'Categoría de riesgo según el PGSI',
-        categorias: [
-          ['sin_riesgo', 'Sin riesgo'],
-          ['riesgo_bajo', 'Riesgo bajo'],
-          ['riesgo_moderado', 'Riesgo moderado'],
-          ['juego_problematico', 'Juego problemático'],
-        ],
-      },
-    ],
+    calculadas: [],
     variables: {
-      aposto: { texto: 'Apostó en los últimos 12 meses', ...siNo('aposto_12m', 'Apostó', 'No apostó') },
-      riesgo: {
-        texto: 'Riesgo PGSI',
-        columna: 'pgsi_categoria',
-        niveles: [
-          nivel('bajo', 'Sin riesgo o riesgo bajo', ['sin_riesgo', 'riesgo_bajo']),
-          nivel('alto', 'Riesgo moderado o juego problemático', ['riesgo_moderado', 'juego_problematico']),
-        ],
-      },
-      ingresos: {
-        texto: 'Ingresos del hogar',
-        columna: 'ingresos_hogar',
-        niveles: [
-          nivel('bajo', 'Hasta 1 salario mínimo', [1]),
-          nivel('medio', 'Entre 1 y 3 salarios mínimos', [2, 3]),
-          nivel('alto', 'Más de 3 salarios mínimos', [4, 5]),
-        ],
-      },
-      deudas: { texto: 'Deudas', ...siNo('tiene_deudas', 'Tiene deudas', 'No tiene deudas') },
-      dependientes: { texto: 'Personas a cargo', ...siNo('alguien_depende', 'Alguien depende de su ingreso', 'Nadie depende de su ingreso') },
-      familiares: { texto: 'Entorno', ...siNo('familiares_apuestan', 'Familiares o amigos apuestan', 'Familiares o amigos no apuestan') },
-      plata_facil: {
-        texto: 'Creencia de que se puede generar plata fácil apostando',
-        columna: 'plata_facil',
-        niveles: [nivel('si', 'Cree que sí o a veces', ['si', 'a_veces']), nivel('no', 'Cree que no', ['no'])],
-      },
-      recibio_ef: { texto: 'Educación financiera', ...siNo('recibio_ef', 'Recibió educación financiera', 'No recibió') },
-      sabe_ef: { texto: 'Conocimiento de educación financiera', ...siNo('sabe_que_es_ef', 'Sabe qué es', 'No sabe qué es') },
+      aposto: { texto: 'Apuesta', ...siNo('apuesta', 'Apuesta', 'No apuesta') },
       edad: {
         texto: 'Edad',
         columna: 'edad',
         niveles: [rango('18_24', '18 a 24', 18, 24), rango('25_34', '25 a 34', 25, 34), rango('35_mas', '35 o más', 35, 99)],
       },
+      genero: {
+        texto: 'Género',
+        columna: 'genero',
+        niveles: [nivel('masculino', 'Masculino', ['masculino']), nivel('femenino', 'Femenino', ['femenino'])],
+      },
       carrera: {
         texto: 'Carrera',
         columna: 'carrera',
         niveles: [
-          nivel('inicial', 'Educación Inicial', ['educacion_inicial']),
-          nivel('profesorados', 'Profesorados', ['prof_ingles', 'prof_matematicas', 'prof_literatura']),
+          nivel('profesorados', 'Profesorados', ['educacion_inicial', 'prof_ingles', 'prof_matematicas', 'prof_literatura']),
           nivel('tecnicaturas', 'Tecnicaturas', [
-            'tec_ciencia_datos_ia',
+            'tec_enfermeria',
+            'tec_trabajo_social',
             'tec_seguridad_higiene',
+            'tec_ciencia_datos_ia',
             'tec_adm_financiera',
             'tec_acompanante_terapeutico',
-            'tec_trabajo_social',
           ]),
+          nivel('otras', 'Otras', ['cufa', 'enfermeria']),
         ],
       },
+      trabajo: {
+        texto: 'Condición laboral',
+        columna: 'situacion_laboral',
+        niveles: [
+          nivel('trabaja', 'Trabaja', ['trabajo_propio', 'relacion_dependencia']),
+          nivel('no_trabaja', 'No trabaja', ['no_trabajo']),
+        ],
+      },
+      depende: { texto: 'Dependencia económica', ...siNo('depende_economicamente', 'Depende de alguien', 'No depende de nadie') },
+      dependientes: { texto: 'Personas a cargo', ...siNo('alguien_depende', 'Alguien depende de su ingreso', 'Nadie depende de su ingreso') },
+      recibio_ef: { texto: 'Educación financiera', ...siNo('recibio_ef', 'Recibió educación financiera', 'No recibió') },
+      sabe_ef: { texto: 'Conocimiento de educación financiera', ...siNo('sabe_que_es_ef', 'Sabe qué es', 'No sabe qué es') },
     },
     cruces: [
-      { id: 'aposto_ingresos', seccion: 'Situación económica', factor: 'ingresos', resultado: 'aposto' },
-      { id: 'aposto_deudas', seccion: 'Situación económica', factor: 'deudas', resultado: 'aposto' },
+      { id: 'aposto_edad', seccion: 'Quiénes apuestan', factor: 'edad', resultado: 'aposto' },
+      { id: 'aposto_genero', seccion: 'Quiénes apuestan', factor: 'genero', resultado: 'aposto' },
+      { id: 'aposto_carrera', seccion: 'Quiénes apuestan', factor: 'carrera', resultado: 'aposto' },
+      { id: 'aposto_trabajo', seccion: 'Situación económica', factor: 'trabajo', resultado: 'aposto' },
+      { id: 'aposto_depende', seccion: 'Situación económica', factor: 'depende', resultado: 'aposto' },
       { id: 'aposto_dependientes', seccion: 'Situación económica', factor: 'dependientes', resultado: 'aposto' },
-      { id: 'riesgo_deudas', seccion: 'Situación económica', factor: 'deudas', resultado: 'riesgo' },
-      { id: 'aposto_familiares', seccion: 'Entorno y publicidad', factor: 'familiares', resultado: 'aposto' },
-      { id: 'aposto_plata_facil', seccion: 'Entorno y publicidad', factor: 'plata_facil', resultado: 'aposto' },
-      { id: 'aposto_recibio_ef', seccion: 'Educación financiera', factor: 'recibio_ef', resultado: 'aposto' },
       { id: 'aposto_sabe_ef', seccion: 'Educación financiera', factor: 'sabe_ef', resultado: 'aposto' },
-      { id: 'riesgo_recibio_ef', seccion: 'Educación financiera', factor: 'recibio_ef', resultado: 'riesgo' },
-      { id: 'aposto_edad', seccion: 'Quiénes responden', factor: 'edad', resultado: 'aposto' },
-      { id: 'aposto_carrera', seccion: 'Quiénes responden', factor: 'carrera', resultado: 'aposto' },
+      { id: 'aposto_recibio_ef', seccion: 'Educación financiera', factor: 'recibio_ef', resultado: 'aposto' },
     ],
   },
 

@@ -65,6 +65,6 @@ new Motor({
   raiz: document.querySelector('.app'),
   id: 'adultos',
   ui: UI,
-  // Cada pregunta en una tarjeta de papel (como el dashboard). Preguntas más largas antes de achicar la letra.
-  presentacion: { tarjeta: true, largoPreguntaLarga: 70, flechaAlEnviar: false },
+  // Cada pregunta en una tarjeta. Presentación y consentimiento en una sola pantalla (sin portada aparte).
+  presentacion: { tarjeta: true, largoPreguntaLarga: 70, flechaAlEnviar: false, inicioConConsentimiento: true },
 }).iniciar();

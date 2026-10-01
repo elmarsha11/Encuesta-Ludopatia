@@ -125,13 +125,14 @@ export class Motor {
    * @param {object} [opciones.presentacion] - lo que cambia entre temas y no es CSS:
    *   tarjeta: envolver cada pregunta en .tarjeta (adolescentes) o no (adultos: la página es la tarjeta);
    *   largoPreguntaLarga: desde cuántos caracteres una pregunta usa la letra más chica;
-   *   flechaAlEnviar: si el botón «Enviar» lleva flecha.
+   *   flechaAlEnviar: si el botón «Enviar» lleva flecha;
+   *   inicioConConsentimiento: la presentación y «¿Aceptás participar?» en una sola pantalla.
    */
   constructor({ raiz, id, ui, presentacion = {} }) {
     this.raiz = raiz;
     this.id = id;
     this.ui = ui;
-    this.presentacion = { tarjeta: false, largoPreguntaLarga: 60, flechaAlEnviar: true, ...presentacion };
+    this.presentacion = { tarjeta: false, largoPreguntaLarga: 60, flechaAlEnviar: true, inicioConConsentimiento: false, ...presentacion };
     this.claveBorrador = `encuesta:${id}:borrador`;
     this.el = {
       progresoSeccion: raiz.querySelector('.progreso-seccion'),
@@ -283,7 +284,7 @@ export class Motor {
   irAPaso(i, direccion) {
     const dir = direccion ?? (i >= this.estado.paso ? 'adelante' : 'atras');
     const lista = this.lista();
-    if (i < 0) return this.navegar({ pantalla: 'consentimiento', paso: 0 }, 'atras');
+    if (i < 0) return this.navegar({ pantalla: this.pantallaConsentimiento(), paso: 0 }, 'atras');
     if (i >= lista.length) return this.enviar();
     this.navegar({ pantalla: 'recorrido', paso: i, ...this.extraParaPaso(lista[i], this.estado.respuestas) }, dir);
   }
@@ -320,10 +321,52 @@ export class Motor {
     this.irAPaso(this.estado.paso + 1, 'adelante');
   }
 
+  /** Dónde se pregunta «¿Aceptás participar?»: en su propia pantalla o en la de inicio. */
+  pantallaConsentimiento() {
+    return this.presentacion.inicioConConsentimiento ? 'inicio' : 'consentimiento';
+  }
+
+  /** Los dos botones del consentimiento (los usa la pantalla que lo muestre). */
+  botonesConsentimiento(c) {
+    return h(
+      'div',
+      { class: 'consentimiento-botones' },
+      h(
+        'button',
+        {
+          type: 'button',
+          class: 'btn btn--primario',
+          on: {
+            click: () => {
+              this.registrar('acepto');
+              this.irAPaso(0, 'adelante');
+            },
+          },
+        },
+        c.si,
+      ),
+      h(
+        'button',
+        {
+          type: 'button',
+          class: 'btn btn--secundario',
+          on: {
+            click: () => {
+              this.registrar('no_participa');
+              guardarBorrador(this.claveBorrador, null);
+              this.navegar({ pantalla: 'no-participa', respuestas: {} }, 'adelante');
+            },
+          },
+        },
+        c.no,
+      ),
+    );
+  }
+
   volver() {
     const { pantalla, paso } = this.estado;
     if (pantalla === 'consentimiento') return this.navegar({ pantalla: 'inicio' }, 'atras');
-    if (pantalla === 'no-participa') return this.navegar({ pantalla: 'consentimiento' }, 'atras');
+    if (pantalla === 'no-participa') return this.navegar({ pantalla: this.pantallaConsentimiento() }, 'atras');
     if (pantalla === 'error') return this.irAPaso(this.lista().length - 1, 'atras');
     this.irAPaso(paso - 1, 'atras');
   }
@@ -435,18 +478,29 @@ export class Motor {
             ),
           intro.cierre &&
             h('p', { class: `portada-cierre${aparecer}`, estilo: { animationDelay: `${dCierre}ms` } }, intro.cierre),
-          // El consentimiento va en su propia pantalla: así cada una entra entera en el celular
-          // y la pregunta «¿Querés participar?» no queda escondida debajo del texto.
-          h(
-            'div',
-            { class: `portada-continuar${aparecer}`, estilo: { animationDelay: `${dCierre + 140}ms` } },
-            h(
-              'button',
-              { type: 'button', class: 'btn btn--primario', on: { click: () => this.navegar({ pantalla: 'consentimiento' }, 'adelante') } },
-              h('span', {}, this.ui.continuar),
-              icono('siguiente'),
-            ),
-          ),
+          // Adultos: presentación corta y consentimiento en la misma pantalla. Adolescentes: el
+          // consentimiento va en su propia pantalla, así cada una entra entera en el celular.
+          this.presentacion.inicioConConsentimiento
+            ? h(
+                'section',
+                {
+                  class: `consentimiento consentimiento--en-inicio${aparecer}`,
+                  'aria-labelledby': 'consentimiento-t',
+                  estilo: { animationDelay: `${dCierre + 140}ms` },
+                },
+                h('h2', { id: 'consentimiento-t', class: 'consentimiento-titulo' }, d.pantallas.consentimiento.pregunta),
+                this.botonesConsentimiento(d.pantallas.consentimiento),
+              )
+            : h(
+                'div',
+                { class: `portada-continuar${aparecer}`, estilo: { animationDelay: `${dCierre + 140}ms` } },
+                h(
+                  'button',
+                  { type: 'button', class: 'btn btn--primario', on: { click: () => this.navegar({ pantalla: 'consentimiento' }, 'adelante') } },
+                  h('span', {}, this.ui.continuar),
+                  icono('siguiente'),
+                ),
+              ),
         ];
       }
 
@@ -457,39 +511,7 @@ export class Motor {
             'section',
             { class: 'consentimiento', 'aria-labelledby': 'consentimiento-t' },
             h('h1', { id: 'consentimiento-t', class: 'consentimiento-titulo', tabindex: '-1' }, c.pregunta),
-            h(
-              'div',
-              { class: 'consentimiento-botones' },
-              h(
-                'button',
-                {
-                  type: 'button',
-                  class: 'btn btn--primario',
-                  on: {
-                    click: () => {
-                      this.registrar('acepto');
-                      this.irAPaso(0, 'adelante');
-                    },
-                  },
-                },
-                c.si,
-              ),
-              h(
-                'button',
-                {
-                  type: 'button',
-                  class: 'btn btn--secundario',
-                  on: {
-                    click: () => {
-                      this.registrar('no_participa');
-                      guardarBorrador(this.claveBorrador, null);
-                      this.navegar({ pantalla: 'no-participa', respuestas: {} }, 'adelante');
-                    },
-                  },
-                },
-                c.no,
-              ),
-            ),
+            this.botonesConsentimiento(c),
           ),
         ];
       }
@@ -1071,7 +1093,8 @@ export class Motor {
   actualizarProgreso() {
     const { pantalla, paso, respuestas } = this.estado;
     const p = this.preguntaActual();
-    this.el.progresoSeccion.textContent = p ? (this.def.secciones.find((s) => s.id === p.seccion)?.titulo ?? NBSP) : NBSP;
+    const conSeccion = p && this.def.portadasDeSeccion !== false;
+    this.el.progresoSeccion.textContent = conSeccion ? (this.def.secciones.find((s) => s.id === p.seccion)?.titulo ?? NBSP) : NBSP;
     if (!this.def) return;
     const lista = this.lista();
     const { hechas, total } = L.progreso(this.def, respuestas, paso, lista);

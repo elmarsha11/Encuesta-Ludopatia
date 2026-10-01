@@ -2,7 +2,7 @@
 
 Sistema propio de encuestas anónimas sobre ludopatía, con dos encuestas:
 
-- **Adultos (18+)**: estudiantes de un instituto terciario. Incluye el índice PGSI.
+- **Adultos (18+)**: estudiantes de un instituto terciario. Preguntas del grupo de Administración Financiera: cuántos apuestan.
 - **Adolescentes (12-17)**: migración del formulario "¿Cuándo el juego deja de ser un juego?".
 
 El plan completo, con decisiones y pendientes, está en [`docs/PLAN-encuesta-ludopatia.md`](docs/PLAN-encuesta-ludopatia.md).
@@ -57,7 +57,7 @@ npm run backup                                  # copia verificada de la base de
 | `backend/test/` | Pruebas automáticas (backend y lógica del frontend). |
 | `frontend/motor/` | Motor común a las dos encuestas: `logica.js` (reglas puras, con tests), `motor.js` (pantallas) y `dom.js` (construcción de elementos, compartida con el dashboard). |
 | `frontend/adolescentes/` | Página, tema, tipografías y textos de interfaz de la encuesta de adolescentes. |
-| `frontend/adultos/` | Lo mismo para la encuesta de adultos (tema «Papel y tinta»). |
+| `frontend/adultos/` | Lo mismo para la encuesta de adultos (tema «Pulso», `tema-c.css`). `tema-b.css` («Papel y tinta») queda para el dashboard. |
 | `design/` | Handoff de Claude Design tal como llegó (referencia). Lo que se sirve es la copia en `frontend/`. |
 | `database/schema.sql` | Esquema de la base, **generado** con `npm run schema` (no editar a mano). |
 | `docs/` | Plan y fuentes originales de las preguntas. |

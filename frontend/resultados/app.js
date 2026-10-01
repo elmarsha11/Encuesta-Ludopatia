@@ -12,8 +12,8 @@ const raiz = document.getElementById('raiz');
 // Qué va en «Hallazgos principales» de cada encuesta, además del total.
 const HALLAZGOS = {
   adultos: {
-    apuesta: { id: 'aposto_12m', valores: ['si'], titulo: 'Apostó en los últimos 12 meses', complemento: { valores: ['no'], texto: 'No apostó' } },
-    tercero: { tipo: 'pgsi', id: 'pgsi_categoria', titulo: 'Riesgo según el PGSI · quienes apostaron' },
+    apuesta: { id: 'apuesta', valores: ['si'], titulo: 'Apuesta', complemento: { valores: ['no'], texto: 'No apuesta' } },
+    tercero: { tipo: 'renglones', id: 'frecuencia', titulo: 'Con qué frecuencia apuestan · quienes apuestan' },
   },
   adolescentes: {
     apuesta: {

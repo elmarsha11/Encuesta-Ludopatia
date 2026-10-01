@@ -1,76 +1,32 @@
 // Encuesta de adultos (18+).
-// Fuentes: docs/fuentes/adultos-preguntas-1.jpeg y docs/fuentes/adultos-preguntas-2-no-apuesta.jpg,
-// con los ajustes acordados en docs/PLAN-encuesta-ludopatia.md (sección 4).
+// Fuentes: las preguntas del grupo de Administración Financiera (docs/fuentes/adultos-preguntas-1.jpeg
+// y docs/fuentes/adultos-preguntas-2-no-apuesta.jpg), con lo que exige la consigna del instituto
+// (medio de pago, monto por rangos, preguntas para quienes no apuestan). Ver
+// docs/PLAN-encuesta-ludopatia.md, sección 4.
 //
-// Todas las respuestas son obligatorias: no se avanza sin contestar. En las preguntas
-// sensibles (plata, deudas, si apostó) una de las respuestas es «Prefiero no responder»:
-// obligar sin esa salida empuja a mentir o a abandonar, y las dos cosas ensucian los datos.
-// El PGSI NO la tiene: es un instrumento validado y su puntaje necesita los 9 ítems.
+// Todas las respuestas son obligatorias. El grupo pidió las preguntas de a una, sin portadas
+// de sección: las secciones quedan solo para agrupar los gráficos del dashboard.
 
-import { SI_NO, SI_NO_NOSE, PREFIERO_NO_RESPONDER } from './opciones-comunes.js';
+import { SI_NO, SI_NO_NOSE } from './opciones-comunes.js';
 
-// Salario Mínimo, Vital y Móvil usado como referencia en la pregunta de ingresos.
-// Valor de septiembre de 2026. PENDIENTE: actualizar al valor vigente en octubre de 2026.
-// En la base se guarda el PASO (1 a 5), no el monto: cambiar este número no altera los datos.
-export const SMVM_REFERENCIA = 383_800;
-
-const apostoUltimoAnio = { pregunta: 'aposto_12m', es: ['si'] };
-const noApostoUltimoAnio = { pregunta: 'aposto_12m', es: ['no'] };
-
-// PGSI — Problem Gambling Severity Index (9 ítems, últimos 12 meses).
-// PENDIENTE: reemplazar por los ítems textuales de la validación española
-// (López-González, Estévez y Griffiths, 2018). Esta es una traducción de trabajo.
-const ITEMS_PGSI = [
-  '¿Apostaste más de lo que realmente podías permitirte perder?',
-  '¿Necesitaste apostar cantidades cada vez mayores para sentir la misma emoción?',
-  '¿Volviste otro día para intentar recuperar el dinero que habías perdido?',
-  '¿Pediste dinero prestado o vendiste algo para conseguir dinero para apostar?',
-  '¿Sentiste que podrías tener un problema con el juego?',
-  '¿El juego te causó problemas de salud, incluido estrés o ansiedad?',
-  '¿Otras personas criticaron tus apuestas o te dijeron que tenías un problema con el juego, más allá de que vos creyeras que era cierto o no?',
-  '¿El juego te causó problemas económicos a vos o a tu hogar?',
-  '¿Te sentiste culpable por la forma en que apostás o por lo que pasa cuando apostás?',
-];
-
-const preguntasPgsi = ITEMS_PGSI.map((texto, i) => ({
-  id: `pgsi_${i + 1}`,
-  seccion: 'pgsi',
-  tipo: 'escala',
-  texto,
-  min: 0,
-  max: 3,
-  etiquetas: { 0: 'Nunca', 1: 'A veces', 2: 'La mayoría de las veces', 3: 'Casi siempre' },
-  visibleSi: apostoUltimoAnio,
-}));
-
-// Categorías oficiales del PGSI según el puntaje total (0 a 27).
-export function categoriaPgsi(total) {
-  if (total === 0) return 'sin_riesgo';
-  if (total <= 2) return 'riesgo_bajo';
-  if (total <= 7) return 'riesgo_moderado';
-  return 'juego_problematico';
-}
+const apuesta = { pregunta: 'apuesta', es: ['si'] };
+const noApuesta = { pregunta: 'apuesta', es: ['no'] };
 
 export default {
   id: 'adultos',
   tabla: 'respuestas_adultos',
-  titulo: 'Apuestas, dinero y decisiones',
+  titulo: 'Encuesta sobre apuestas',
   respuestasObligatorias: true,
-  smvmReferencia: SMVM_REFERENCIA,
+  portadasDeSeccion: false,
 
-  // Textos de las pantallas que no son preguntas.
-  // PENDIENTE: revisión y aprobación del grupo de Administración Financiera.
   pantallas: {
     intro: {
-      titulo: 'Apuestas, dinero y decisiones',
+      titulo: '¿Apostás?',
       texto:
-        'Somos estudiantes de la Tecnicatura en Administración Financiera y estamos investigando ' +
-        'cómo se relacionan las apuestas con la situación económica, la publicidad y la educación ' +
-        'financiera. La encuesta es anónima: no pedimos nombre, DNI ni email, y nadie puede saber ' +
-        'qué respondiste vos. No hay respuestas correctas ni incorrectas y no buscamos juzgar a nadie. ' +
-        'Lleva menos de 5 minutos. Todas las preguntas son obligatorias, pero podés abandonar la ' +
-        'encuesta cuando quieras: si no llegás al final, no se guarda nada. Te pedimos que respondas ' +
-        'con honestidad.',
+        'Somos estudiantes de la Tecnicatura en Administración Financiera y queremos saber cuántas ' +
+        'personas del instituto apuestan. La encuesta es anónima: no pedimos nombre, DNI ni email, y ' +
+        'nadie puede saber qué respondiste. No hay respuestas correctas ni incorrectas. Lleva unos ' +
+        '3 minutos y todas las preguntas son obligatorias. Si no llegás al final, no se guarda nada.',
     },
     consentimiento: {
       pregunta: '¿Aceptás participar?',
@@ -80,55 +36,20 @@ export default {
     },
     edadFueraDeRango: 'Esta encuesta es para personas de 18 años o más. Gracias por tu interés.',
     cierre: {
-      titulo: 'Gracias por tu participación',
-      texto:
-        'Tus respuestas se guardaron de forma anónima y van a formar parte de un análisis ' +
-        'estadístico del grupo, sin datos individuales.',
+      titulo: '¡Gracias por participar!',
+      texto: 'Tus respuestas se guardaron de forma anónima y van a formar parte de un análisis del grupo, sin datos individuales.',
     },
   },
 
   secciones: [
-    {
-      id: 'sobre_vos',
-      titulo: 'Sobre vos',
-      descripcion: 'Datos generales para describir al grupo que responde. Nada de esto te identifica.',
-    },
-    {
-      id: 'apuestas',
-      titulo: 'Apuestas',
-      descripcion: 'Cuando decimos "apostar" hablamos de jugar dinero en casinos, apuestas deportivas, online o de forma presencial.',
-    },
-    {
-      id: 'habitos',
-      titulo: 'Tus hábitos de apuesta',
-      descripcion: 'Estas preguntas son solo para quienes apostaron en el último año.',
-    },
-    {
-      id: 'pgsi',
-      titulo: 'Pensando en los últimos 12 meses…',
-      descripcion:
-        'Estas 9 preguntas forman parte de un cuestionario usado internacionalmente (PGSI). ' +
-        'Elegí la opción que mejor describa tu experiencia.',
-    },
-    {
-      id: 'mirada',
-      titulo: 'Tu mirada sobre las apuestas',
-      descripcion: 'Estas preguntas son para quienes no apostaron en el último año.',
-    },
-    {
-      id: 'entorno',
-      titulo: 'Tu entorno y la publicidad',
-      descripcion: 'Estas preguntas son para todos, hayas apostado o no.',
-    },
-    {
-      id: 'educacion_financiera',
-      titulo: 'Educación financiera',
-      descripcion: 'Una última sección, corta.',
-    },
+    { id: 'sobre_vos', titulo: 'Sobre vos' },
+    { id: 'apuestas', titulo: 'Apuestas' },
+    { id: 'habitos', titulo: 'Hábitos de apuesta' },
+    { id: 'no_apuesta', titulo: 'Quienes no apuestan' },
+    { id: 'educacion_financiera', titulo: 'Educación financiera' },
   ],
 
   preguntas: [
-    // Bloque 1 — Sobre vos
     {
       id: 'edad',
       seccion: 'sobre_vos',
@@ -143,15 +64,21 @@ export default {
       tipo: 'unica',
       texto: '¿Qué carrera estás cursando?',
       opciones: [
-        { valor: 'educacion_inicial', texto: 'Educación Inicial', grupo: 'Educación Inicial' },
+        { valor: 'educacion_inicial', texto: 'Educación Inicial', grupo: 'Profesorados' },
         { valor: 'prof_ingles', texto: 'Inglés', grupo: 'Profesorados' },
         { valor: 'prof_matematicas', texto: 'Matemáticas', grupo: 'Profesorados' },
         { valor: 'prof_literatura', texto: 'Literatura', grupo: 'Profesorados' },
-        { valor: 'tec_ciencia_datos_ia', texto: 'Ciencia de Datos e IA', grupo: 'Tecnicaturas' },
-        { valor: 'tec_seguridad_higiene', texto: 'Seguridad e Higiene', grupo: 'Tecnicaturas' },
-        { valor: 'tec_adm_financiera', texto: 'Administración Financiera', grupo: 'Tecnicaturas' },
-        { valor: 'tec_acompanante_terapeutico', texto: 'Acompañante Terapéutico', grupo: 'Tecnicaturas' },
+        { valor: 'tec_enfermeria', texto: 'Enfermería', grupo: 'Tecnicaturas' },
         { valor: 'tec_trabajo_social', texto: 'Trabajo Social', grupo: 'Tecnicaturas' },
+        { valor: 'tec_seguridad_higiene', texto: 'Seguridad e Higiene', grupo: 'Tecnicaturas' },
+        { valor: 'tec_ciencia_datos_ia', texto: 'Ciencia de Datos e IA', grupo: 'Tecnicaturas' },
+        { valor: 'tec_adm_financiera', texto: 'Administración Financiera', grupo: 'Tecnicaturas' },
+        // «ATM» en la lista del grupo: confirmado que es Acompañante Terapéutico.
+        { valor: 'tec_acompanante_terapeutico', texto: 'Acompañante Terapéutico', grupo: 'Tecnicaturas' },
+        { valor: 'cufa', texto: 'CUFA (Formación Básica)', grupo: 'Otras' },
+        // PENDIENTE: «Enfermería» y «Tecnicatura Enfermería» son dos carreras distintas (confirmado).
+        // Falta definir el texto y el grupo de esta opción; lo resuelve la responsable de adultos.
+        { valor: 'enfermeria', texto: 'Enfermería (otra)', grupo: 'Otras' },
       ],
     },
     {
@@ -163,7 +90,6 @@ export default {
         { valor: 'masculino', texto: 'Masculino' },
         { valor: 'femenino', texto: 'Femenino' },
         { valor: 'otro', texto: 'Otro' },
-        { valor: 'prefiero_no_decir', texto: 'Prefiero no decir' },
       ],
     },
     {
@@ -191,80 +117,42 @@ export default {
       texto: '¿Alguien depende económicamente de vos?',
       opciones: SI_NO,
     },
-    {
-      id: 'ingresos_hogar',
-      seccion: 'sobre_vos',
-      tipo: 'escala',
-      presentacion: 'slider',
-      texto: '¿Cuánto dinero ingresa por mes en tu hogar, aproximadamente?',
-      ayuda:
-        'Sumá todos los ingresos de las personas con las que vivís. Lo usamos para ver si la ' +
-        'situación económica se relaciona con las apuestas; una aproximación alcanza.',
-      min: 1,
-      max: 5,
-      // Cuántos salarios mínimos abarca cada paso: [desde, hasta] (null = sin tope).
-      // El frontend lo multiplica por smvmReferencia para mostrar el equivalente en pesos.
-      rangosSmvm: { 1: [0, 1], 2: [1, 2], 3: [2, 3], 4: [3, 5], 5: [5, null] },
-      opcionNoResponde: PREFIERO_NO_RESPONDER,
-      etiquetas: {
-        1: 'Sin ingresos o hasta 1 salario mínimo',
-        2: 'Entre 1 y 2 salarios mínimos',
-        3: 'Entre 2 y 3 salarios mínimos',
-        4: 'Entre 3 y 5 salarios mínimos',
-        5: 'Más de 5 salarios mínimos',
-      },
-    },
-    {
-      id: 'tiene_deudas',
-      seccion: 'sobre_vos',
-      tipo: 'unica',
-      texto: '¿Tenés deudas actualmente?',
-      ayuda: 'Por ejemplo: préstamos, tarjeta de crédito impaga, cuotas atrasadas o dinero que le debés a alguien.',
-      opciones: [...SI_NO, PREFIERO_NO_RESPONDER],
-    },
-    {
-      id: 'deuda_relativa',
-      seccion: 'sobre_vos',
-      tipo: 'escala',
-      presentacion: 'slider',
-      texto: '¿Cuánto representa tu deuda comparada con lo que ingresa por mes en tu hogar?',
-      min: 1,
-      max: 5,
-      etiquetas: {
-        1: 'Menos de medio mes de ingresos',
-        2: 'Entre medio mes y 1 mes',
-        3: 'Entre 1 y 3 meses',
-        4: 'Entre 3 y 6 meses',
-        5: 'Más de 6 meses de ingresos',
-      },
-      opcionNoResponde: PREFIERO_NO_RESPONDER,
-      visibleSi: { pregunta: 'tiene_deudas', es: ['si'] },
-    },
 
-    // Bloque 2 — Pregunta gatillo
+    // Pregunta gatillo: separa a quienes apuestan de quienes no. Es el dato principal de la
+    // encuesta. Dice «online o presenciales» porque después se pregunta por el casino
+    // presencial: con «online» solamente, quien solo va al casino quedaría contado como «no».
     {
-      id: 'aposto_12m',
+      id: 'apuesta',
       seccion: 'apuestas',
       tipo: 'unica',
-      texto:
-        'En los últimos 12 meses, ¿apostaste dinero, ya sea online o de forma presencial?',
-      // Quien prefiere no responder no ve ni la rama SÍ ni la rama NO: sigue en «entorno».
-      opciones: [...SI_NO, PREFIERO_NO_RESPONDER],
+      texto: '¿Realizás apuestas, ya sea online o presenciales?',
+      opciones: SI_NO,
     },
 
-    // Rama SÍ — Tus hábitos de apuesta
+    // Rama SÍ
     {
       id: 'frecuencia',
       seccion: 'habitos',
       tipo: 'unica',
       texto: '¿Con qué frecuencia apostás?',
-      visibleSi: apostoUltimoAnio,
+      visibleSi: apuesta,
       opciones: [
+        { valor: 'diariamente', texto: 'Diariamente' },
+        { valor: 'semanalmente', texto: 'Semanalmente' },
+        { valor: 'mensualmente', texto: 'Mensualmente' },
         { valor: 'menos_mensual', texto: 'Menos de una vez al mes' },
-        { valor: 'algunas_mes', texto: 'Algunas veces al mes' },
-        { valor: 'semanal', texto: 'Una vez por semana' },
-        { valor: 'varias_semana', texto: 'Varias veces por semana' },
-        { valor: 'casi_diario', texto: 'Casi todos los días' },
+      ],
+    },
+    {
+      id: 'tipo_apuesta',
+      seccion: 'habitos',
+      tipo: 'multiple',
+      texto: '¿Qué tipo de apuestas hacés?',
+      visibleSi: apuesta,
+      opciones: [
+        { valor: 'casino_presencial', texto: 'Casino presencial' },
+        { valor: 'casino_online', texto: 'Casino online' },
+        { valor: 'deportivas', texto: 'Apuestas deportivas' },
       ],
     },
     {
@@ -272,7 +160,7 @@ export default {
       seccion: 'habitos',
       tipo: 'multiple',
       texto: '¿Por qué apostás?',
-      visibleSi: apostoUltimoAnio,
+      visibleSi: apuesta,
       opciones: [
         { valor: 'diversion', texto: 'Diversión' },
         { valor: 'ganar_dinero', texto: 'Ganar dinero' },
@@ -281,15 +169,46 @@ export default {
       ],
     },
     {
-      id: 'tipo_apuesta',
+      // En rangos (consigna del instituto): un número libre no se puede agrupar después.
+      id: 'monto_por_vez',
+      seccion: 'habitos',
+      tipo: 'unica',
+      texto: '¿Cuánto dinero solés apostar cada vez?',
+      visibleSi: apuesta,
+      opciones: [
+        { valor: 'menos_10k', texto: 'Menos de $10.000' },
+        { valor: 'entre_10k_50k', texto: 'Entre $10.000 y $50.000' },
+        { valor: 'entre_50k_100k', texto: 'Entre $50.000 y $100.000' },
+        { valor: 'mas_100k', texto: 'Más de $100.000' },
+      ],
+    },
+    {
+      // Lo exige la consigna del instituto.
+      id: 'medio_pago',
       seccion: 'habitos',
       tipo: 'multiple',
-      texto: '¿Qué tipo de apuestas hacés?',
-      visibleSi: apostoUltimoAnio,
+      texto: '¿Con qué medio de pago apostás?',
+      visibleSi: apuesta,
       opciones: [
-        { valor: 'casino_presencial', texto: 'Casino presencial' },
-        { valor: 'casino_online', texto: 'Casino online' },
-        { valor: 'deportivas', texto: 'Apuestas deportivas' },
+        { valor: 'efectivo', texto: 'Efectivo' },
+        { valor: 'debito', texto: 'Tarjeta de débito' },
+        { valor: 'credito', texto: 'Tarjeta de crédito' },
+        { valor: 'billetera_virtual', texto: 'Billetera virtual' },
+        { valor: 'transferencia', texto: 'Transferencia bancaria' },
+        { valor: 'otro', texto: 'Otro' },
+      ],
+    },
+    {
+      id: 'origen_dinero',
+      seccion: 'habitos',
+      tipo: 'multiple',
+      texto: '¿De dónde proviene el dinero que usás para apostar?',
+      visibleSi: apuesta,
+      opciones: [
+        { valor: 'sueldo', texto: 'Sueldo' },
+        { valor: 'prestamo', texto: 'Préstamo' },
+        { valor: 'planes_sociales', texto: 'Planes sociales' },
+        { valor: 'otro', texto: 'Otro' },
       ],
     },
     {
@@ -297,7 +216,7 @@ export default {
       seccion: 'habitos',
       tipo: 'unica',
       texto: '¿Reconocés si apostás en una plataforma legal?',
-      visibleSi: apostoUltimoAnio,
+      visibleSi: apuesta,
       opciones: SI_NO,
     },
     {
@@ -305,58 +224,25 @@ export default {
       seccion: 'habitos',
       tipo: 'unica',
       texto: '¿Incluiste a alguien para que se involucre en el mundo de las apuestas?',
-      visibleSi: apostoUltimoAnio,
+      visibleSi: apuesta,
       opciones: SI_NO_NOSE,
     },
-    {
-      id: 'monto_por_vez',
-      seccion: 'habitos',
-      tipo: 'escala',
-      presentacion: 'slider',
-      texto: '¿Cuánto dinero solés apostar cada vez?',
-      visibleSi: apostoUltimoAnio,
-      min: 1,
-      max: 5,
-      etiquetas: {
-        1: 'Menos de $10.000',
-        2: 'Entre $10.000 y $25.000',
-        3: 'Entre $25.000 y $50.000',
-        4: 'Entre $50.000 y $100.000',
-        5: 'Más de $100.000',
-      },
-      opcionNoResponde: PREFIERO_NO_RESPONDER,
-    },
-    {
-      id: 'origen_dinero',
-      seccion: 'habitos',
-      tipo: 'multiple',
-      texto: '¿De dónde proviene el dinero que usás para apostar?',
-      visibleSi: apostoUltimoAnio,
-      opciones: [
-        { valor: 'sueldo', texto: 'Sueldo' },
-        { valor: 'prestamo', texto: 'Préstamo' },
-        { valor: 'planes_sociales', texto: 'Planes sociales' },
-        { valor: 'otro', texto: 'Otro' },
-        { ...PREFIERO_NO_RESPONDER, exclusiva: true },
-      ],
-    },
-    ...preguntasPgsi,
 
-    // Rama NO — Tu mirada sobre las apuestas
+    // Rama NO
     {
       id: 'penso_apostar',
-      seccion: 'mirada',
+      seccion: 'no_apuesta',
       tipo: 'unica',
       texto: '¿Pensaste alguna vez en hacerlo?',
-      visibleSi: noApostoUltimoAnio,
+      visibleSi: noApuesta,
       opciones: SI_NO,
     },
     {
       id: 'motivo_no_apuesta',
-      seccion: 'mirada',
+      seccion: 'no_apuesta',
       tipo: 'unica',
       texto: '¿Cuál es el motivo principal por el que no apostás?',
-      visibleSi: noApostoUltimoAnio,
+      visibleSi: noApuesta,
       opciones: [
         { valor: 'no_me_interesa', texto: 'No me interesa' },
         { valor: 'miedo_perder_plata', texto: 'Miedo a perder plata' },
@@ -365,38 +251,38 @@ export default {
         { valor: 'otro', texto: 'Otro' },
       ],
     },
-
-    // Bloque 3 — Entorno y publicidad (todos)
     {
       id: 'familiares_apuestan',
-      seccion: 'entorno',
+      seccion: 'no_apuesta',
       tipo: 'unica',
       texto: '¿Tenés familiares o amigos cercanos que apuesten regularmente?',
+      visibleSi: noApuesta,
       opciones: SI_NO_NOSE,
     },
     {
       id: 'plata_facil',
-      seccion: 'entorno',
+      seccion: 'no_apuesta',
       tipo: 'unica',
       texto: '¿Creés que se puede generar plata fácil apostando?',
+      visibleSi: noApuesta,
       opciones: [...SI_NO, { valor: 'a_veces', texto: 'A veces' }],
     },
     {
       id: 'canales_publicidad',
-      seccion: 'entorno',
+      seccion: 'no_apuesta',
       tipo: 'multiple',
       texto: '¿Por qué canales ves más publicidad de apuestas?',
+      visibleSi: noApuesta,
       opciones: [
         { valor: 'redes', texto: 'Redes sociales' },
         { valor: 'videojuegos', texto: 'Videojuegos' },
         { valor: 'streamers', texto: 'Streamers y/o influencers' },
-        { valor: 'tv', texto: 'TV' },
-        { valor: 'calle', texto: 'La calle' },
         { valor: 'ninguno', texto: 'Ninguno', exclusiva: true },
       ],
     },
 
-    // Bloque 4 — Educación financiera
+    // Educación financiera, al final y para todos. «¿Sabés qué es?» va primero: quien no
+    // sabe qué es no puede saber si la recibió.
     {
       id: 'sabe_que_es_ef',
       seccion: 'educacion_financiera',
@@ -430,38 +316,5 @@ export default {
       texto: '¿Te gustaría recibirla?',
       opciones: SI_NO,
     },
-    {
-      // Pantalla informativa: no es una pregunta y no se guarda.
-      // PENDIENTE: borrador de Claude; lo revisa y aprueba el grupo.
-      id: 'info_ef',
-      seccion: 'educacion_financiera',
-      tipo: 'info',
-      titulo: '¿Qué es la educación financiera?',
-      texto:
-        'Es el conjunto de conocimientos y hábitos que nos ayudan a manejar el dinero: armar un ' +
-        'presupuesto, ahorrar, entender cuánto cuesta realmente un crédito o una compra en cuotas, ' +
-        'y tomar decisiones informadas antes de gastar, endeudarnos o invertir. No se trata de ' +
-        'tener mucho dinero, sino de decidir mejor con el que tenemos.',
-    },
   ],
-
-  // Columnas que no responde la persona: las calcula el backend a partir de las respuestas.
-  columnasCalculadas: [
-    {
-      nombre: 'pgsi_total',
-      sql: 'INTEGER CHECK (pgsi_total BETWEEN 0 AND 27)',
-      descripcion: 'Puntaje PGSI: suma de los 9 ítems (0 a 27). Vacío si no apostó en los últimos 12 meses.',
-    },
-    {
-      nombre: 'pgsi_categoria',
-      descripcion: 'Categoría PGSI: sin_riesgo (0) · riesgo_bajo (1-2) · riesgo_moderado (3-7) · juego_problematico (8+).',
-      sql: "TEXT CHECK (pgsi_categoria IN ('sin_riesgo', 'riesgo_bajo', 'riesgo_moderado', 'juego_problematico'))",
-    },
-  ],
-
-  calcular(r) {
-    if (r.aposto_12m !== 'si') return { pgsi_total: null, pgsi_categoria: null };
-    const total = preguntasPgsi.reduce((suma, p) => suma + r[p.id], 0);
-    return { pgsi_total: total, pgsi_categoria: categoriaPgsi(total) };
-  },
 };

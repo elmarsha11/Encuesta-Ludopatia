@@ -7,6 +7,7 @@ export function definicionPublica(encuesta) {
     id: encuesta.id,
     titulo: encuesta.titulo,
     respuestasObligatorias: encuesta.respuestasObligatorias,
+    portadasDeSeccion: encuesta.portadasDeSeccion ?? true,
     smvmReferencia: encuesta.smvmReferencia,
     pantallas: encuesta.pantallas,
     secciones: encuesta.secciones,
